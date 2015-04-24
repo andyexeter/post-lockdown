@@ -22,15 +22,10 @@ class PostLockdown {
 
 		self::$locked_post_ids = array_flip( get_option( 'postlockdown_locked_posts', array() ) );
 
-		//add_action( 'before_delete_post', array( __CLASS__, 'before_delete_post_hook' ) );
-
-		//add_filter( 'post_row_actions', array(__CLASS__, 'remove_trash_action' ), 10, 2 );
-		//add_filter( 'page_row_actions', array(__CLASS__, 'remove_trash_action' ), 10, 2 );
+		add_filter( 'user_has_cap', array(__CLASS__, 'filter_cap'), 10, 3 );
 
 		add_action( 'admin_menu', array(__CLASS__, 'add_options_page') );
 		add_action( 'admin_init', array(__CLASS__, 'register_settings' ) );
-
-		add_filter( 'user_has_cap', array(__CLASS__, 'filter_cap'), 10, 3 );
 
 	}
 
@@ -39,8 +34,6 @@ class PostLockdown {
 		if ( $args[0] != 'delete_post' && $args[0] != 'publish_pages' && $args[0] != 'publish_posts' ) {
 			return $allcaps;
 		}
-
-		//die(var_dump($cap));
 
 		if ( !empty( $allcaps[ self::$cap ] ) ) {
 			return $allcaps;
@@ -61,15 +54,11 @@ class PostLockdown {
 	}
 
 	public static function add_options_page() {
-
 		add_options_page('post-lockdown', 'Post Lockdown', self::$cap, 'post-lockdown', array(__CLASS__, 'output_options_page') );
-
 	}
 
 	public static function register_settings() {
-
 		register_setting( 'post-lockdown', 'postlockdown_locked_posts' );
-
 	}
 
 	public static function output_options_page() {
@@ -104,30 +93,6 @@ class PostLockdown {
 		}
 
 		include_once( __DIR__ . '/options-page.php' );
-
-	}
-
-	public static function before_delete_post_hook($post_id) {
-
-		if ( current_user_can( 'manage_options' ) ) {
-			return true;
-		}
-
-		if ( in_array($post_id, self::$locked_post_ids ) ) {
-
-			wp_die( __( 'Sorry, this post is unable to be deleted. Please contact one of the site administrators', 'post-lockdown' ) );
-		}
-
-		return true;
-	}
-
-	public static function remove_trash_action($actions, $post) {
-
-		if ( isset( $actions['trash'] ) && isset( self::$locked_post_ids[ $post->ID ] ) ) {
-			unset( $actions['trash'] );
-		}
-
-		return $actions;
 
 	}
 
