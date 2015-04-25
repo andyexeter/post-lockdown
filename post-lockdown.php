@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Plugin Name: PostLockdown
+ * Plugin Name: Post Lockdown
  * Plugin URI: http://www.andypalmer.me
  * Description: Allows admins to prevent certain posts of any post type from being deleted by non-admins
  * Version: 0.8.0
@@ -11,9 +11,11 @@
  *
  */
 
-if ( is_admin() ) {
+if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
 	PostLockdown::init();
 }
+
+register_uninstall_hook( __FILE__, array( 'PostLockdown', 'uninstall' ) );
 
 class PostLockdown {
 
@@ -41,24 +43,27 @@ class PostLockdown {
 
 		$options = get_option( self::KEY, array() );
 
-		// Set both options by flipping the arrays so we can use isset() over in_array()
+		if ( ! empty( $options ) ) {
 
-		if ( ! empty( $options['locked_post_ids'] ) ) {
-			self::$locked_post_ids = array_flip( $options['locked_post_ids'] );
+			// Set both options by flipping the arrays so we can use isset() over in_array()
+
+			if ( ! empty( $options['locked_post_ids'] ) ) {
+				self::$locked_post_ids = array_flip( $options['locked_post_ids'] );
+			}
+
+			if ( ! empty( $options['protected_post_ids'] ) ) {
+				self::$protected_post_ids = array_flip( $options['protected_post_ids'] );
+			}
+
+			self::$caps = array(
+				'delete_post' => true,
+				'edit_post' => true,
+				'publish_pages' => true,
+				'publish_posts' => true,
+			);
+
+			add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
 		}
-
-		if ( ! empty( $options['protected_post_ids'] ) ) {
-			self::$protected_post_ids = array_flip( $options['protected_post_ids'] );
-		}
-
-		self::$caps = array(
-			'delete_post' => true,
-			'edit_post' => true,
-			'publish_pages' => true,
-			'publish_posts' => true,
-		);
-
-		add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
 
 		add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'add_options_page' ) );
@@ -83,7 +88,7 @@ class PostLockdown {
 		} elseif ( isset( $post->ID ) ) {
 			$post_id = $post->ID;
 		} else {
-			$post_id = (int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_NUMBER_INT );
+			$post_id = filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_NUMBER_INT );
 		}
 
 		if ( ! $post_id ) {
@@ -147,14 +152,14 @@ class PostLockdown {
 
 			foreach ( $posts as $post ) {
 
-				$protected = isset( self::$protected_post_ids[ $post->ID ] );
 				$locked = isset( self::$locked_post_ids[ $post->ID ] );
+				$protected = isset( self::$protected_post_ids[ $post->ID ] );
 
 				$post_types[ $post_type->name ]['posts'][] = array(
 					'ID' => $post->ID,
 					'post_title' => $post->post_title,
-					'protected' => $protected,
 					'locked' => $locked,
+					'protected' => $protected,
 				);
 			}
 		}
@@ -164,5 +169,9 @@ class PostLockdown {
 		$title = self::TITLE;
 
 		include_once( plugin_dir_path( __FILE__ ) . 'options-page.php' );
+	}
+
+	public static function uninstall() {
+		delete_option( self::KEY );
 	}
 }
