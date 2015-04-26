@@ -1,16 +1,11 @@
 <?php
 /**
- *
  * Plugin Name: Post Lockdown
- * Description: Allows admins to prevent certain posts of any post type from being deleted by non-admins
+ * Description: Allows admins to prevent certain posts of any post type from being deleted or edited by non-admins.
  * Version: 0.8.2
  * Author: Andy Palmer
  * Author URI: http://www.andypalmer.me
- * Tags: posts, lock, protect, capability
- * Requires at least: 3.6
- * Tested up to: 4.2
  * License: GPL2
- *
  */
 
 if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
@@ -78,6 +73,7 @@ class PostLockdown {
 	 * {@link PostLockdown::CAP} capability we bail out early.
 	 */
 	public static function filter_cap($allcaps, $cap, $args) {
+
 		$post = get_post();
 
 		if ( ! isset( self::$caps[ $args[0] ] ) || ! empty( $allcaps[ self::CAP ] ) ) {
@@ -172,6 +168,10 @@ class PostLockdown {
 		include_once( plugin_dir_path( __FILE__ ) . 'options-page.php' );
 	}
 
+	/**
+	 * Callback for register_uninstall_hook() function.
+	 * Removes the plugin option from the database when it is uninstalled.
+	 */
 	public static function uninstall() {
 		delete_option( self::KEY );
 	}
