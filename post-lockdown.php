@@ -18,7 +18,7 @@ class PostLockdown {
 
 	/** Capability required to edit the plugin options. */
 	const CAP = 'manage_options';
-	/** Plugin key for options and the options page. */
+	/** Plugin key for options and the option page. */
 	const KEY = 'post_lockdown';
 	/** Option page title. */
 	const TITLE = 'Post Lockdown';
@@ -28,7 +28,7 @@ class PostLockdown {
 	/** @var array List of post IDs which cannot be trashed or deleted. */
 	private static $protected_post_ids = array();
 	/** @var array Array of capabilities to compare against. */
-	private static $caps;
+	private static $caps = array();
 
 	/**
 	 * Plugin init method.
@@ -40,7 +40,7 @@ class PostLockdown {
 
 		if ( ! empty( $options ) ) {
 
-			// Set both options by flipping the arrays so we can use isset() over in_array()
+			// Set both options but flip the arrays so we can use isset() over in_array()
 
 			if ( ! empty( $options['locked_post_ids'] ) ) {
 				self::$locked_post_ids = array_flip( $options['locked_post_ids'] );
@@ -72,11 +72,11 @@ class PostLockdown {
 	 */
 	public static function filter_cap($allcaps, $cap, $args) {
 
-		$post = get_post();
-
 		if ( ! isset( self::$caps[ $args[0] ] ) || ! empty( $allcaps[ self::CAP ] ) ) {
 			return $allcaps;
 		}
+
+		$post = get_post();
 
 		if ( isset( $args[2] ) ) {
 			$post_id = $args[2];
@@ -147,14 +147,11 @@ class PostLockdown {
 
 			foreach ( $posts as $post ) {
 
-				$locked = isset( self::$locked_post_ids[ $post->ID ] );
-				$protected = isset( self::$protected_post_ids[ $post->ID ] );
-
 				$post_types[ $post_type->name ]['posts'][] = array(
 					'ID' => $post->ID,
 					'post_title' => $post->post_title,
-					'locked' => $locked,
-					'protected' => $protected,
+					'locked' => isset( self::$locked_post_ids[ $post->ID ] ),
+					'protected' => isset( self::$protected_post_ids[ $post->ID ] ),
 				);
 			}
 		}
