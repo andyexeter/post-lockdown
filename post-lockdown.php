@@ -15,6 +15,7 @@ if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
 register_uninstall_hook( __FILE__, array( 'PostLockdown', 'uninstall' ) );
 
 class PostLockdown {
+	
 	/** Capability required to edit the plugin options. */
 	const CAP = 'manage_options';
 	/** Plugin key for options and the option page. */
@@ -34,9 +35,11 @@ class PostLockdown {
 	 * Gets the plugin options and adds the required action and filter callbacks.
 	 */
 	public static function init() {
+
 		$options = get_option( self::KEY, array() );
 
 		if ( ! empty( $options ) ) {
+
 			// Set both options but flip the arrays so we can use isset() over in_array()
 			if ( ! empty( $options['locked_post_ids'] ) ) {
 				self::$locked_post_ids = array_flip( $options['locked_post_ids'] );
@@ -68,6 +71,7 @@ class PostLockdown {
 	 * {@link PostLockdown::CAP} capability we bail out early.
 	 */
 	public static function filter_cap($allcaps, $cap, $args) {
+
 		if ( ! isset( self::$caps[ $args[0] ] ) || ! empty( $allcaps[ self::CAP ] ) ) {
 			return $allcaps;
 		}
@@ -75,6 +79,7 @@ class PostLockdown {
 		if ( isset( $args[2] ) ) {
 			$post_id = $args[2];
 		} else {
+
 			$post = get_post();
 
 			if ( isset( $post->ID ) ) {
@@ -126,9 +131,11 @@ class PostLockdown {
 	 * Gets an array of post types and their posts and includes the options page HTML.
 	 */
 	public static function output_options_page() {
+
 		$post_types = array();
 
 		foreach ( get_post_types( array(), 'objects' ) as $post_type ) {
+
 			$posts = get_posts( array(
 				'post_type'		=> $post_type->name,
 				'post_status'	=> array( 'publish', 'pending', 'draft', 'future' ),
@@ -142,6 +149,7 @@ class PostLockdown {
 			$post_types[ $post_type->name ] = array( 'label' => $post_type->label, 'posts' => array() );
 
 			foreach ( $posts as $post ) {
+
 				$post_types[ $post_type->name ]['posts'][] = array(
 					'ID'			=> $post->ID,
 					'post_title'	=> $post->post_title,
