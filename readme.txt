@@ -8,7 +8,7 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Protects posts of any post type by disabling trashing/deletion and locks them by preventing edits by non-admins
+Protects posts of any post type (except nav menu items) by disabling trashing/deletion and locks them by preventing edits by non-admins
 
 == Description ==
 

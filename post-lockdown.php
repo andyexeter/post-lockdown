@@ -15,7 +15,7 @@ if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
 register_uninstall_hook( __FILE__, array( 'PostLockdown', 'uninstall' ) );
 
 class PostLockdown {
-	
+
 	/** Capability required to edit the plugin options. */
 	const CAP = 'manage_options';
 	/** Plugin key for options and the option page. */
@@ -135,6 +135,10 @@ class PostLockdown {
 		$post_types = array();
 
 		foreach ( get_post_types( array(), 'objects' ) as $post_type ) {
+
+			if ( $post_type->name == 'nav_menu_item' ) {
+				continue;
+			}
 
 			$posts = get_posts( array(
 				'post_type'		=> $post_type->name,
