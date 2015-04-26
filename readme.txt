@@ -13,8 +13,8 @@ Protects posts of any post type by disabling trashing/deletion and locks them by
 == Description ==
 
 Post Lockdown protects and optionally locks your site-critical posts and pages
-by preventing non-admins from sending them to trash or deleting them. They can also be locked completely which stops
-any non-admins from being able to edit the page, regardless of their capability
+by preventing non-admins from trashing or deleting them. They can also be locked completely which stops
+any non-admins from being able to edit the post, regardless of their capability
 
 == Installation ==
 
