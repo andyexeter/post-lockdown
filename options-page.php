@@ -1,7 +1,7 @@
 <div class="wrap">
-	<h2><?php echo esc_html( $title ); ?></h2>
+	<h2><?php echo esc_html( PostLockdown::TITLE ); ?></h2>
 	<form action="options.php" method="post">
-		<?php settings_fields( $key ); ?>
+		<?php settings_fields( PostLockdown::KEY ); ?>
 		<h3>Protected Posts</h3>
 		<table class="form-table">
 			<tbody>
@@ -10,7 +10,7 @@
 				<tr>
 					<th><?php echo esc_html( $post_type['label'] ); ?></th>
 					<td>
-						<select name="<?php echo $key; ?>[protected_post_ids][]" multiple="multiple" style="min-width:450px;height:150px">
+						<select name="<?php echo esc_attr( PostLockdown::KEY ); ?>[protected_post_ids][]" multiple="multiple" style="min-width:450px;height:150px">
 							<?php foreach( $post_type['posts'] as $the_post ) { ?>
 							<option value="<?php echo esc_attr( $the_post['ID'] ); ?>"<?php selected( $the_post['protected'], true ); ?>><?php echo esc_html( $the_post['post_title'] ); ?></option>
 							<?php } ?>
@@ -28,7 +28,7 @@
 				<tr>
 					<th><?php echo esc_html( $post_type['label'] ); ?></th>
 					<td>
-						<select name="<?php echo $key; ?>[locked_post_ids][]" multiple="multiple" style="min-width:450px;height:150px">
+						<select name="<?php echo esc_attr( PostLockdown::KEY ); ?>[locked_post_ids][]" multiple="multiple" style="min-width:450px;height:150px">
 							<?php foreach( $post_type['posts'] as $the_post ) { ?>
 							<option value="<?php echo esc_attr( $the_post['ID'] ); ?>"<?php selected( $the_post['locked'], true ); ?>><?php echo esc_html( $the_post['post_title'] ); ?></option>
 							<?php } ?>

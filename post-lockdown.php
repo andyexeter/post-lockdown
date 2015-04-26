@@ -156,9 +156,6 @@ class PostLockdown {
 			}
 		}
 
-		$key = self::KEY;
-		$title = self::TITLE;
-
 		include_once( plugin_dir_path( __FILE__ ) . 'options-page.php' );
 	}
 
