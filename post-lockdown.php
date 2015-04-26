@@ -18,10 +18,8 @@ class PostLockdown {
 
 	/** Capability required to edit the plugin options. */
 	const CAP = 'manage_options';
-	/** Option key. */
+	/** Plugin key for options and the options page. */
 	const KEY = 'post_lockdown';
-	/** Option page slug. */
-	const SLUG = 'post-lockdown';
 	/** Option page title. */
 	const TITLE = 'Post Lockdown';
 
@@ -92,7 +90,7 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		// If we got to this point and the post ID is a locked post,
+		// If we get to this point and the post ID is a locked post,
 		// or a protected post for anything except 'edit_posts' then
 		// set the requested capability to false.
 
@@ -114,7 +112,7 @@ class PostLockdown {
 	 * Registers the plugin's option name so it gets saved.
 	 */
 	public static function register_setting() {
-		register_setting( self::SLUG, self::KEY );
+		register_setting( self::KEY, self::KEY );
 	}
 
 	/**
@@ -122,7 +120,7 @@ class PostLockdown {
 	 * Adds the plugin's options page.
 	 */
 	public static function add_options_page() {
-		add_options_page( self::TITLE, self::TITLE, self::CAP, self::SLUG, array( __CLASS__, 'output_options_page' ) );
+		add_options_page( self::TITLE, self::TITLE, self::CAP, self::KEY, array( __CLASS__, 'output_options_page' ) );
 	}
 
 	/**
@@ -162,7 +160,6 @@ class PostLockdown {
 		}
 
 		$key = self::KEY;
-		$slug = self::SLUG;
 		$title = self::TITLE;
 
 		include_once( plugin_dir_path( __FILE__ ) . 'options-page.php' );

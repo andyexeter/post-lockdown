@@ -1,7 +1,7 @@
 <div class="wrap">
 	<h2><?php echo esc_html( $title ); ?></h2>
 	<form action="options.php" method="post">
-		<?php settings_fields( $slug ); ?>
+		<?php settings_fields( $key ); ?>
 		<h3>Protected Posts</h3>
 		<table class="form-table">
 			<tbody>
