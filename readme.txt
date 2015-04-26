@@ -24,7 +24,9 @@ any non-admins from being able to edit the post, regardless of their capability
 
 == Screenshots ==
 
-1. This screenshot shows how Post Lockdown locks posts (Sample Page 2 Locked) and how it protects them (Sample Page 3 Protected)
+1. A page list showing one locked page, one protected page and one normal page
+2. The Publish metabox for a protected page logged in as an Editor. See how the plugin removes the Move to Trash link.
+3. The WordPress error message when a non-admin trys to delete a protected page via the bulk options Move to Trash option
 
 == Changelog ==
 
