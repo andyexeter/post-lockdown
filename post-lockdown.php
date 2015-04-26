@@ -15,7 +15,6 @@ if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
 register_uninstall_hook( __FILE__, array( 'PostLockdown', 'uninstall' ) );
 
 class PostLockdown {
-
 	/** Capability required to edit the plugin options. */
 	const CAP = 'manage_options';
 	/** Plugin key for options and the option page. */
@@ -27,7 +26,7 @@ class PostLockdown {
 	private static $locked_post_ids = array();
 	/** @var array List of post IDs which cannot be trashed or deleted. */
 	private static $protected_post_ids = array();
-	/** @var array Array of capabilities to compare against. */
+	/** @var array List of capabilities to compare against in our capability filter. */
 	private static $caps = array();
 
 	/**
@@ -35,13 +34,10 @@ class PostLockdown {
 	 * Gets the plugin options and adds the required action and filter callbacks.
 	 */
 	public static function init() {
-
 		$options = get_option( self::KEY, array() );
 
 		if ( ! empty( $options ) ) {
-
 			// Set both options but flip the arrays so we can use isset() over in_array()
-
 			if ( ! empty( $options['locked_post_ids'] ) ) {
 				self::$locked_post_ids = array_flip( $options['locked_post_ids'] );
 			}
@@ -50,6 +46,7 @@ class PostLockdown {
 				self::$protected_post_ids = array_flip( $options['protected_post_ids'] );
 			}
 
+			// Set the capabilities we want to return false for our posts
 			self::$caps = array(
 				'delete_post' => true,
 				'edit_post' => true,
@@ -71,19 +68,20 @@ class PostLockdown {
 	 * {@link PostLockdown::CAP} capability we bail out early.
 	 */
 	public static function filter_cap($allcaps, $cap, $args) {
-
 		if ( ! isset( self::$caps[ $args[0] ] ) || ! empty( $allcaps[ self::CAP ] ) ) {
 			return $allcaps;
 		}
 
-		$post = get_post();
-
 		if ( isset( $args[2] ) ) {
 			$post_id = $args[2];
-		} elseif ( isset( $post->ID ) ) {
-			$post_id = $post->ID;
 		} else {
-			$post_id = filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_NUMBER_INT );
+			$post = get_post();
+
+			if ( isset( $post->ID ) ) {
+				$post_id = $post->ID;
+			} else {
+				$post_id = filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_NUMBER_INT );
+			}
 		}
 
 		if ( ! $post_id ) {
@@ -91,7 +89,7 @@ class PostLockdown {
 		}
 
 		// If we get to this point and the post ID is a locked post,
-		// or a protected post for anything except 'edit_posts' then
+		// or a protected post for anything except 'edit_posts', then
 		// set the requested capability to false.
 
 		$post_ids = self::$locked_post_ids;
@@ -128,15 +126,13 @@ class PostLockdown {
 	 * Gets an array of post types and their posts and includes the options page HTML.
 	 */
 	public static function output_options_page() {
-
 		$post_types = array();
 
 		foreach ( get_post_types( array(), 'objects' ) as $post_type ) {
-
 			$posts = get_posts( array(
-				'post_type' => $post_type->name,
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-				'posts_per_page' => -1,
+				'post_type'		=> $post_type->name,
+				'post_status'	=> array( 'publish', 'pending', 'draft', 'future' ),
+				'nopaging'		=> true,
 			) );
 
 			if ( empty( $posts ) ) {
@@ -146,12 +142,11 @@ class PostLockdown {
 			$post_types[ $post_type->name ] = array( 'label' => $post_type->label, 'posts' => array() );
 
 			foreach ( $posts as $post ) {
-
 				$post_types[ $post_type->name ]['posts'][] = array(
-					'ID' => $post->ID,
-					'post_title' => $post->post_title,
-					'locked' => isset( self::$locked_post_ids[ $post->ID ] ),
-					'protected' => isset( self::$protected_post_ids[ $post->ID ] ),
+					'ID'			=> $post->ID,
+					'post_title'	=> $post->post_title,
+					'locked'		=> isset( self::$locked_post_ids[ $post->ID ] ),
+					'protected'		=> isset( self::$protected_post_ids[ $post->ID ] ),
 				);
 			}
 		}
