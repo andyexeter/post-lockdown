@@ -136,7 +136,7 @@ class PostLockdown {
 
 		foreach ( get_post_types( array(), 'objects' ) as $post_type ) {
 
-			if ( $post_type->name == 'nav_menu_item' ) {
+			if ( 'nav_menu_item' == $post_type->name ) {
 				continue;
 			}
 
