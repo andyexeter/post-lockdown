@@ -8,7 +8,7 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Allows you to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
+Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
 
 = Description ==
 
