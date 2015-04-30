@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Post Lockdown
- * Description: Allows admins to prevent certain posts of any post type from being deleted or edited by non-admins.
+ * Description: Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
  * Version: 0.9.5
  * Author: Andy Palmer
  * Author URI: http://www.andypalmer.me
@@ -16,8 +16,6 @@ register_uninstall_hook( __FILE__, array( 'PostLockdown', 'uninstall' ) );
 
 class PostLockdown {
 
-	/** Capability required to edit the plugin options. */
-	const CAP = 'manage_options';
 	/** Plugin key for options and the option page. */
 	const KEY = 'post_lockdown';
 	/** Option page title. */
@@ -27,8 +25,6 @@ class PostLockdown {
 	private static $locked_post_ids = array();
 	/** @var array List of post IDs which cannot be trashed or deleted. */
 	private static $protected_post_ids = array();
-	/** @var array List of capabilities to compare against in our capability filter. */
-	private static $caps = array();
 
 	/**
 	 * Plugin init method.
@@ -36,32 +32,10 @@ class PostLockdown {
 	 */
 	public static function init() {
 
-		$options = get_option( self::KEY, array() );
-
-		if ( ! empty( $options ) ) {
-
-			// Set both options but flip the arrays so we can use isset() over in_array()
-			if ( ! empty( $options['locked_post_ids'] ) ) {
-				self::$locked_post_ids = array_flip( $options['locked_post_ids'] );
-			}
-
-			if ( ! empty( $options['protected_post_ids'] ) ) {
-				self::$protected_post_ids = array_flip( $options['protected_post_ids'] );
-			}
-
-			// Set the capabilities we want to return false for our posts
-			self::$caps = array(
-				'delete_post' => true,
-				'edit_post' => true,
-				'publish_pages' => true,
-				'publish_posts' => true,
-			);
-
-			add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
-		}
-
 		add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'add_options_page' ) );
+
+		add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
 	}
 
 	/**
@@ -72,7 +46,22 @@ class PostLockdown {
 	 */
 	public static function filter_cap($allcaps, $cap, $args) {
 
-		if ( ! isset( self::$caps[ $args[0] ] ) || ! empty( $allcaps[ self::CAP ] ) ) {
+		// If there's no locked or protected posts get out of here
+		if ( ! self::load_options() ) {
+			return $allcaps;
+		}
+
+		$admin_cap = apply_filters( 'postlockdown_admin_capability', 'manage_options' );
+
+		// Set the capabilities we want to return false for our posts
+		$the_caps = apply_filters( 'postlockdown_capabilities', array(
+			'delete_post' => true,
+			'edit_post' => true,
+			'publish_pages' => true,
+			'publish_posts' => true,
+		) );
+
+		if ( ! isset( $the_caps[ $args[0] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
 			return $allcaps;
 		}
 
@@ -123,7 +112,10 @@ class PostLockdown {
 	 * Adds the plugin's options page.
 	 */
 	public static function add_options_page() {
-		add_options_page( self::TITLE, self::TITLE, self::CAP, self::KEY, array( __CLASS__, 'output_options_page' ) );
+
+		$admin_cap = apply_filters( 'postlockdown_admin_capability', 'manage_options' );
+
+		add_options_page( self::TITLE, self::TITLE, $admin_cap, self::KEY, array( __CLASS__, 'output_options_page' ) );
 	}
 
 	/**
@@ -131,6 +123,8 @@ class PostLockdown {
 	 * Gets an array of post types and their posts and includes the options page HTML.
 	 */
 	public static function output_options_page() {
+
+		self::load_options();
 
 		$post_types = array();
 
@@ -140,11 +134,11 @@ class PostLockdown {
 				continue;
 			}
 
-			$posts = get_posts( array(
+			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
 				'post_type'		=> $post_type->name,
 				'post_status'	=> array( 'publish', 'pending', 'draft', 'future' ),
 				'nopaging'		=> true,
-			) );
+			) ) );
 
 			if ( empty( $posts ) ) {
 				continue;
@@ -172,5 +166,35 @@ class PostLockdown {
 	 */
 	public static function uninstall() {
 		delete_option( self::KEY );
+	}
+
+	/**
+	 * Sets the array of locked and protected post IDs.
+	 * @return boolean Whether both arrays are empty
+	 */
+	private static function load_options() {
+
+		$options = get_option( self::KEY, array() );
+
+		if ( empty( $options ) ) {
+			return false;
+		}
+
+		$empty = true;
+
+		// Set both options but flip the arrays so we can use isset() over in_array()
+		if ( ! empty( $options['locked_post_ids'] ) ) {
+			self::$locked_post_ids = array_flip( $options['locked_post_ids'] );
+
+			$empty = false;
+		}
+
+		if ( ! empty( $options['protected_post_ids'] ) ) {
+			self::$protected_post_ids = array_flip( $options['protected_post_ids'] );
+
+			$empty = false;
+		}
+
+		return !$empty;
 	}
 }
