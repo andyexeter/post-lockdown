@@ -125,39 +125,27 @@ class PostLockdown {
 	public static function output_options_page() {
 
 		self::load_options();
-
-		$post_types = array();
-
-		foreach ( get_post_types( array(), 'objects' ) as $post_type ) {
-
-			if ( 'nav_menu_item' == $post_type->name ) {
-				continue;
-			}
-
-			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-				'post_type'		=> $post_type->name,
-				'post_status'	=> array( 'publish', 'pending', 'draft', 'future' ),
-				'nopaging'		=> true,
-			) ) );
-
-			if ( empty( $posts ) ) {
-				continue;
-			}
-
-			$post_types[ $post_type->name ] = array( 'label' => $post_type->label, 'posts' => array() );
-
-			foreach ( $posts as $post ) {
-
-				$post_types[ $post_type->name ]['posts'][] = array(
-					'ID'			=> $post->ID,
-					'post_title'	=> $post->post_title,
-					'locked'		=> isset( self::$locked_post_ids[ $post->ID ] ),
-					'protected'		=> isset( self::$protected_post_ids[ $post->ID ] ),
-				);
-			}
-		}
+		
+		$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
+			'post_type' => 'any',
+			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+			'nopaging' => true,
+			'post__in' => array_merge( array_keys( self::$locked_post_ids ), array_keys( self::$protected_post_ids ) )
+		) ) );
 
 		include_once( plugin_dir_path( __FILE__ ) . 'options-page.php' );
+	}
+	
+	public static function is_post_locked( $post_id ) {
+		self::load_options();
+		
+		return isset( self::$locked_post_ids[ $post_id ] );
+	}
+	
+	public static function is_post_protected( $post_id ) {
+		self::load_options();
+		
+		return isset( self::$protected_post_ids[ $post_id ] );
 	}
 
 	/**
@@ -173,6 +161,10 @@ class PostLockdown {
 	 * @return boolean Whether both arrays are empty
 	 */
 	private static function load_options() {
+		
+		if ( !empty( self::$locked_post_ids ) && !empty( self::$protected_post_ids ) ) {
+			return true;
+		}
 
 		$options = get_option( self::KEY, array() );
 
