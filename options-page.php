@@ -9,13 +9,22 @@
 					<td>
 						<div class="pl-posts-container">
 							<div class="pl-posts pl-posts-available">
-								<div class="pl-posts-search-box">
-									<input type="text" autocomplete="off" class="pl-posts-autocomplete" placeholder="Search..." />
+								<div class="pl-searchbox">
+									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="Search..." />
 								</div>
-								<ul class="pl-multiselect" data-input_name="">
+								<ul class="pl-multiselect">
 								</ul>
 							</div>
 							<div class="pl-posts pl-posts-selected">
+								<ul class="pl-multiselect" data-input_name="">
+									<?php foreach ( $posts as $selected ) { ?>
+										<li class="" data-post_id="<?php echo $selected->ID; ?>">
+											<span class="post-title"><?php echo $selected->post_title; ?></span>
+											<span class="dashicons dashicons-remove"></span>
+											<span class="post-type"><?php echo $selected->post_type; ?></span>
+										</li>
+									<?php } ?>
+								</ul>
 							</div>
 						</div>
 						<p class="description">Protected posts cannot be trashed or deleted by non-admins</p>
