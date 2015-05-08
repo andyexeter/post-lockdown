@@ -18,9 +18,9 @@
 							<div class="pl-posts pl-posts-selected">
 								<ul class="pl-multiselect" data-input_name="">
 									<?php foreach ( $posts as $selected ) { ?>
-										<li class="" data-post_id="<?php echo $selected->ID; ?>">
+										<li class="post-<?php echo $selected->ID; ?>" data-post_id="<?php echo $selected->ID; ?>">
 											<span class="post-title"><?php echo $selected->post_title; ?></span>
-											<span class="dashicons dashicons-remove"></span>
+											<span class="dashicons dashicons-no"></span>
 											<span class="post-type"><?php echo $selected->post_type; ?></span>
 										</li>
 									<?php } ?>

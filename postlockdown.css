@@ -43,11 +43,30 @@
 	background-color: #eaf2fa;
 }
 
+.pl-multiselect li.selected {
+	background-color:#f8f8f8;
+	cursor: default;
+}
+
+.pl-multiselect li .post-title {
+	font-size:13px;
+}
+
 .pl-multiselect li .post-type {
 	float:right;
 	text-transform:uppercase;
 	font-size:11px;
 }
+
+.pl-multiselect li .dashicons {
+	color:#333;
+	float:right;
+	position:relative;
+	top:-3px;
+	display:none;
+}
+
+.pl-multiselect li:hover .dashicons-no {display:block;}
 
 .pl-searchbox {
 	background:#fff;
