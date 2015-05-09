@@ -66,7 +66,7 @@
 	display:none;
 }
 
-.pl-multiselect li:hover .dashicons-no {display:block;}
+.pl-posts-selected .pl-multiselect li:hover .dashicons-no {display:block;}
 
 .pl-searchbox {
 	background:#fff;
@@ -78,4 +78,5 @@
 .ui-autocomplete {display:none !important}
 .pl-autocomplete {
 	width:100%;
+	font-size:13px;
 }
