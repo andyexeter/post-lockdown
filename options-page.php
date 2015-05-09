@@ -2,10 +2,14 @@
 	<h2><?php echo esc_html( PostLockdown::TITLE ); ?></h2>
 	<form action="options.php" method="post">
 		<?php settings_fields( PostLockdown::KEY ); ?>
+		<p>
+			<?php esc_html_e( 'Select locked and protected posts by adding them to the right hand boxes.
+			Use the search field to filter the list of posts.', 'postlockdown' ); ?>
+		</p>
 		<table class="form-table">
 			<tbody>
 				<tr>
-					<th>Locked Posts</th>
+					<th><?php esc_html_e( 'Locked Posts', 'postlockdown' ); ?></th>
 					<td>
 						<div class="pl-posts-container">
 							<div class="pl-posts pl-posts-available">
@@ -16,20 +20,11 @@
 								</ul>
 							</div>
 							<div class="pl-posts pl-posts-selected">
-								<ul class="pl-multiselect" data-key="locked" data-input_name="<?php echo PostLockdown::KEY; ?>[locked_post_ids]">
-									<?php /* foreach ( $posts as $selected ) { ?>
-									  <?php if ( PostLockdown::is_post_locked( $selected->ID ) ) { ?>
-									  <li class="post-<?php echo $selected->ID; ?>" data-post_id="<?php echo $selected->ID; ?>">
-									  <span class="post-title"><?php echo $selected->post_title; ?></span>
-									  <span class="dashicons dashicons-no"></span>
-									  <span class="post-type"><?php echo $selected->post_type; ?></span>
-									  </li>
-									  <?php } ?>
-									  <?php } */ ?>
+								<ul class="pl-multiselect" data-key="locked" data-input_name="<?php esc_attr_e( PostLockdown::KEY ); ?>[locked_post_ids]">
 								</ul>
 							</div>
 						</div>
-						<p class="description">Locked posts cannot be edited, trashed or deleted by non-admins</p>
+						<p class="description"><?php esc_html_e( 'Locked posts cannot be edited, trashed or deleted by non-admins', 'postlockdown' ); ?></p>
 					</td>
 				</tr>
 				<tr>
@@ -44,20 +39,11 @@
 								</ul>
 							</div>
 							<div class="pl-posts pl-posts-selected">
-								<ul class="pl-multiselect" data-key="protected" data-input_name="<?php echo PostLockdown::KEY; ?>[protected_post_ids]">
-									<?php /* foreach ( $posts as $selected ) { ?>
-									  <?php if ( PostLockdown::is_post_protected( $selected->ID ) ) { ?>
-									  <li class="post-<?php echo $selected->ID; ?>" data-post_id="<?php echo $selected->ID; ?>">
-									  <span class="post-title"><?php echo $selected->post_title; ?></span>
-									  <span class="dashicons dashicons-no"></span>
-									  <span class="post-type"><?php echo $selected->post_type; ?></span>
-									  </li>
-									  <?php } ?>
-									  <?php } */ ?>
+								<ul class="pl-multiselect" data-key="protected" data-input_name="<?php esc_attr_e( PostLockdown::KEY ); ?>[protected_post_ids]">
 								</ul>
 							</div>
 						</div>
-						<p class="description">Protected posts cannot be trashed or deleted by non-admins</p>
+						<p class="description"><?php esc_html_e( 'Protected posts cannot be trashed or deleted by non-admins', 'postlockdown' ); ?></p>
 					</td>
 				</tr>
 			</tbody>
