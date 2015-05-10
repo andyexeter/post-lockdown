@@ -135,10 +135,6 @@ class PostLockdown {
 	public static function add_options_page() {
 		$admin_cap = apply_filters( 'postlockdown_admin_capability', 'manage_options' );
 
-		$i = 0;
-
-		$i ++;
-
 		self::$page_hook = add_options_page( self::TITLE, self::TITLE, $admin_cap, self::KEY, array( __CLASS__, 'output_options_page' ) );
 	}
 
