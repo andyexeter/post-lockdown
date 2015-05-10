@@ -3,7 +3,7 @@ Contributors: andyexeter
 Donate link: http://bit.ly/1b2f6OL
 Tags: posts, lock, protect, capabilities, trash, delete
 Requires at least: 3.6
-Tested up to: 4.2
+Tested up to: 4.2.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
