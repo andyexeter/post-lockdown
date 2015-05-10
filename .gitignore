@@ -1,3 +1,5 @@
+# Patterns for all branches
+
 # Packages #
 *.7z
 *.dmg
@@ -23,3 +25,11 @@ Thumbs.db
 
 node_modules/*
 nbproject/*
+
+# Patterns for master branch
+
+src/*
+tests/*
+.jshintrc
+Gruntfile.js
+package.json
