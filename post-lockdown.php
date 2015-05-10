@@ -177,10 +177,15 @@ class PostLockdown {
 
 		$assets_path = plugin_dir_url( __FILE__ ) . 'view/assets/';
 
-		wp_enqueue_style( 'postlockdown', $assets_path . 'postlockdown.css', null, null );
+		$ext = '';
+		if ( ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ) {
+			$ext = '.min';
+		}
 
-		wp_enqueue_script( 'pl-multiselect', $assets_path . 'jquery.plmultiselect.js', array( 'jquery-ui-autocomplete' ), null, true );
-		wp_enqueue_script( 'postlockdown', $assets_path . 'postlockdown.js', array( 'pl-multiselect' ), null, true );
+		wp_enqueue_style( 'postlockdown', $assets_path . "postlockdown{$ext}.css", null, null );
+
+		wp_enqueue_script( 'pl-multiselect', $assets_path . "jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
+		wp_enqueue_script( 'postlockdown', $assets_path . "postlockdown{$ext}.js", array( 'pl-multiselect' ), null, true );
 
 		$data = array();
 

@@ -21,6 +21,19 @@ module.exports = function ( grunt ) {
 				src: 'Gruntfile.js'
 			}
 		},
+		clean: {
+			build: [ 'view/assets' ]
+		},
+		copy: {
+			build: {
+				files: [ {
+						expand: true,
+						cwd: 'src/assets',
+						src: '*.js',
+						dest: 'view/assets'
+					} ]
+			}
+		},
 		cssmin: {
 			build: {
 				files: {
@@ -39,7 +52,7 @@ module.exports = function ( grunt ) {
 			build: {
 				files: [ {
 						expand: true,
-						cwd: 'src/assets/',
+						cwd: 'view/assets/',
 						src: '*.js',
 						dest: 'view/assets',
 						ext: '.min.js',
@@ -78,6 +91,6 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
 
-	grunt.registerTask( 'default', [ 'jshint:build', 'uglify:build', 'less:build', 'cssmin:build' ] );
+	grunt.registerTask( 'default', [ 'jshint:build', 'clean:build', 'copy:build', 'uglify:build', 'less:build', 'cssmin:build' ] );
 
 };
