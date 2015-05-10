@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Post Lockdown
  * Description: Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
- * Version: 0.9.5
+ * Version: 0.9.8
  * Author: Andy Palmer
  * Author URI: http://www.andypalmer.me
  * License: GPL2
@@ -48,9 +48,9 @@ class PostLockdown {
 		//add_filter( 'the_title', array( __CLASS__, 'the_title' ), 10, 2 );
 	}
 
-	public static function the_title($title, $post_id) {
-		/** @todo Filter get_post_class() function to get padlock showing on locked posts */
-		if ( !self::load_options() ) {
+	public static function the_title( $title, $post_id ) {
+		/** @todo Filter get_post_class function to get padlock showing on locked posts */
+		if ( ! self::load_options() ) {
 			return $title;
 		}
 
@@ -67,9 +67,9 @@ class PostLockdown {
 	 * one of our {@link PostLockdown::$caps} on a locked post. If the user has the
 	 * {@link PostLockdown::CAP} capability we bail out early.
 	 */
-	public static function filter_cap($allcaps, $cap, $args) {
+	public static function filter_cap( $allcaps, $cap, $args ) {
 		// If there's no locked or protected posts get out of here
-		if ( !self::load_options() ) {
+		if ( ! self::load_options() ) {
 			return $allcaps;
 		}
 
@@ -77,13 +77,13 @@ class PostLockdown {
 
 		// Set the capabilities we want to return false for our posts
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
-			'delete_post' => true,
-			'edit_post' => true,
-			'publish_pages' => true,
-			'publish_posts' => true,
-				) );
+			'delete_post'	 => true,
+			'edit_post'		 => true,
+			'publish_pages'	 => true,
+			'publish_posts'	 => true,
+		) );
 
-		if ( !isset( $the_caps[ $args[ 0 ] ] ) || !empty( $allcaps[ $admin_cap ] ) ) {
+		if ( ! isset( $the_caps[ $args[ 0 ] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
 			return $allcaps;
 		}
 
@@ -99,7 +99,7 @@ class PostLockdown {
 			}
 		}
 
-		if ( !$post_id ) {
+		if ( ! $post_id ) {
 			return $allcaps;
 		}
 
@@ -135,6 +135,10 @@ class PostLockdown {
 	public static function add_options_page() {
 		$admin_cap = apply_filters( 'postlockdown_admin_capability', 'manage_options' );
 
+		$i = 0;
+
+		$i ++;
+
 		self::$page_hook = add_options_page( self::TITLE, self::TITLE, $admin_cap, self::KEY, array( __CLASS__, 'output_options_page' ) );
 	}
 
@@ -147,7 +151,7 @@ class PostLockdown {
 	 * Gets an array of post types and their posts and includes the options page HTML.
 	 */
 	public static function output_options_page() {
-		include_once( plugin_dir_path( __FILE__ ) . 'options-page.php' );
+		include_once( plugin_dir_path( __FILE__ ) . 'view/options-page.php' );
 	}
 
 	public static function ajax_autocomplete() {
@@ -156,36 +160,43 @@ class PostLockdown {
 		$offset = self::filter_input( 'offset', 'int' );
 
 		$posts = get_posts( array(
-			'post_type' => 'any',
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-			's' => $query,
-			'offset' => $offset,
+			'post_type'		 => 'any',
+			'post_status'	 => array( 'publish', 'pending', 'draft', 'future' ),
+			's'				 => $query,
+			'offset'		 => $offset,
 			'posts_per_page' => 10,
-				) );
+		) );
 
 		wp_send_json_success( $posts );
 	}
 
-	public static function enqueue_scripts($hook) {
+	public static function enqueue_scripts( $hook ) {
 		if ( $hook !== self::$page_hook ) {
 			return;
 		}
 
-		wp_enqueue_style( 'postlockdown', plugin_dir_url( __FILE__ ) . 'postlockdown.css', null, null );
+		$assets_path = plugin_dir_url( __FILE__ ) . 'view/assets/';
 
-		wp_enqueue_script( 'pl-multiselect', plugin_dir_url( __FILE__ ) . 'jquery.plmultiselect.js', array( 'jquery-ui-autocomplete' ), null, true );
-		wp_enqueue_script( 'postlockdown', plugin_dir_url( __FILE__ ) . 'postlockdown.js', array( 'pl-multiselect' ), null, true );
+		$ext = '';
+		if ( ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ) {
+			$ext = '.min';
+		}
+
+		wp_enqueue_style( 'postlockdown', $assets_path . "postlockdown{$ext}.css", null, null );
+
+		wp_enqueue_script( 'pl-multiselect', $assets_path . "jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
+		wp_enqueue_script( 'postlockdown', $assets_path . "postlockdown{$ext}.js", array( 'pl-multiselect' ), null, true );
 
 		$data = array();
 
 		if ( self::load_options() ) {
 
 			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-				'post_type' => 'any',
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-				'nopaging' => true,
-				'post__in' => array_merge( array_keys( self::$locked_post_ids ), array_keys( self::$protected_post_ids ) )
-					) ) );
+				'post_type'		 => 'any',
+				'post_status'	 => array( 'publish', 'pending', 'draft', 'future' ),
+				'nopaging'		 => true,
+				'post__in'		 => array_merge( array_keys( self::$locked_post_ids ), array_keys( self::$protected_post_ids ) )
+			) ) );
 
 			foreach ( $posts as $post ) {
 				if ( self::is_post_locked( $post->ID ) ) {
@@ -205,8 +216,8 @@ class PostLockdown {
 	 * Callback for the 'delete_post' hook.
 	 * Removes the deleted post's ID from both locked and protected arrays
 	 */
-	public static function update_option($post_id) {
-		if ( !self::load_options() ) {
+	public static function update_option( $post_id ) {
+		if ( ! self::load_options() ) {
 			return;
 		}
 
@@ -221,7 +232,7 @@ class PostLockdown {
 	 * @param int $post_id
 	 * @return bool
 	 */
-	public static function is_post_locked($post_id) {
+	public static function is_post_locked( $post_id ) {
 		self::load_options();
 		return isset( self::$locked_post_ids[ $post_id ] );
 	}
@@ -231,7 +242,7 @@ class PostLockdown {
 	 * @param type $post_id
 	 * @return type
 	 */
-	public static function is_post_protected($post_id) {
+	public static function is_post_protected( $post_id ) {
 		self::load_options();
 		return isset( self::$protected_post_ids[ $post_id ] );
 	}
@@ -249,7 +260,7 @@ class PostLockdown {
 	 * @return boolean Whether both arrays are empty
 	 */
 	private static function load_options() {
-		if ( !empty( self::$locked_post_ids ) && !empty( self::$protected_post_ids ) ) {
+		if ( ! empty( self::$locked_post_ids ) && ! empty( self::$protected_post_ids ) ) {
 			return true;
 		}
 
@@ -262,28 +273,28 @@ class PostLockdown {
 		$empty = true;
 
 		// Set both options but flip the arrays so we can use isset() over in_array()
-		if ( !empty( $options[ 'locked_post_ids' ] ) && is_array( $options[ 'locked_post_ids' ] ) ) {
+		if ( ! empty( $options[ 'locked_post_ids' ] ) && is_array( $options[ 'locked_post_ids' ] ) ) {
 			self::$locked_post_ids = array_flip( $options[ 'locked_post_ids' ] );
 
 			$empty = false;
 		}
 
-		if ( !empty( $options[ 'protected_post_ids' ] ) && is_array( $options[ 'protected_post_ids' ] ) ) {
+		if ( ! empty( $options[ 'protected_post_ids' ] ) && is_array( $options[ 'protected_post_ids' ] ) ) {
 			self::$protected_post_ids = array_flip( $options[ 'protected_post_ids' ] );
 
 			$empty = false;
 		}
 
-		return !$empty;
+		return ! $empty;
 	}
 
-	private static function filter_input($key, $data_type = 'string', $type = INPUT_GET, $flags = 0) {
+	private static function filter_input( $key, $data_type = 'string', $type = INPUT_GET, $flags = 0 ) {
 		switch ( $data_type ) {
 			case 'int':
-				$filter = FILTER_SANITIZE_NUMBER_INT;
+				$filter	 = FILTER_SANITIZE_NUMBER_INT;
 				break;
 			case 'float':
-				$filter = FILTER_SANITIZE_NUMBER_FLOAT;
+				$filter	 = FILTER_SANITIZE_NUMBER_FLOAT;
 
 				$flags |= FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND;
 				break;

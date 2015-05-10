@@ -1,5 +1,3 @@
-# Patterns for all branches
-
 # Packages #
 *.7z
 *.dmg
@@ -18,6 +16,7 @@
 .DS_Store
 .DS_Store?
 ._*
+*~
 .Spotlight-V100
 .Trashes
 ehthumbs.db
@@ -25,11 +24,3 @@ Thumbs.db
 
 node_modules/*
 nbproject/*
-
-# Patterns for master branch
-
-src/*
-tests/*
-.jshintrc
-Gruntfile.js
-package.json
