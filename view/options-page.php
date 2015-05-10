@@ -3,7 +3,7 @@
 	<form action="options.php" method="post">
 		<?php settings_fields( PostLockdown::KEY ); ?>
 		<p>
-			<?php esc_html_e( 'Select locked and protected posts by adding them to the right hand boxes.
+			<?php esc_html_e( 'Select locked and protected posts by adding them to the boxes on the right.
 			Use the search field to filter the list of posts.', 'postlockdown' ); ?>
 		</p>
 		<table class="form-table">
@@ -16,6 +16,7 @@
 								<div class="pl-searchbox">
 									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="Search..." />
 								</div>
+								<span class="spinner"></span>
 								<ul class="pl-multiselect">
 								</ul>
 							</div>
@@ -35,6 +36,7 @@
 								<div class="pl-searchbox">
 									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="Search..." />
 								</div>
+								<span class="spinner"></span>
 								<ul class="pl-multiselect">
 								</ul>
 							</div>
