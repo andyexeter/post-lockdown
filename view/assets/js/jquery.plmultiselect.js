@@ -1,8 +1,8 @@
 /*!
-	jquery-plmultiselect v0.1.0
+	jquery-plmultiselect v1.0.0
 	A jQuery multi select plugin for WordPress admin
 	(c) 2015 Andy Palmer
-	license: http://www.opensource.org/licenses/mit-license.php
+	license: http://www.gnu.org/licenses/gpl-2.0.html
 */
 ( function( $, window ) {
 
@@ -33,27 +33,24 @@
 
 			var self = this;
 
-			$.widget( 'custom.plautocomplete', $.ui.autocomplete, {
-				_renderMenu: function( ul, items ) {
-					self.renderMenu( self.$left, items );
-				}
-			} );
-
 			// Set the selected items menu to the height of the left side
 			$( window ).load( $.proxy( function( ) {
 				this.$right.height( this.$left.parent( ).height( ) );
 			}, this ) );
 
-			this.$search.plautocomplete( {
-				source: function( request, response ) {
+			this.$search.autocomplete( {
+				minLength: 0,
+				source: function( request ) {
 
 					self.queryItems( request.term, 0, function( json ) {
-						response( json.data );
+						self.renderMenu( self.$left, json.data );
 					} );
 				},
-				minLength: 0
+				create: function() {
+					$( this ).autocomplete( 'search' );
+				}
 
-			} ).plautocomplete( 'search' );
+			} );
 
 			// Attach the click handler for available items
 			this.$left.on( 'click', '> li', function( ) {
