@@ -44,21 +44,6 @@ class PostLockdown {
 
 		add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
 		add_filter( 'option_page_capability_' . self::KEY, array( __CLASS__, 'option_page_cap' ) );
-
-		//add_filter( 'the_title', array( __CLASS__, 'the_title' ), 10, 2 );
-	}
-
-	public static function the_title( $title, $post_id ) {
-		/** @todo Filter get_post_class function to get padlock showing on locked posts */
-		if ( ! self::load_options() ) {
-			return $title;
-		}
-
-		if ( isset( self::$locked_post_ids[ $post_id ] ) ) {
-			$title = '<span class="dashicons dashicons-locks"></span> ' . $title;
-		}
-
-		return $title;
 	}
 
 	/**
