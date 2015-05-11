@@ -8,6 +8,7 @@
 }
 .pl-posts {
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   float: left;
   width: 49%;
   position: relative;
@@ -42,8 +43,14 @@
   display: block;
   cursor: pointer;
 }
+.pl-posts-selected .pl-multiselect li {
+  cursor: default;
+}
 .pl-multiselect li:hover {
   background-color: #eaf2fa;
+}
+.pl-posts-selected .pl-multiselect li:hover .dashicons-no {
+  display: block;
 }
 .pl-multiselect li.selected {
   background-color: #f8f8f8;
@@ -58,14 +65,12 @@
   font-size: 11px;
 }
 .pl-multiselect li .dashicons {
-  color: #333;
+  color: #a00;
   float: right;
   position: relative;
   top: -3px;
   display: none;
-}
-.pl-posts-selected .pl-multiselect li:hover .dashicons-no {
-  display: block;
+  cursor: pointer;
 }
 .pl-searchbox {
   background: #fff;
@@ -73,13 +78,13 @@
   border-bottom: 0 none;
   padding: 9px;
 }
-.ui-autocomplete {
-  display: none !important;
-}
 .pl-autocomplete {
   width: 100%;
   font-size: 13px;
 }
 .pl-autocomplete.ui-autocomplete-loading {
   background-image: none !important;
+}
+.ui-autocomplete {
+  display: none !important;
 }

@@ -2,7 +2,7 @@
 
 clear
 
-files=$(find . -mindepth 1 -maxdepth 1 -type f -name '*.php')
+files=$(find ../ -mindepth 1 -maxdepth 1 -type f -name '*.php')
 
 echo "Running PHP Linter..."
 echo ""

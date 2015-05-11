@@ -1,6 +1,6 @@
 {
 	"name": "postlockdown",
-	"version": "0.9.8",
+	"version": "0.9.9",
 	"private": true,
 	"author": "Andy Palmer",
 	"description": "A WordPress plugin to lock and protect posts",

@@ -10,6 +10,7 @@
 
 .pl-posts {
 	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 	float: left;
 	width: 49%;
 	position: relative;
@@ -48,11 +49,16 @@
 		display: block;
 		cursor: pointer;
 
+		.pl-posts-selected & {
+			cursor: default;
+		}
 
 		&:hover {
 			background-color: #eaf2fa;
 
-			.pl-posts-selected & .dashicons-no {display:block}
+			.pl-posts-selected & .dashicons-no {
+				display: block;
+			}
 		}
 
 		&.selected {
@@ -61,21 +67,22 @@
 		}
 
 		.post-title {
-			font-size:13px;
+			font-size: 13px;
 		}
 
 		.post-type {
-			float:right;
-			text-transform:uppercase;
-			font-size:11px;
+			float: right;
+			text-transform: uppercase;
+			font-size: 11px;
 		}
 
 		.dashicons {
-			color: #333;
+			color: #a00;
 			float: right;
 			position: relative;
 			top: -3px;
 			display: none;
+			cursor: pointer;
 		}
 	}
 }
@@ -88,12 +95,14 @@
 }
 
 .pl-autocomplete {
-	width:100%;
-	font-size:13px;
+	width: 100%;
+	font-size: 13px;
 
 	&.ui-autocomplete-loading {
 		background-image: none !important;
 	}
 }
 
-.ui-autocomplete {display:none !important}
+.ui-autocomplete {
+	display: none !important;
+}
