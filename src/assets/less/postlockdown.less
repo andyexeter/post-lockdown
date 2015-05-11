@@ -49,6 +49,9 @@
 		display: block;
 		cursor: pointer;
 
+		.pl-posts-selected & {
+			cursor: default;
+		}
 
 		&:hover {
 			background-color: #eaf2fa;
@@ -74,11 +77,12 @@
 		}
 
 		.dashicons {
-			color: #333;
+			color: #a00;
 			float: right;
 			position: relative;
 			top: -3px;
 			display: none;
+			cursor: pointer;
 		}
 	}
 }

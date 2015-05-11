@@ -8,6 +8,7 @@
 }
 .pl-posts {
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   float: left;
   width: 49%;
   position: relative;
@@ -42,6 +43,9 @@
   display: block;
   cursor: pointer;
 }
+.pl-posts-selected .pl-multiselect li {
+  cursor: default;
+}
 .pl-multiselect li:hover {
   background-color: #eaf2fa;
 }
@@ -61,11 +65,12 @@
   font-size: 11px;
 }
 .pl-multiselect li .dashicons {
-  color: #333;
+  color: #a00;
   float: right;
   position: relative;
   top: -3px;
   display: none;
+  cursor: pointer;
 }
 .pl-searchbox {
   background: #fff;

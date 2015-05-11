@@ -206,7 +206,7 @@
 				.addClass( 'post-' + item.ID )
 				.data( 'post_id', item.ID )
 				.append( '<span class="post-title">' + item.post_title + '</span>' +
-					'<span class="dashicons dashicons-no"></span>' +
+					'<span class="dashicons dashicons-no" title="Remove"></span>' +
 					'<span class="post-type">' + item.post_type + '</span>' +
 					'<input type="hidden" class="post-id" name="' + input_name + '" value="' + item.ID + '" />'
 					);
@@ -239,4 +239,5 @@
 
 	$.fn[pluginName].defaults = {
 	};
+
 } )( jQuery, window );
