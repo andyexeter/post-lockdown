@@ -62,10 +62,10 @@ class PostLockdown {
 
 		// Set the capabilities we want to return false for our posts
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
-			'delete_post'	 => true,
-			'edit_post'		 => true,
-			'publish_pages'	 => true,
-			'publish_posts'	 => true,
+			'delete_post' => true,
+			'edit_post' => true,
+			'publish_pages' => true,
+			'publish_posts' => true,
 		) );
 
 		if ( ! isset( $the_caps[ $args[ 0 ] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
@@ -140,13 +140,13 @@ class PostLockdown {
 
 		$offset = self::filter_input( 'offset', 'int' );
 
-		$posts = get_posts( array(
-			'post_type'		 => 'any',
-			'post_status'	 => array( 'publish', 'pending', 'draft', 'future' ),
-			's'				 => $query,
-			'offset'		 => $offset,
+		$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
+			'post_type' => array_diff( get_post_types(), array( 'nav_menu_item' ) ),
+			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+			's' => $query,
+			'offset' => $offset,
 			'posts_per_page' => 10,
-		) );
+		) ) );
 
 		wp_send_json_success( $posts );
 	}
@@ -173,10 +173,10 @@ class PostLockdown {
 		if ( self::load_options() ) {
 
 			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-				'post_type'		 => 'any',
-				'post_status'	 => array( 'publish', 'pending', 'draft', 'future' ),
-				'nopaging'		 => true,
-				'post__in'		 => array_merge( array_keys( self::$locked_post_ids ), array_keys( self::$protected_post_ids ) )
+				'post_type' => array_diff( get_post_types(), array( 'nav_menu_item' ) ),
+				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+				'nopaging' => true,
+				'post__in' => array_merge( array_keys( self::$locked_post_ids ), array_keys( self::$protected_post_ids ) )
 			) ) );
 
 			foreach ( $posts as $post ) {
@@ -272,10 +272,10 @@ class PostLockdown {
 	private static function filter_input( $key, $data_type = 'string', $type = INPUT_GET, $flags = 0 ) {
 		switch ( $data_type ) {
 			case 'int':
-				$filter	 = FILTER_SANITIZE_NUMBER_INT;
+				$filter = FILTER_SANITIZE_NUMBER_INT;
 				break;
 			case 'float':
-				$filter	 = FILTER_SANITIZE_NUMBER_FLOAT;
+				$filter = FILTER_SANITIZE_NUMBER_FLOAT;
 
 				$flags |= FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND;
 				break;
