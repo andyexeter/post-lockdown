@@ -12,7 +12,7 @@ module.exports = function ( grunt ) {
 				jshintrc: '.jshintrc'
 			},
 			build: {
-				src: 'src/assets/*.js'
+				src: 'src/assets/js/*.js'
 			},
 			grunt: {
 				options: {
@@ -25,26 +25,26 @@ module.exports = function ( grunt ) {
 			build: [ 'view/assets' ]
 		},
 		copy: {
-			build: {
+			js: {
 				files: [ {
 						expand: true,
-						cwd: 'src/assets',
+						cwd: 'src/assets/js',
 						src: '*.js',
-						dest: 'view/assets'
+						dest: 'view/assets/js'
 					} ]
 			}
 		},
 		cssmin: {
 			build: {
 				files: {
-					"view/assets/postlockdown.min.css": "view/assets/postlockdown.css"
+					"view/assets/css/postlockdown.min.css": "view/assets/css/postlockdown.css"
 				}
 			}
 		},
 		less: {
 			build: {
 				files: {
-					"view/assets/postlockdown.css": "src/assets/postlockdown.less"
+					"view/assets/css/postlockdown.css": "src/assets/less/postlockdown.less"
 				}
 			}
 		},
@@ -52,9 +52,9 @@ module.exports = function ( grunt ) {
 			build: {
 				files: [ {
 						expand: true,
-						cwd: 'view/assets/',
+						cwd: 'view/assets/js',
 						src: '*.js',
-						dest: 'view/assets',
+						dest: 'view/assets/js',
 						ext: '.min.js',
 						extDot: 'last'
 					} ]
@@ -63,12 +63,12 @@ module.exports = function ( grunt ) {
 		watch: {
 			options: { livereload: true, spawn: false },
 			less: {
-				files: [ 'src/assets/*.less' ],
-				tasks: [ 'less' ]
+				files: [ 'src/assets/less/*.less' ],
+				tasks: [ 'less:build' ]
 			},
 			js: {
-				files: [ 'src/assets/*.js' ],
-				tasks: [ 'jshint:build', 'concat', 'uglify' ]
+				files: [ 'src/assets/js/*.js' ],
+				tasks: [ 'jshint:build', 'copy:js', 'uglify' ]
 			},
 			grunt: {
 				options: { livereload: false },
@@ -91,6 +91,6 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
 
-	grunt.registerTask( 'default', [ 'jshint:build', 'clean:build', 'copy:build', 'uglify:build', 'less:build', 'cssmin:build' ] );
+	grunt.registerTask( 'default', [ 'jshint:build', 'clean:build', 'copy:js', 'uglify:build', 'less:build', 'cssmin:build' ] );
 
 };

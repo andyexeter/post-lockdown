@@ -178,10 +178,10 @@ class PostLockdown {
 			$ext = '.min';
 		}
 
-		wp_enqueue_style( 'postlockdown', $assets_path . "postlockdown{$ext}.css", null, null );
+		wp_enqueue_style( 'postlockdown', $assets_path . "css/postlockdown{$ext}.css", null, null );
 
-		wp_enqueue_script( 'pl-multiselect', $assets_path . "jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
-		wp_enqueue_script( 'postlockdown', $assets_path . "postlockdown{$ext}.js", array( 'pl-multiselect' ), null, true );
+		wp_enqueue_script( 'pl-multiselect', $assets_path . "js/jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
+		wp_enqueue_script( 'postlockdown', $assets_path . "js/postlockdown{$ext}.js", array( 'pl-multiselect' ), null, true );
 
 		$data = array();
 
@@ -235,8 +235,8 @@ class PostLockdown {
 
 	/**
 	 * Returns whether a post ID is protected
-	 * @param type $post_id
-	 * @return type
+	 * @param int $post_id
+	 * @return bool
 	 */
 	public static function is_post_protected( $post_id ) {
 		self::load_options();
@@ -253,7 +253,7 @@ class PostLockdown {
 
 	/**
 	 * Sets the array of locked and protected post IDs.
-	 * @return boolean Whether both arrays are empty
+	 * @return bool Whether both arrays are empty
 	 */
 	private static function load_options() {
 		if ( ! empty( self::$locked_post_ids ) && ! empty( self::$protected_post_ids ) ) {
