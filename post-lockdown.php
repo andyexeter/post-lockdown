@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Post Lockdown
  * Description: Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
- * Version: 0.9.8
+ * Version: 0.9.9
  * Author: Andy Palmer
  * Author URI: http://www.andypalmer.me
  * License: GPL2
