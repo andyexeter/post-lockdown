@@ -45,6 +45,9 @@
 .pl-multiselect li:hover {
   background-color: #eaf2fa;
 }
+.pl-posts-selected .pl-multiselect li:hover .dashicons-no {
+  display: block;
+}
 .pl-multiselect li.selected {
   background-color: #f8f8f8;
   cursor: default;
@@ -64,17 +67,11 @@
   top: -3px;
   display: none;
 }
-.pl-posts-selected .pl-multiselect li:hover .dashicons-no {
-  display: block;
-}
 .pl-searchbox {
   background: #fff;
   border: 1px solid #ddd;
   border-bottom: 0 none;
   padding: 9px;
-}
-.ui-autocomplete {
-  display: none !important;
 }
 .pl-autocomplete {
   width: 100%;
@@ -82,4 +79,7 @@
 }
 .pl-autocomplete.ui-autocomplete-loading {
   background-image: none !important;
+}
+.ui-autocomplete {
+  display: none !important;
 }
