@@ -151,11 +151,13 @@
 		 */
 		selectItem: function( arg ) {
 
-			var input_name = this.options.inputName + '[]';
+			var input_name = this.options.inputName;
 
 			if ( $.isArray( arg ) ) {
 				this.renderMenu( this.$right, arg, input_name, true );
 			} else {
+
+				input_name += '[' + arg.data( 'post_id' ) + ']';
 
 				arg.clone( false )
 					.data( 'post_id', arg.data( 'post_id' ) )
@@ -182,7 +184,7 @@
 			}
 
 			$.each( items, function( i, item ) {
-				$items.push( self.getItemTpl( item, input_name ) );
+				$items.push( self.getItemTpl( item, input_name + '[' + item.ID + ']' ) );
 			} );
 
 			menu.append( $items );
