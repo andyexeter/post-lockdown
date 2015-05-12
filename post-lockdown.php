@@ -32,8 +32,7 @@ class PostLockdown {
 	private static $page_hook;
 
 	/**
-	 * Plugin init method.
-	 * Gets the plugin options and adds the required action and filter callbacks.
+	 * Adds the required action and filter callbacks.
 	 */
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
@@ -48,9 +47,8 @@ class PostLockdown {
 
 	/**
 	 * Callback for the 'user_has_cap' hook.
-	 * Sets the capability to false when {@link https://codex.wordpress.org/Function_Reference/current_user_can current_user_can()} has been called on
-	 * one of our {@link PostLockdown::$caps} on a locked post. If the user has the
-	 * {@link PostLockdown::CAP} capability we bail out early.
+	 * Sets the capability to false when current_user_can() has been called on
+	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
 	public static function filter_cap( $allcaps, $cap, $args ) {
 		// If there's no locked or protected posts get out of here
@@ -88,18 +86,10 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		// If we get to this point and the post ID is a locked post,
-		// or a protected post for anything except 'edit_posts', then
-		// set the requested capability to false.
-
-		$post_ids = self::$locked_post_ids;
-
-		if ( 'edit_post' != $args[ 0 ] ) {
-			$post_ids += self::$protected_post_ids;
-		}
-
-		if ( isset( $post_ids[ $post_id ] ) ) {
-			$allcaps[ $cap[ 0 ] ] = false;
+		if ( 'edit_post' == $args[ 0 ] ) {
+			$allcaps[ $cap[ 0 ] ] = ! self::is_post_locked( $post_id );
+		} else {
+			$allcaps[ $cap[ 0 ] ] = ! self::is_post_protected( $post_id ) && ! self::is_post_locked( $post_id );
 		}
 
 		return $allcaps;
@@ -123,6 +113,10 @@ class PostLockdown {
 		self::$page_hook = add_options_page( self::TITLE, self::TITLE, $admin_cap, self::KEY, array( __CLASS__, 'output_options_page' ) );
 	}
 
+	/**
+	 * Filter for the 'option_page_capability_{$slug}' hook.
+	 * Allows the required capability to be filtered correctly.
+	 */
 	public static function option_page_cap() {
 		return apply_filters( 'postlockdown_admin_capability', 'manage_options' );
 	}
@@ -135,6 +129,10 @@ class PostLockdown {
 		include_once( plugin_dir_path( __FILE__ ) . 'view/options-page.php' );
 	}
 
+	/**
+	 * Callback for the 'pl_autocomplete' AJAX action.
+	 * Responds with a json encoded array of posts matching the query.
+	 */
 	public static function ajax_autocomplete() {
 		$query = self::filter_input( 'term' );
 
@@ -151,6 +149,10 @@ class PostLockdown {
 		wp_send_json_success( $posts );
 	}
 
+	/**
+	 * Callback for the 'admin_enqueue_scripts' hook.
+	 * Enqueues the required scripts and styles for the plugin options page.
+	 */
 	public static function enqueue_scripts( $hook ) {
 		if ( $hook !== self::$page_hook ) {
 			return;
@@ -176,7 +178,7 @@ class PostLockdown {
 				'post_type' => array_diff( get_post_types(), array( 'nav_menu_item' ) ),
 				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
 				'nopaging' => true,
-				'post__in' => array_merge( array_keys( self::$locked_post_ids ), array_keys( self::$protected_post_ids ) )
+				'post__in' => array_merge( self::$locked_post_ids, self::$protected_post_ids ),
 			) ) );
 
 			foreach ( $posts as $post ) {
@@ -195,7 +197,7 @@ class PostLockdown {
 
 	/**
 	 * Callback for the 'delete_post' hook.
-	 * Removes the deleted post's ID from both locked and protected arrays
+	 * Removes the deleted post's ID from both locked and protected arrays.
 	 */
 	public static function update_option( $post_id ) {
 		if ( ! self::load_options() ) {
@@ -209,6 +211,14 @@ class PostLockdown {
 	}
 
 	/**
+	 * Callback for register_uninstall_hook() function.
+	 * Removes the plugin option from the database when it is uninstalled.
+	 */
+	public static function uninstall() {
+		delete_option( self::KEY );
+	}
+
+	/**
 	 * Returns whether a post ID is locked.
 	 * @param int $post_id
 	 * @return bool
@@ -219,7 +229,7 @@ class PostLockdown {
 	}
 
 	/**
-	 * Returns whether a post ID is protected
+	 * Returns whether a post ID is protected.
 	 * @param int $post_id
 	 * @return bool
 	 */
@@ -229,16 +239,8 @@ class PostLockdown {
 	}
 
 	/**
-	 * Callback for register_uninstall_hook() function.
-	 * Removes the plugin option from the database when it is uninstalled.
-	 */
-	public static function uninstall() {
-		delete_option( self::KEY );
-	}
-
-	/**
 	 * Sets the array of locked and protected post IDs.
-	 * @return bool Whether both arrays are empty
+	 * @return bool Whether both arrays are empty.
 	 */
 	private static function load_options() {
 		if ( ! empty( self::$locked_post_ids ) && ! empty( self::$protected_post_ids ) ) {
@@ -253,15 +255,14 @@ class PostLockdown {
 
 		$empty = true;
 
-		// Set both options but flip the arrays so we can use isset() over in_array()
 		if ( ! empty( $options[ 'locked_post_ids' ] ) && is_array( $options[ 'locked_post_ids' ] ) ) {
-			self::$locked_post_ids = array_flip( $options[ 'locked_post_ids' ] );
+			self::$locked_post_ids = $options[ 'locked_post_ids' ];
 
 			$empty = false;
 		}
 
 		if ( ! empty( $options[ 'protected_post_ids' ] ) && is_array( $options[ 'protected_post_ids' ] ) ) {
-			self::$protected_post_ids = array_flip( $options[ 'protected_post_ids' ] );
+			self::$protected_post_ids = $options[ 'protected_post_ids' ];
 
 			$empty = false;
 		}
@@ -269,6 +270,14 @@ class PostLockdown {
 		return ! $empty;
 	}
 
+	/**
+	 * Convenience wrapper for PHP's filter_input() function.
+	 * @param string $key Input key.
+	 * @param string $data_type Input data type.
+	 * @param int $type Type of input. INPUT_POST or INPUT_GET (Default).
+	 * @param int $flags Additional flags to pass to filter_input().
+	 * @return mixed Filtered input.
+	 */
 	private static function filter_input( $key, $data_type = 'string', $type = INPUT_GET, $flags = 0 ) {
 		switch ( $data_type ) {
 			case 'int':
