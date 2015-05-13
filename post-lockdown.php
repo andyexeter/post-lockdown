@@ -46,12 +46,12 @@ class PostLockdown {
 	}
 
 	/**
-	 * Callback for the 'user_has_cap' hook.
+	 * Filter for the 'user_has_cap' hook.
 	 * Sets the capability to false when current_user_can() has been called on
 	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
 	public static function filter_cap( $allcaps, $cap, $args ) {
-		// If there's no locked or protected posts get out of here
+		// If there are no locked or protected posts get out of here
 		if ( ! self::load_options() ) {
 			return $allcaps;
 		}
@@ -66,6 +66,9 @@ class PostLockdown {
 			'publish_posts' => true,
 		) );
 
+		/* If it's not a capability we're interested in, or the user has
+		 * the required capability to bypass restrictions get out of here
+		 */
 		if ( ! isset( $the_caps[ $args[ 0 ] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
 			return $allcaps;
 		}
