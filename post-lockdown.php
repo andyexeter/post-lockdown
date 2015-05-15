@@ -17,7 +17,7 @@ register_uninstall_hook( __FILE__, array( 'PostLockdown', 'uninstall' ) );
 class PostLockdown {
 
 	/** Plugin key for options and the option page. */
-	const KEY = 'post_lockdown';
+	const KEY = 'postlockdown';
 
 	/** Option page title. */
 	const TITLE = 'Post Lockdown';
