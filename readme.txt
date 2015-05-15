@@ -1,10 +1,10 @@
 === Post Lockdown ===
 Contributors: andyexeter
 Donate link: http://bit.ly/1b2f6OL
-Tags: posts, lock, protect, capabilities, trash, delete
+Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
 Tested up to: 4.2.2
-Stable tag: trunk
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,33 +23,35 @@ See the screenshots for an example of what an Editor would see when they view a 
 
 == Installation ==
 
-1. Upload `post-lockdown` to the `/wp-content/plugins/` directory
+1. Upload the `post-lockdown` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Choose your locked/protected pages under Settings > Post Lockdown
+3. Select your locked/protected posts under Settings > Post Lockdown
 
 == FAQ ==
 
 = What is a "non-admin user"? =
 
 By default, the plugin classes a non-admin as a user who does not have the `manage_options` capability e.g an Editor.
-The capability can be filtered using the `postlockdown_admin_capability` filter
+The capability can be filtered using the `postlockdown_admin_capability` filter.
 
 = Are there any other filters I can use? =
 
-Yep. Check out the Developers section for a list of all available filters
+Yep. Check out the Developers section for a list of all available filters.
 
 == Screenshots ==
 
 1. A page list showing one locked page, one protected page and one regular page.
 2. The Publish metabox for a protected page logged in as an Editor. See how the plugin removes the Move to Trash link.
-3. The Post Lockdown administration page
+3. The Post Lockdown administration page.
 
 == Developers ==
 
 The following filters are used throughout the plugin:
 
-* `postlockdown_admin_capability` - The capability a user must have to be exempt from locked/protected post restrictions. Defaults to `manage_options`.
+* `postlockdown_admin_capability` - The capability a user must have to bypass locked/protected posts restrictions. Default is `manage_options`.
 * `postlockdown_capabilities` - Array of capabilities to restrict.
+* `postlockdown_locked_posts` - Array of locked post IDs. Allows you to programatically add or remove post IDs. Both the key AND value must be set to the post ID
+* `postlockdown_protected_posts` - Array of protected post IDs. Allows you to programatically add or remove post IDs. Both the key AND value must be set to the post ID
 * `postlockdown_get_posts` - Array of args to pass to get_posts().
 
 == Changelog ==
