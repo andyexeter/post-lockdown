@@ -4,7 +4,7 @@ Donate link: http://bit.ly/1b2f6OL
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
 Tested up to: 4.2.2
-Stable tag: 1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
