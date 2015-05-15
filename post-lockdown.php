@@ -69,12 +69,12 @@ class PostLockdown {
 		/* If it's not a capability we're interested in, or the user has
 		 * the required capability to bypass restrictions get out of here
 		 */
-		if ( ! isset( $the_caps[ $args[ 0 ] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
+		if ( ! isset( $the_caps[ $args[0] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
 			return $allcaps;
 		}
 
-		if ( isset( $args[ 2 ] ) ) {
-			$post_id = $args[ 2 ];
+		if ( isset( $args[2] ) ) {
+			$post_id = $args[2];
 		} else {
 			$post = get_post();
 
@@ -89,10 +89,10 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		if ( 'edit_post' == $args[ 0 ] ) {
-			$allcaps[ $cap[ 0 ] ] = ! self::is_post_locked( $post_id );
+		if ( 'edit_post' == $args[0] ) {
+			$allcaps[ $cap[0] ] = ! self::is_post_locked( $post_id );
 		} else {
-			$allcaps[ $cap[ 0 ] ] = ! self::is_post_protected( $post_id ) && ! self::is_post_locked( $post_id );
+			$allcaps[ $cap[0] ] = ! self::is_post_protected( $post_id ) && ! self::is_post_locked( $post_id );
 		}
 
 		return $allcaps;
@@ -186,11 +186,11 @@ class PostLockdown {
 
 			foreach ( $posts as $post ) {
 				if ( self::is_post_locked( $post->ID ) ) {
-					$data[ 'locked' ][] = $post;
+					$data['locked'][] = $post;
 				}
 
 				if ( self::is_post_protected( $post->ID ) ) {
-					$data[ 'protected' ][] = $post;
+					$data['protected'][] = $post;
 				}
 			}
 		}
@@ -258,14 +258,14 @@ class PostLockdown {
 
 		$empty = true;
 
-		if ( ! empty( $options[ 'locked_post_ids' ] ) && is_array( $options[ 'locked_post_ids' ] ) ) {
-			self::$locked_post_ids = $options[ 'locked_post_ids' ];
+		if ( ! empty( $options['locked_post_ids'] ) && is_array( $options['locked_post_ids'] ) ) {
+			self::$locked_post_ids = apply_filters( 'postlockdown_locked_posts', $options['locked_post_ids'] );
 
 			$empty = false;
 		}
 
-		if ( ! empty( $options[ 'protected_post_ids' ] ) && is_array( $options[ 'protected_post_ids' ] ) ) {
-			self::$protected_post_ids = $options[ 'protected_post_ids' ];
+		if ( ! empty( $options['protected_post_ids'] ) && is_array( $options['protected_post_ids'] ) ) {
+			self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', $options['protected_post_ids'] );
 
 			$empty = false;
 		}
