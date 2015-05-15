@@ -10,3 +10,4 @@ src/ export-ignore
 tests/ export-ignore
 node_modules/ export-ignore
 nbproject/ export-ignore
+*.orig export-ignore
