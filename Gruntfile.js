@@ -1,5 +1,6 @@
-'use strict';
-module.exports = function ( grunt ) {
+module.exports = function( grunt ) {
+
+	'use strict';
 
 	grunt.util.linefeed = '\n';
 
@@ -35,20 +36,28 @@ module.exports = function ( grunt ) {
 			}
 		},
 		cssmin: {
+			options: {
+				report: 'gzip'
+			},
 			build: {
 				files: {
-					"view/assets/css/postlockdown.min.css": "view/assets/css/postlockdown.css"
+					'view/assets/css/postlockdown.min.css': 'view/assets/css/postlockdown.css'
 				}
 			}
 		},
 		less: {
 			build: {
 				files: {
-					"view/assets/css/postlockdown.css": "src/assets/less/postlockdown.less"
+					'view/assets/css/postlockdown.css': 'src/assets/less/postlockdown.less'
 				}
 			}
 		},
 		uglify: {
+			options: {
+				compress: true,
+				mangle: true,
+				report: 'gzip'
+			},
 			build: {
 				files: [ {
 						expand: true,
@@ -91,6 +100,6 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
 
-	grunt.registerTask( 'default', [ 'jshint:build', 'clean:build', 'copy:js', 'uglify:build', 'less:build', 'cssmin:build' ] );
+	grunt.registerTask( 'default', [ 'jshint', 'clean:build', 'copy:js', 'uglify:build', 'less:build', 'cssmin:build' ] );
 
 };
