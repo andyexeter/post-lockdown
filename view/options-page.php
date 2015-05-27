@@ -29,7 +29,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th>Protected Posts</th>
+					<th><?php esc_html_e( 'Protected Posts', 'postlockdown' ); ?></th>
 					<td>
 						<div class="pl-posts-container">
 							<div class="pl-posts pl-posts-available">
