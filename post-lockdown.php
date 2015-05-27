@@ -157,15 +157,16 @@ class PostLockdown {
 	 * Enqueues the required scripts and styles for the plugin options page.
 	 */
 	public static function enqueue_scripts( $hook ) {
+		// If it's not the plugin options page get out of here.
 		if ( $hook !== self::$page_hook ) {
 			return;
 		}
 
 		$assets_path = plugin_dir_url( __FILE__ ) . 'view/assets/';
 
-		$ext = '';
-		if ( ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ) {
-			$ext = '.min';
+		$ext = '.min';
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			$ext = '';
 		}
 
 		wp_enqueue_style( 'postlockdown', $assets_path . "css/postlockdown{$ext}.css", null, null );
