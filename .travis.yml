@@ -45,9 +45,9 @@ before_script:
 - sed -i "s/yourusernamehere/travis/" wp-tests-config.php
 - sed -i "s/yourpasswordhere//" wp-tests-config.php
 - mysql -e "CREATE DATABASE wordpress_tests;" -uroot
-- cd "/tmp/wordpress/src/wp-content/plugins/$PLUGIN_SLUG"
+- cd "/tmp/wordpress/src/wp-content/plugins/$PLUGIN_SLUG/tests"
+- pyrus install pear/PHP_CodeSniffer
 - phpenv rehash
 
 script:
-- cd tests
 - ./test.sh
