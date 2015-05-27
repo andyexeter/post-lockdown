@@ -20,9 +20,6 @@
   "unused": true,
   "white": true,
   "predef": [
-    "alert",
-	"$",
-	"jQuery",
-	"store"
+	"jQuery"
   ]
 }
