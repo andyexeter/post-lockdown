@@ -1,5 +1,5 @@
 /*!
-	jquery-plmultiselect v1.0.0
+	jquery-plmultiselect v1.0.1
 	A jQuery multi select plugin for WordPress admin
 	(c) 2015 Andy Palmer
 	license: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,7 +13,7 @@
 	function Plugin( element, options ) {
 
 		this.$el = $( element );
-		this.options = $.extend( { }, $.fn[pluginName].defaults, options );
+		this.options = $.extend( { }, options );
 
 		this.$search = this.options.inputSearch;
 		this.$left = this.options.ulAvailable;
@@ -81,21 +81,6 @@
 					self.nextPage( );
 				}
 			} );
-		},
-		/**
-		 * Destroys the plugin instance
-		 */
-		destroy: function( ) {
-
-			//this.$el.off( 'click.' + pluginName, this.options.tabSelector).removeData( pluginName + '.plugin' );
-		},
-		/**
-		 * Emits a namespaced plugin event.
-		 * @param {string} event - The name of the event to emit.
-		 */
-		emit: function( event ) {
-
-			this.$el.trigger( pluginName + '.' + event, [ this.options ] );
 		},
 		nextPage: function( ) {
 
@@ -230,13 +215,7 @@
 				$( this ).data( pluginName + '.plugin', plugin );
 			}
 
-			if ( typeof args[0] === 'string' && args[0].charAt( 0 ) !== '_' && $.isFunction( plugin[args[0]] ) ) {
-				plugin[args[0]].apply( plugin, [ ].slice.call( args, 1 ) );
-			}
 		} );
-	};
-
-	$.fn[pluginName].defaults = {
 	};
 
 } )( jQuery, window );
