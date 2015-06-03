@@ -14,7 +14,7 @@
 						<div class="pl-posts-container">
 							<div class="pl-posts pl-posts-available">
 								<div class="pl-searchbox">
-									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="Search..." />
+									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="<?php esc_html_e( 'Search...', 'postlockdown' ); ?>" />
 								</div>
 								<span class="spinner"></span>
 								<ul class="pl-multiselect">
@@ -34,7 +34,7 @@
 						<div class="pl-posts-container">
 							<div class="pl-posts pl-posts-available">
 								<div class="pl-searchbox">
-									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="Search..." />
+									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="<?php esc_html_e( 'Search...', 'postlockdown' ); ?>" />
 								</div>
 								<span class="spinner"></span>
 								<ul class="pl-multiselect">
