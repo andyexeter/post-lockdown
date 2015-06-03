@@ -142,7 +142,7 @@ class PostLockdown {
 		$offset = self::filter_input( 'offset', 'int' );
 
 		$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-			'post_type' => array_diff( get_post_types(), array( 'nav_menu_item' ) ),
+			'post_type' => array_diff( get_post_types(), array( 'nav_menu_item', 'revision' ) ),
 			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
 			's' => $query,
 			'offset' => $offset,
@@ -169,17 +169,17 @@ class PostLockdown {
 			$ext = '';
 		}
 
-		wp_enqueue_style( 'postlockdown', $assets_path . "css/postlockdown{$ext}.css", null, null );
+		wp_enqueue_style( self::KEY, $assets_path . "css/postlockdown{$ext}.css", null, null );
 
-		wp_enqueue_script( 'pl-multiselect', $assets_path . "js/jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
-		wp_enqueue_script( 'postlockdown', $assets_path . "js/postlockdown{$ext}.js", array( 'pl-multiselect' ), null, true );
+		wp_enqueue_script( 'plmultiselect', $assets_path . "js/jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
+		wp_enqueue_script( self::KEY, $assets_path . "js/postlockdown{$ext}.js", array( 'plmultiselect' ), null, true );
 
 		$data = array();
 
 		if ( self::load_options() ) {
 
 			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-				'post_type' => array_diff( get_post_types(), array( 'nav_menu_item' ) ),
+				'post_type' => array_diff( get_post_types(), array( 'nav_menu_item', 'revision' ) ),
 				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
 				'nopaging' => true,
 				'post__in' => array_merge( self::$locked_post_ids, self::$protected_post_ids ),
@@ -196,7 +196,7 @@ class PostLockdown {
 			}
 		}
 
-		wp_localize_script( 'postlockdown', 'postlockdown', $data );
+		wp_localize_script( self::KEY, self::KEY, $data );
 	}
 
 	/**
