@@ -208,8 +208,7 @@ class PostLockdown {
 			return;
 		}
 
-		unset( self::$locked_post_ids[ $post_id ] );
-		unset( self::$protected_post_ids[ $post_id ] );
+		unset( self::$locked_post_ids[ $post_id ], self::$protected_post_ids[ $post_id ] );
 
 		update_option( self::KEY, array( 'locked_post_ids' => self::$locked_post_ids, 'protected_post_ids' => self::$protected_post_ids ) );
 	}
@@ -253,25 +252,19 @@ class PostLockdown {
 
 		$options = get_option( self::KEY, array() );
 
-		if ( empty( $options ) ) {
-			return false;
-		}
-
-		$empty = true;
-
 		if ( ! empty( $options['locked_post_ids'] ) && is_array( $options['locked_post_ids'] ) ) {
-			self::$locked_post_ids = apply_filters( 'postlockdown_locked_posts', $options['locked_post_ids'] );
-
-			$empty = false;
+			self::$locked_post_ids = $options['locked_post_ids'];
 		}
+
+		self::$locked_post_ids = apply_filters( 'postlockdown_locked_posts', self::$locked_post_ids );
 
 		if ( ! empty( $options['protected_post_ids'] ) && is_array( $options['protected_post_ids'] ) ) {
-			self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', $options['protected_post_ids'] );
-
-			$empty = false;
+			self::$protected_post_ids = $options['protected_post_ids'];
 		}
 
-		return ! $empty;
+		self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', self::$protected_post_ids );
+
+		return ( ! empty( self::$locked_post_ids ) || ! empty( self::$protected_post_ids ) );
 	}
 
 	/**
