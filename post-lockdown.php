@@ -141,8 +141,16 @@ class PostLockdown {
 
 		$offset = self::filter_input( 'offset', 'int' );
 
+		$excluded_post_types = array( 'nav_menu_item', 'revision' );
+
+		if ( class_exists( 'WooCommerce' ) ) {
+			$excluded_post_types[] = 'product_variation';
+		}
+
+		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
+
 		$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-			'post_type' => array_diff( get_post_types(), array( 'nav_menu_item', 'revision' ) ),
+			'post_type' => array_diff( get_post_types(), $excluded_post_types ),
 			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
 			's' => $query,
 			'offset' => $offset,
@@ -178,8 +186,16 @@ class PostLockdown {
 
 		if ( self::load_options() ) {
 
+			$excluded_post_types = array( 'nav_menu_item', 'revision' );
+
+			if ( class_exists( 'WooCommerce' ) ) {
+				$excluded_post_types[] = 'product_variation';
+			}
+
+			$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
+
 			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-				'post_type' => array_diff( get_post_types(), array( 'nav_menu_item', 'revision' ) ),
+				'post_type' => array_diff( get_post_types(), $excluded_post_types ),
 				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
 				'nopaging' => true,
 				'post__in' => array_merge( self::$locked_post_ids, self::$protected_post_ids ),
