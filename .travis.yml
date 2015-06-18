@@ -5,7 +5,7 @@ sudo: false
 matrix:
   include:
     - php: '5.6'
-      env: WP_VERSION=master WP_MULTISITE=0
+      env: WP_VERSION=master WP_MULTISITE=0 PHPSNIFF=1
     - php: '5.2'
       env: WP_VERSION=master WP_MULTISITE=1
     - php: '5.6'
@@ -23,7 +23,7 @@ matrix:
     - php: '5.5'
       env: WP_VERSION=4.0 WP_MULTISITE=1
     - php: '5.3'
-      env: WP_VERSION=4.0 WP_MULTISITE=0
+      env: WP_VERSION=4.0 WP_MULTISITE=0 PHPSNIFF=1
     - php: '5.4'
       env: WP_VERSION=3.9 WP_MULTISITE=0
     - php: 'hhvm'
@@ -45,9 +45,10 @@ before_script:
 - sed -i "s/yourusernamehere/travis/" wp-tests-config.php
 - sed -i "s/yourpasswordhere//" wp-tests-config.php
 - mysql -e "CREATE DATABASE wordpress_tests;" -uroot
-- cd "/tmp/wordpress/src/wp-content/plugins/$PLUGIN_SLUG/tests"
-- pyrus install pear/PHP_CodeSniffer
+- cd "/tmp/wordpress/src/wp-content/plugins/$PLUGIN_SLUG"
+- if [[ "$PHPSNIFF" == "1" ]]; then pyrus install pear/PHP_CodeSniffer && git clone -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git /tmp/wpcs && phpcs --config-set installed_paths /tmp/wpcs; fi
 - phpenv rehash
 
 script:
-- ./test.sh
+- if [[ "$PHPSNIFF" == "1" ]]; then find -L . -mindepth 1 -maxdepth 2 -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
+- if [[ "$PHPSNIFF" == "1" ]]; then find -L . -mindepth 1 -maxdepth 2 -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 phpcs --standard="WordPress-Extra" -v; fi
