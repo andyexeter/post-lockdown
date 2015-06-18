@@ -7,6 +7,7 @@
  * Author: Andy Palmer
  * Author URI: http://www.andypalmer.me
  * License: GPL2
+ * Text Domain: postlockdown
  */
 if ( is_admin() ) {
 	PostLockdown::init();
@@ -141,21 +142,11 @@ class PostLockdown {
 
 		$offset = self::filter_input( 'offset', 'int' );
 
-		$excluded_post_types = array( 'nav_menu_item', 'revision' );
-
-		if ( class_exists( 'WooCommerce' ) ) {
-			$excluded_post_types[] = 'product_variation';
-		}
-
-		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
-
-		$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-			'post_type' => array_diff( get_post_types(), $excluded_post_types ),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+		$posts = self::get_posts( array(
 			's' => $query,
 			'offset' => $offset,
 			'posts_per_page' => 10,
-		) ) );
+		) );
 
 		wp_send_json_success( $posts );
 	}
@@ -186,20 +177,10 @@ class PostLockdown {
 
 		if ( self::load_options() ) {
 
-			$excluded_post_types = array( 'nav_menu_item', 'revision' );
-
-			if ( class_exists( 'WooCommerce' ) ) {
-				$excluded_post_types[] = 'product_variation';
-			}
-
-			$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
-
-			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-				'post_type' => array_diff( get_post_types(), $excluded_post_types ),
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+			$posts = self::get_posts( array(
 				'nopaging' => true,
 				'post__in' => array_merge( self::$locked_post_ids, self::$protected_post_ids ),
-			) ) );
+			) );
 
 			foreach ( $posts as $post ) {
 				if ( self::is_post_locked( $post->ID ) ) {
@@ -281,6 +262,29 @@ class PostLockdown {
 		self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', self::$protected_post_ids );
 
 		return ( ! empty( self::$locked_post_ids ) || ! empty( self::$protected_post_ids ) );
+	}
+
+	private static function get_posts( $args = array() ) {
+		$excluded_post_types = array( 'nav_menu_item', 'revision' );
+
+		if ( class_exists( 'WooCommerce' ) ) {
+			$excluded_post_types = array_merge( $excluded_post_types, array(
+				'product_variation',
+				'shop_order',
+				'shop_coupon',
+			) );
+		}
+
+		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
+
+		$defaults = array(
+			'post_type' => array_diff( get_post_types(), $excluded_post_types ),
+			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		return get_posts( apply_filters( 'postlockdown_get_posts', $args ) );
 	}
 
 	/**
