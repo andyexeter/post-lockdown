@@ -3,8 +3,7 @@
 	<form action="options.php" method="post">
 		<?php settings_fields( PostLockdown::KEY ); ?>
 		<p>
-			<?php esc_html_e( 'Select locked and protected posts by adding them to the boxes on the right.
-			Use the search field to filter the list of posts.', 'postlockdown' ); ?>
+			<?php esc_html_e( 'Select locked and protected posts by adding them to the boxes on the right. Use the search field to filter the list of posts.', 'postlockdown' ); ?>
 		</p>
 		<table class="form-table">
 			<tbody>
