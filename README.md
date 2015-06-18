@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andyexeter/post-lockdown.png)](https://travis-ci.org/andyexeter/post-lockdown)
+
 # Post Lockdown
 
 This is the official git repository for the Post Lockdown WordPress plugin
