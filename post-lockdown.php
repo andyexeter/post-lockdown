@@ -90,7 +90,7 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		if ( 'edit_post' == $args[0] ) {
+		if ( 'edit_post' === $args[0] ) {
 			$allcaps[ $cap[0] ] = ! self::is_post_locked( $post_id );
 		} else {
 			$allcaps[ $cap[0] ] = ! self::is_post_protected( $post_id ) && ! self::is_post_locked( $post_id );
