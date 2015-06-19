@@ -3,10 +3,11 @@
 /**
  * Plugin Name: Post Lockdown
  * Description: Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Andy Palmer
  * Author URI: http://www.andypalmer.me
  * License: GPL2
+ * Text Domain: postlockdown
  */
 if ( is_admin() ) {
 	PostLockdown::init();
@@ -89,7 +90,7 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		if ( 'edit_post' == $args[0] ) {
+		if ( 'edit_post' === $args[0] ) {
 			$allcaps[ $cap[0] ] = ! self::is_post_locked( $post_id );
 		} else {
 			$allcaps[ $cap[0] ] = ! self::is_post_protected( $post_id ) && ! self::is_post_locked( $post_id );
@@ -141,13 +142,11 @@ class PostLockdown {
 
 		$offset = self::filter_input( 'offset', 'int' );
 
-		$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-			'post_type' => array_diff( get_post_types(), array( 'nav_menu_item' ) ),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+		$posts = self::get_posts( array(
 			's' => $query,
 			'offset' => $offset,
 			'posts_per_page' => 10,
-		) ) );
+		) );
 
 		wp_send_json_success( $posts );
 	}
@@ -157,32 +156,31 @@ class PostLockdown {
 	 * Enqueues the required scripts and styles for the plugin options page.
 	 */
 	public static function enqueue_scripts( $hook ) {
+		// If it's not the plugin options page get out of here.
 		if ( $hook !== self::$page_hook ) {
 			return;
 		}
 
 		$assets_path = plugin_dir_url( __FILE__ ) . 'view/assets/';
 
-		$ext = '';
-		if ( ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ) {
-			$ext = '.min';
+		$ext = '.min';
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			$ext = '';
 		}
 
-		wp_enqueue_style( 'postlockdown', $assets_path . "css/postlockdown{$ext}.css", null, null );
+		wp_enqueue_style( self::KEY, $assets_path . "css/postlockdown{$ext}.css", null, null );
 
-		wp_enqueue_script( 'pl-multiselect', $assets_path . "js/jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
-		wp_enqueue_script( 'postlockdown', $assets_path . "js/postlockdown{$ext}.js", array( 'pl-multiselect' ), null, true );
+		wp_enqueue_script( 'plmultiselect', $assets_path . "js/jquery.plmultiselect{$ext}.js", array( 'jquery-ui-autocomplete' ), null, true );
+		wp_enqueue_script( self::KEY, $assets_path . "js/postlockdown{$ext}.js", array( 'plmultiselect' ), null, true );
 
 		$data = array();
 
 		if ( self::load_options() ) {
 
-			$posts = get_posts( apply_filters( 'postlockdown_get_posts', array(
-				'post_type' => array_diff( get_post_types(), array( 'nav_menu_item' ) ),
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+			$posts = self::get_posts( array(
 				'nopaging' => true,
 				'post__in' => array_merge( self::$locked_post_ids, self::$protected_post_ids ),
-			) ) );
+			) );
 
 			foreach ( $posts as $post ) {
 				if ( self::is_post_locked( $post->ID ) ) {
@@ -195,7 +193,7 @@ class PostLockdown {
 			}
 		}
 
-		wp_localize_script( 'postlockdown', 'postlockdown', $data );
+		wp_localize_script( self::KEY, self::KEY, $data );
 	}
 
 	/**
@@ -207,8 +205,7 @@ class PostLockdown {
 			return;
 		}
 
-		unset( self::$locked_post_ids[ $post_id ] );
-		unset( self::$protected_post_ids[ $post_id ] );
+		unset( self::$locked_post_ids[ $post_id ], self::$protected_post_ids[ $post_id ] );
 
 		update_option( self::KEY, array( 'locked_post_ids' => self::$locked_post_ids, 'protected_post_ids' => self::$protected_post_ids ) );
 	}
@@ -252,25 +249,42 @@ class PostLockdown {
 
 		$options = get_option( self::KEY, array() );
 
-		if ( empty( $options ) ) {
-			return false;
-		}
-
-		$empty = true;
-
 		if ( ! empty( $options['locked_post_ids'] ) && is_array( $options['locked_post_ids'] ) ) {
-			self::$locked_post_ids = apply_filters( 'postlockdown_locked_posts', $options['locked_post_ids'] );
-
-			$empty = false;
+			self::$locked_post_ids = $options['locked_post_ids'];
 		}
+
+		self::$locked_post_ids = apply_filters( 'postlockdown_locked_posts', self::$locked_post_ids );
 
 		if ( ! empty( $options['protected_post_ids'] ) && is_array( $options['protected_post_ids'] ) ) {
-			self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', $options['protected_post_ids'] );
-
-			$empty = false;
+			self::$protected_post_ids = $options['protected_post_ids'];
 		}
 
-		return ! $empty;
+		self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', self::$protected_post_ids );
+
+		return ( ! empty( self::$locked_post_ids ) || ! empty( self::$protected_post_ids ) );
+	}
+
+	private static function get_posts( $args = array() ) {
+		$excluded_post_types = array( 'nav_menu_item', 'revision' );
+
+		if ( class_exists( 'WooCommerce' ) ) {
+			$excluded_post_types = array_merge( $excluded_post_types, array(
+				'product_variation',
+				'shop_order',
+				'shop_coupon',
+			) );
+		}
+
+		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
+
+		$defaults = array(
+			'post_type' => array_diff( get_post_types(), $excluded_post_types ),
+			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		return get_posts( apply_filters( 'postlockdown_get_posts', $args ) );
 	}
 
 	/**

@@ -10,7 +10,8 @@ for i in $files; do
 	echo "Formatting $i"
 	cp $i $i.orig
 	# This regex replaces [ 0 ] with [0], [ 123 ] with [123], [ "ID" ] with ["ID"] and [ 'ID' ] with ['ID']
-	sed -ri "s/\[ ([0-9]+|(\x27|\x22)[^\x27\x22]*(\x27|\x22)) \]/[\1]/g" $i
+	#sed -ri "s/\[ ([0-9]+|(\x27|\x22)[^\x27\x22]*(\x27|\x22)) \]/[\1]/g" $i
+	sed -ri "s/\[[ ]*([0-9]+|[\x27|\x22][^\x27|\x22]*[\x27|\x22])[ ]*\]/[\1]/g" $i
 	# Delete the backup if no changes were made
 	cmp --silent post-lockdown.php post-lockdown.php.orig && rm -f $i.orig
 done
