@@ -10,7 +10,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
 
-= Description ==
+== Description ==
 
 Post Lockdown locks your site-critical pages and posts by disabling all non-admin users' ability to edit or delete them.
 It can also protect pages and posts, which will allow editing of them but still disable trashing and deleting.
@@ -27,7 +27,7 @@ See the screenshots for an example of what an Editor would see when they view a 
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Select your locked/protected posts under Settings > Post Lockdown
 
-== FAQ ==
+== Frequently Asked Questions ==
 
 = What is a "non-admin user"? =
 
