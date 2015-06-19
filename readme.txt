@@ -36,7 +36,14 @@ The capability can be filtered using the `postlockdown_admin_capability` filter.
 
 = Are there any other filters I can use? =
 
-Yep. Check out the Developers section for a list of all available filters.
+The following filters are used throughout the plugin:
+
+* `postlockdown_admin_capability` - The capability a user must have to bypass locked/protected posts restrictions. Default is `manage_options`.
+* `postlockdown_capabilities` - Array of capabilities to restrict.
+* `postlockdown_excluded_post_types` - Array of post types to exclude from search.
+* `postlockdown_get_posts` - Array of args to pass to get_posts().
+* `postlockdown_locked_posts` - Array of locked post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID
+* `postlockdown_protected_posts` - Array of protected post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID
 
 == Screenshots ==
 
@@ -44,17 +51,15 @@ Yep. Check out the Developers section for a list of all available filters.
 2. The Publish metabox for a protected page logged in as an Editor. See how the plugin removes the Move to Trash link.
 3. The Post Lockdown administration page.
 
-== Developers ==
-
-The following filters are used throughout the plugin:
-
-* `postlockdown_admin_capability` - The capability a user must have to bypass locked/protected posts restrictions. Default is `manage_options`.
-* `postlockdown_capabilities` - Array of capabilities to restrict.
-* `postlockdown_locked_posts` - Array of locked post IDs. Allows you to programatically add or remove post IDs. Both the key AND value must be set to the post ID
-* `postlockdown_protected_posts` - Array of protected post IDs. Allows you to programatically add or remove post IDs. Both the key AND value must be set to the post ID
-* `postlockdown_get_posts` - Array of args to pass to get_posts().
-
 == Changelog ==
 
+= 1.0.1 =
+
+* Fixed an issue where post IDs could not be filtered if none were set on the options page.
+* Added revisions and the WooCommerce product_variation post type to the excluded post types list.
+* Added escaping to placeholder attributes for search fields.
+* Added a new filter: `postlockdown_excluded_post_types`.
+
 = 1.0.0 =
-Initial release
+
+* Initial release
