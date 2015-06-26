@@ -264,6 +264,11 @@ class PostLockdown {
 		return ( ! empty( self::$locked_post_ids ) || ! empty( self::$protected_post_ids ) );
 	}
 
+	/**
+	 * Convenience wrapper for get_posts().
+	 * @param type $args Array of args to merge with defaults passed to get_posts().
+	 * @return array Array of posts.
+	 */
 	private static function get_posts( $args = array() ) {
 		$excluded_post_types = array( 'nav_menu_item', 'revision' );
 
