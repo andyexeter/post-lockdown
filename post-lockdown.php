@@ -29,7 +29,7 @@ class PostLockdown {
 	/** @var array List of post IDs which cannot be trashed or deleted. */
 	private static $protected_post_ids = array();
 
-	/** @var string Page hook returned by add_options_page() */
+	/** @var string Page hook returned by add_options_page(). */
 	private static $page_hook;
 
 	/**
@@ -52,7 +52,7 @@ class PostLockdown {
 	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
 	public static function filter_cap( $allcaps, $cap, $args ) {
-		// If there are no locked or protected posts get out of here
+		// If there are no locked or protected posts get out of here.
 		if ( ! self::load_options() ) {
 			return $allcaps;
 		}
@@ -68,7 +68,7 @@ class PostLockdown {
 		) );
 
 		/* If it's not a capability we're interested in, or the user has
-		 * the required capability to bypass restrictions get out of here
+		 * the required capability to bypass restrictions get out of here.
 		 */
 		if ( ! isset( $the_caps[ $args[0] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
 			return $allcaps;
@@ -207,7 +207,10 @@ class PostLockdown {
 
 		unset( self::$locked_post_ids[ $post_id ], self::$protected_post_ids[ $post_id ] );
 
-		update_option( self::KEY, array( 'locked_post_ids' => self::$locked_post_ids, 'protected_post_ids' => self::$protected_post_ids ) );
+		update_option( self::KEY, array(
+			'locked_post_ids' => self::$locked_post_ids,
+			'protected_post_ids' => self::$protected_post_ids,
+		) );
 	}
 
 	/**
@@ -240,6 +243,8 @@ class PostLockdown {
 
 	/**
 	 * Sets the array of locked and protected post IDs.
+	 * The return value is used to bail out of functions early if
+	 * there are no locked or protected posts set.
 	 * @return bool Whether both arrays are empty.
 	 */
 	private static function load_options() {
@@ -307,7 +312,6 @@ class PostLockdown {
 				break;
 			case 'float':
 				$filter = FILTER_SANITIZE_NUMBER_FLOAT;
-
 				$flags |= FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND;
 				break;
 			default:
