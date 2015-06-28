@@ -74,17 +74,7 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		if ( isset( $args[2] ) ) {
-			$post_id = $args[2];
-		} else {
-			$post = get_post();
-
-			if ( isset( $post->ID ) ) {
-				$post_id = $post->ID;
-			} else {
-				$post_id = self::filter_input( 'post_ID', 'int', INPUT_POST );
-			}
-		}
+		$post_id = self::get_post_id( $args );
 
 		if ( ! $post_id ) {
 			return $allcaps;
@@ -270,8 +260,30 @@ class PostLockdown {
 	}
 
 	/**
+	 * Attempts to retrieve the current post ID using multiple methods.
+	 * @param array $args Array of args passed from user_cap
+	 * @return int The current post ID.
+	 */
+	private static function get_post_id( $args = array() ) {
+		/** First check if $args[2] is set from the 'user_has_cap' filter hook * */
+		if ( isset( $args[2] ) ) {
+			return (int) $args[2];
+		}
+
+		/** Next, try getting the global $post object * */
+		$post = get_post();
+
+		if ( isset( $post->ID ) ) {
+			return (int) $post->ID;
+		}
+
+		/** Finally, look for post_ID in the POST data * */
+		return (int) self::filter_input( 'post_ID', 'int', INPUT_POST );
+	}
+
+	/**
 	 * Convenience wrapper for get_posts().
-	 * @param type $args Array of args to merge with defaults passed to get_posts().
+	 * @param array $args Array of args to merge with defaults passed to get_posts().
 	 * @return array Array of posts.
 	 */
 	private static function get_posts( $args = array() ) {
