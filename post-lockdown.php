@@ -96,6 +96,12 @@ class PostLockdown {
 		return $allcaps;
 	}
 
+	/**
+	 * Filter for the 'wp_insert_post_data' hook.
+	 *
+	 * Reverts any changes made by a non-admin to a post's status, privacy and password.
+	 * Also reverts any date changes if they're set to a future date.
+	 */
 	public static function prevent_published_status_change( $data ) {
 
 		if ( current_user_can( self::get_admin_cap() ) ) {
