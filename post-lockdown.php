@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Post Lockdown
  * Description: Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
@@ -23,6 +22,9 @@ class PostLockdown {
 	/** Option page title. */
 	const TITLE = 'Post Lockdown';
 
+	/** Query arg used to determine if an admin notice is displayed */
+	const QUERY_ARG = 'plstatuschange';
+
 	/** @var array List of post IDs which cannot be edited, trashed or deleted. */
 	private static $locked_post_ids = array();
 
@@ -38,39 +40,44 @@ class PostLockdown {
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'add_options_page' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		add_action( 'delete_post', array( __CLASS__, 'update_option' ) );
 		add_action( 'wp_ajax_pl_autocomplete', array( __CLASS__, 'ajax_autocomplete' ) );
 
+		add_filter( 'removable_query_args', array( __CLASS__, 'remove_query_arg' ) );
+		add_filter( 'wp_insert_post_data', array( __CLASS__, 'prevent_published_status_change' ) );
 		add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
-		add_filter( 'option_page_capability_' . self::KEY, array( __CLASS__, 'option_page_cap' ) );
+		add_filter( 'option_page_capability_' . self::KEY, array( __CLASS__, 'get_admin_cap' ) );
 	}
 
 	/**
 	 * Filter for the 'user_has_cap' hook.
+	 *
 	 * Sets the capability to false when current_user_can() has been called on
 	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
 	public static function filter_cap( $allcaps, $cap, $args ) {
-		// If there are no locked or protected posts get out of here.
-		if ( ! self::load_options() ) {
+		/* If there are no locked or protected posts, or the user has
+		 * the required capability to bypass restrictions get out of here.
+		 */
+		if ( ! self::load_options() || ! empty( $allcaps[ self::get_admin_cap() ] ) ) {
 			return $allcaps;
 		}
 
-		$admin_cap = apply_filters( 'postlockdown_admin_capability', 'manage_options' );
-
-		// Set the capabilities we want to return false for our posts
+		/**
+		 * 'publish_posts' and 'publish_pages' are included to stop
+		 * non-admins being able to change a protected post's status
+		 * from published to Draft which would remove it from the
+		 * front end of the website.
+		 */
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
 			'delete_post' => true,
 			'edit_post' => true,
-			'publish_pages' => true,
-			'publish_posts' => true,
 		) );
 
-		/* If it's not a capability we're interested in, or the user has
-		 * the required capability to bypass restrictions get out of here.
-		 */
-		if ( ! isset( $the_caps[ $args[0] ] ) || ! empty( $allcaps[ $admin_cap ] ) ) {
+		// If it's not a capability we're interested in get out of here.
+		if ( ! isset( $the_caps[ $args[0] ] ) ) {
 			return $allcaps;
 		}
 
@@ -89,6 +96,87 @@ class PostLockdown {
 		return $allcaps;
 	}
 
+	public static function prevent_published_status_change( $data ) {
+
+		if ( current_user_can( self::get_admin_cap() ) ) {
+			return $data;
+		}
+
+		$post_id = self::get_post_id();
+
+		if ( ! self::is_post_locked( $post_id ) && ! self::is_post_protected( $post_id ) ) {
+			return $data;
+		}
+
+		$post = get_post( $post_id );
+
+		$changed = false;
+
+		if ( 'publish' === $post->post_status ) {
+			if ( 'publish' !== $data['post_status'] ) {
+				$changed = true;
+				$data['post_status'] = $post->post_status;
+			}
+
+			if ( $data['post_password'] !== $post->post_password ) {
+				$changed = true;
+				$data['post_password'] = $post->post_password;
+			}
+
+			if ( $data['post_date'] !== $post->post_date && strtotime( $data['post_date'] ) > time() ) {
+				$changed = true;
+				$data['post_date'] = $post->post_date;
+				$data['post_date_gmt'] = $post->post_date_gmt;
+			}
+		}
+
+		if ( $changed ) {
+			add_filter( 'redirect_post_location', array( __CLASS__, 'redirect_post_location' ) );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Filter for the 'redirect_post_location' hook.
+	 *
+	 * Adds the plugin's query arg to the redirect URI when
+	 * the status of a protected post changes to indicate that
+	 * an error message should be displayed.
+	 */
+	public static function redirect_post_location( $location ) {
+		return add_query_arg( self::QUERY_ARG, 1, $location );
+	}
+
+	/**
+	 * Filter for the 'removable_query_args' hook.
+	 *
+	 * Adds the plugin's query arg to the array of args
+	 * removed by WordPress using the JavaScript History API.
+	 */
+	public static function remove_query_arg( $args ) {
+		$args[] = self::QUERY_ARG;
+
+		return $args;
+	}
+
+	/**
+	 * Callback for the 'admin_notices' hook.
+	 *
+	 * Outputs an error message is the plugin's query arg is set.
+	 */
+	public static function admin_notices() {
+		$changed = self::filter_input( self::QUERY_ARG );
+
+		if ( $changed ) {
+			?>
+			<div class="error notice is-dismissible">
+				<p><?php esc_html_e( 'This post is protected by Post Lockdown and must stay published.', 'postlockdown' ); ?></p>
+			</div>
+			<?php
+		}
+	}
+
 	/**
 	 * Callback for the 'admin_init' hook.
 	 * Registers the plugin's option name so it gets saved.
@@ -102,17 +190,7 @@ class PostLockdown {
 	 * Adds the plugin's options page.
 	 */
 	public static function add_options_page() {
-		$admin_cap = apply_filters( 'postlockdown_admin_capability', 'manage_options' );
-
-		self::$page_hook = add_options_page( self::TITLE, self::TITLE, $admin_cap, self::KEY, array( __CLASS__, 'output_options_page' ) );
-	}
-
-	/**
-	 * Filter for the 'option_page_capability_{$slug}' hook.
-	 * Allows the required capability to be filtered correctly.
-	 */
-	public static function option_page_cap() {
-		return apply_filters( 'postlockdown_admin_capability', 'manage_options' );
+		self::$page_hook = add_options_page( self::TITLE, self::TITLE, self::get_admin_cap(), self::KEY, array( __CLASS__, 'output_options_page' ) );
 	}
 
 	/**
@@ -229,6 +307,17 @@ class PostLockdown {
 	public static function is_post_protected( $post_id ) {
 		self::load_options();
 		return isset( self::$protected_post_ids[ $post_id ] );
+	}
+
+	/**
+	 * Returns the required capability a user must be to bypass all
+	 * locked and protected post restrictions. Defaults to 'manage_options'.
+	 *
+	 * Also serves as a callback for the 'option_page_capability_{slug}' hook.
+	 * @return string The required capability.
+	 */
+	public static function get_admin_cap() {
+		return apply_filters( 'postlockdown_admin_capability', 'manage_options' );
 	}
 
 	/**
