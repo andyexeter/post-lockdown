@@ -189,6 +189,7 @@ class PostLockdown {
 
 	/**
 	 * Callback for the 'admin_init' hook.
+	 *
 	 * Registers the plugin's option name so it gets saved.
 	 */
 	public static function register_setting() {
@@ -197,6 +198,7 @@ class PostLockdown {
 
 	/**
 	 * Callback for the 'admin_menu' hook.
+	 *
 	 * Adds the plugin's options page.
 	 */
 	public static function add_options_page() {
@@ -205,6 +207,7 @@ class PostLockdown {
 
 	/**
 	 * Callback used by add_options_page().
+	 *
 	 * Gets an array of post types and their posts and includes the options page HTML.
 	 */
 	public static function output_options_page() {
@@ -213,6 +216,7 @@ class PostLockdown {
 
 	/**
 	 * Callback for the 'pl_autocomplete' AJAX action.
+	 *
 	 * Responds with a json encoded array of posts matching the query.
 	 */
 	public static function ajax_autocomplete() {
@@ -231,6 +235,7 @@ class PostLockdown {
 
 	/**
 	 * Callback for the 'admin_enqueue_scripts' hook.
+	 *
 	 * Enqueues the required scripts and styles for the plugin options page.
 	 */
 	public static function enqueue_scripts( $hook ) {
@@ -276,6 +281,7 @@ class PostLockdown {
 
 	/**
 	 * Callback for the 'delete_post' hook.
+	 *
 	 * Removes the deleted post's ID from both locked and protected arrays.
 	 */
 	public static function update_option( $post_id ) {
@@ -293,6 +299,7 @@ class PostLockdown {
 
 	/**
 	 * Callback for register_uninstall_hook() function.
+	 *
 	 * Removes the plugin option from the database when it is uninstalled.
 	 */
 	public static function uninstall() {
@@ -332,6 +339,7 @@ class PostLockdown {
 
 	/**
 	 * Sets the array of locked and protected post IDs.
+	 *
 	 * The return value is used to bail out of functions early if
 	 * there are no locked or protected posts set.
 	 * @return bool Whether both arrays are empty.
