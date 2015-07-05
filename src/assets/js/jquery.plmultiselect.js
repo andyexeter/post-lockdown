@@ -1,3 +1,9 @@
+/*!
+	jquery-plmultiselect v1.0.2
+	A jQuery multi select plugin for WordPress admin
+	(c) 2015 Andy Palmer
+	license: http://www.gnu.org/licenses/gpl-2.0.html
+*/
 ( function( $, window ) {
 
 	'use strict';
@@ -21,20 +27,13 @@
 
 	Plugin.prototype = {
 		/**
-		 * Initialises the plugin instance
+		 * Initialises the plugin instance.
 		 */
 		init: function( ) {
 
 			var self = this;
 
-			// Set the selected items menu to the height of the left side
-			/*$( window ).load( $.proxy( function( ) {
-			 this.$right.height( this.$left.parent( ).height( ) );
-			 }, this ) );*/
-
-			$( window ).load( function( ) {
-				self.$right.height( self.$left.parent( ).height( ) );
-			} );
+			this.$right.height( this.$left.parent( ).height( ) );
 
 			this.$search.autocomplete( {
 				minLength: 0,
@@ -59,7 +58,7 @@
 
 			} );
 
-			// Attach the click handler for remove buttons on selected items
+			// Attach the click handler for remove buttons on selected items.
 			this.$right.on( 'click', '> li .dashicons-no', function( ) {
 
 				var ID = $( this ).closest( 'li' ).data( 'ID' );
@@ -67,14 +66,15 @@
 				self.$left.find( '.post-' + ID ).removeClass( 'selected' );
 			} );
 
-			// If we have a list of items add them to the selected menu
+			// If we have a list of items add them to the selected menu.
 			if ( this.options.selected.length ) {
 				this.selectItem( this.options.selected );
 			}
 
-			// Paginate scrolling of the available items menu
+			// Paginate scrolling of the available items menu.
 			this.$left.on( 'scroll', function( ) {
 
+				// Go to next page if the scrollbar is 15px or less from the bottom.
 				if ( this.scrollHeight - $( this ).scrollTop( ) - 15 <= $( this ).height( ) ) {
 					self.nextPage( );
 				}
@@ -82,18 +82,19 @@
 		},
 		nextPage: function( ) {
 
-			var term = this.options.inputSearch.val( ),
+			var self = this,
+				term = this.options.inputSearch.val( ),
 				offset = this.$left.children( 'li' ).length;
 
-			this.queryItems( term, offset, $.proxy( function( json ) {
-				this.renderMenu( this.$left, json.data, '', true );
-			}, this ) );
+			this.queryItems( term, offset, function( json ) {
+				self.renderMenu( self.$left, json.data, '', true );
+			} );
 
 		},
 		/**
 		 * Makes an AJAX request for a list of items.
 		 * @param {string} term - The term to query items for.
-		 * @param {number} offset - The number of items to pass over
+		 * @param {number} offset - The number of items to pass over.
 		 * @param {function} success - If the request is successful this function will be invoked.
 		 */
 		queryItems: function( term, offset, success ) {
@@ -130,7 +131,7 @@
 		},
 		/**
 		 * Selects an item by cloning it, or adds an array of plain objects, to the right hand box.
-		 * @param {jQuery||object[]} arg - The jQuery object or an array of plain objects
+		 * @param {jQuery||object[]} arg - The jQuery object or an array of plain objects.
 		 */
 		selectItem: function( arg ) {
 
