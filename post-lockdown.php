@@ -172,14 +172,18 @@ class PostLockdown {
 	 * Outputs an error message is the plugin's query arg is set.
 	 */
 	public static function admin_notices() {
-		$changed = self::filter_input( self::QUERY_ARG );
+		$notices = array();
 
-		if ( $changed ) {
-			?>
-			<div class="error notice is-dismissible">
-				<p><?php esc_html_e( 'This post is protected by Post Lockdown and must stay published.', 'postlockdown' ); ?></p>
-			</div>
-			<?php
+		if ( self::filter_input( self::QUERY_ARG ) ) {
+
+			$notices[] = array(
+				'class' => 'error',
+				'message' => esc_html( 'This post is protected by Post Lockdown and must stay published.', 'postlockdown' ),
+			);
+		}
+
+		if ( ! empty( $notices ) ) {
+			include_once( plugin_dir_path( __FILE__ ) . 'view/admin-notices.php' );
 		}
 	}
 
