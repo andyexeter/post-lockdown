@@ -58,13 +58,6 @@ class PostLockdown {
 	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
 	public static function filter_cap( $allcaps, $cap, $args ) {
-		/* If there are no locked or protected posts, or the user has
-		 * the required capability to bypass restrictions get out of here.
-		 */
-		if ( ! self::load_options() || ! empty( $allcaps[ self::get_admin_cap() ] ) ) {
-			return $allcaps;
-		}
-
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
 			'delete_post' => true,
 			'edit_post' => true,
@@ -72,6 +65,13 @@ class PostLockdown {
 
 		// If it's not a capability we're interested in get out of here.
 		if ( ! isset( $the_caps[ $args[0] ] ) ) {
+			return $allcaps;
+		}
+
+		/* If there are no locked or protected posts, or the user has
+		 * the required capability to bypass restrictions get out of here.
+		 */
+		if ( ! empty( $allcaps[ self::get_admin_cap() ] ) || ! self::load_options() ) {
 			return $allcaps;
 		}
 
@@ -101,7 +101,7 @@ class PostLockdown {
 		/* If there are no locked or protected posts, or the user has
 		 * the required capability to bypass restrictions get out of here.
 		 */
-		if ( ! self::load_options() || current_user_can( self::get_admin_cap() ) ) {
+		if ( current_user_can( self::get_admin_cap() ) || ! self::load_options() ) {
 			return $data;
 		}
 
