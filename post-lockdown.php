@@ -170,7 +170,7 @@ class PostLockdown {
 	/**
 	 * Callback for the 'admin_notices' hook.
 	 *
-	 * Outputs an error message if the plugin's query arg is set.
+	 * Outputs the plugin's admin notices if there are any.
 	 */
 	public static function output_admin_notices() {
 		$notices = array();
@@ -221,13 +221,9 @@ class PostLockdown {
 	 * Responds with a json encoded array of posts matching the query.
 	 */
 	public static function ajax_autocomplete() {
-		$query = self::filter_input( 'term' );
-
-		$offset = self::filter_input( 'offset', 'int' );
-
 		$posts = self::get_posts( array(
-			's' => $query,
-			'offset' => $offset,
+			's' => self::filter_input( 'term' ),
+			'offset' => self::filter_input( 'offset', 'int' ),
 			'posts_per_page' => 10,
 		) );
 
