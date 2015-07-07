@@ -40,14 +40,14 @@ class PostLockdown {
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'add_options_page' ) );
-		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'output_admin_notices' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		add_action( 'delete_post', array( __CLASS__, 'update_option' ) );
 		add_action( 'wp_ajax_pl_autocomplete', array( __CLASS__, 'ajax_autocomplete' ) );
 
-		add_filter( 'removable_query_args', array( __CLASS__, 'remove_query_arg' ) );
-		add_filter( 'wp_insert_post_data', array( __CLASS__, 'prevent_published_status_change' ) );
 		add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
+		add_filter( 'wp_insert_post_data', array( __CLASS__, 'prevent_status_change' ), 10, 2 );
+		add_filter( 'removable_query_args', array( __CLASS__, 'remove_query_arg' ) );
 		add_filter( 'option_page_capability_' . self::KEY, array( __CLASS__, 'get_admin_cap' ) );
 	}
 
@@ -65,12 +65,6 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		/**
-		 * 'publish_posts' and 'publish_pages' are included to stop
-		 * non-admins being able to change a protected post's status
-		 * from published to Draft which would remove it from the
-		 * front end of the website.
-		 */
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
 			'delete_post' => true,
 			'edit_post' => true,
@@ -81,7 +75,7 @@ class PostLockdown {
 			return $allcaps;
 		}
 
-		$post_id = self::get_post_id( $args );
+		$post_id = $args[2];
 
 		if ( ! $post_id ) {
 			return $allcaps;
@@ -99,18 +93,24 @@ class PostLockdown {
 	/**
 	 * Filter for the 'wp_insert_post_data' hook.
 	 *
-	 * Reverts any changes made by a non-admin to a post's status, privacy and password.
-	 * Also reverts any date changes if they're set to a future date.
+	 * Reverts any changes made by a non-admin to a published protected post's status, privacy and password.
+	 * Also reverts any date changes if they're set to a future date. If anything is changed a filter for
+	 * the 'redirect_post_location' hook is added to display an admin notice letting the user know we reverted it.
 	 */
-	public static function prevent_published_status_change( $data ) {
-
-		if ( current_user_can( self::get_admin_cap() ) ) {
+	public static function prevent_status_change( $data, $postarr ) {
+		/* If there are no locked or protected posts, or the user has
+		 * the required capability to bypass restrictions get out of here.
+		 */
+		if ( ! self::load_options() || current_user_can( self::get_admin_cap() ) ) {
 			return $data;
 		}
 
-		$post_id = self::get_post_id();
+		$post_id = $postarr['ID'];
 
-		if ( ! self::is_post_locked( $post_id ) && ! self::is_post_protected( $post_id ) ) {
+		/* If it's not a protected post get out of here. No need
+		 * to check for locked posts because they can't be edited.
+		 */
+		if ( ! self::is_post_protected( $post_id ) ) {
 			return $data;
 		}
 
@@ -129,6 +129,7 @@ class PostLockdown {
 				$data['post_password'] = $post->post_password;
 			}
 
+			// Revert the post date if it's set to a future date.
 			if ( $data['post_date'] !== $post->post_date && strtotime( $data['post_date'] ) > time() ) {
 				$changed = true;
 				$data['post_date'] = $post->post_date;
@@ -169,9 +170,9 @@ class PostLockdown {
 	/**
 	 * Callback for the 'admin_notices' hook.
 	 *
-	 * Outputs an error message is the plugin's query arg is set.
+	 * Outputs an error message if the plugin's query arg is set.
 	 */
-	public static function admin_notices() {
+	public static function output_admin_notices() {
 		$notices = array();
 
 		if ( self::filter_input( self::QUERY_ARG ) ) {
@@ -364,28 +365,6 @@ class PostLockdown {
 		self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', self::$protected_post_ids );
 
 		return ( ! empty( self::$locked_post_ids ) || ! empty( self::$protected_post_ids ) );
-	}
-
-	/**
-	 * Attempts to retrieve the current post ID using multiple methods.
-	 * @param array $args Array of args passed from user_cap
-	 * @return int The current post ID.
-	 */
-	private static function get_post_id( $args = array() ) {
-		/** First check if $args[2] is set from the 'user_has_cap' filter hook * */
-		if ( isset( $args[2] ) ) {
-			return (int) $args[2];
-		}
-
-		/** Next, try getting the global $post object * */
-		$post = get_post();
-
-		if ( isset( $post->ID ) ) {
-			return (int) $post->ID;
-		}
-
-		/** Finally, look for post_ID in the POST data * */
-		return (int) self::filter_input( 'post_ID', 'int', INPUT_POST );
 	}
 
 	/**
