@@ -47,11 +47,19 @@ The following filters are used throughout the plugin:
 
 == Screenshots ==
 
-1. A page list showing one locked page, one protected page and one regular page.
+1. A page list showing one regular page, one locked page and one protected page.
 2. The Publish metabox for a protected page logged in as an Editor. See how the plugin removes the Move to Trash link.
 3. The Post Lockdown administration page.
 
 == Changelog ==
+
+= 1.1 =
+
+* Added functionality to prevent non-admins changing the post status of a protected published post to something which could remove it from the front end e.g Draft, Private or Scheduled.
+* Fixed an issue which caused a PHP warning when a non-admin used the Quick Edit box for a protected post.
+* Added new version of multi select plugin.
+* Lots of optimisations and general improvements.
+
 
 = 1.0.1 =
 
