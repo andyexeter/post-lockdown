@@ -1,5 +1,5 @@
 /*!
-	jquery-plmultiselect v1.0.1
+	jquery-plmultiselect v1.0.2
 	A jQuery multi select plugin for WordPress admin
 	(c) 2015 Andy Palmer
 	license: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,16 +27,13 @@
 
 	Plugin.prototype = {
 		/**
-		 * Initialises the plugin instance
+		 * Initialises the plugin instance.
 		 */
 		init: function( ) {
 
 			var self = this;
 
-			// Set the selected items menu to the height of the left side
-			$( window ).load( $.proxy( function( ) {
-				this.$right.height( this.$left.parent( ).height( ) );
-			}, this ) );
+			this.$right.height( this.$left.parent( ).height( ) );
 
 			this.$search.autocomplete( {
 				minLength: 0,
@@ -61,41 +58,43 @@
 
 			} );
 
-			// Attach the click handler for remove buttons on selected items
+			// Attach the click handler for remove buttons on selected items.
 			this.$right.on( 'click', '> li .dashicons-no', function( ) {
 
-				var post_id = $( this ).closest( 'li' ).data( 'post_id' );
+				var ID = $( this ).closest( 'li' ).data( 'ID' );
 				$( this ).closest( 'li' ).remove( );
-				self.$left.find( '.post-' + post_id ).removeClass( 'selected' );
+				self.$left.find( '.post-' + ID ).removeClass( 'selected' );
 			} );
 
-			// If we have a list of items add them to the selected menu
+			// If we have a list of items add them to the selected menu.
 			if ( this.options.selected.length ) {
 				this.selectItem( this.options.selected );
 			}
 
-			// Paginate scrolling of the available items menu
+			// Paginate scrolling of the available items menu.
 			this.$left.on( 'scroll', function( ) {
 
-				if ( this.scrollHeight - $( this ).scrollTop( ) <= $( this ).height( ) ) {
+				// Go to next page if the scrollbar is 15px or less from the bottom.
+				if ( this.scrollHeight - $( this ).scrollTop( ) - 15 <= $( this ).height( ) ) {
 					self.nextPage( );
 				}
 			} );
 		},
 		nextPage: function( ) {
 
-			var term = this.options.inputSearch.val( ),
+			var self = this,
+				term = this.options.inputSearch.val( ),
 				offset = this.$left.children( 'li' ).length;
 
-			this.queryItems( term, offset, $.proxy( function( json ) {
-				this.renderMenu( this.$left, json.data, '', true );
-			}, this ) );
+			this.queryItems( term, offset, function( json ) {
+				self.renderMenu( self.$left, json.data, '', true );
+			} );
 
 		},
 		/**
 		 * Makes an AJAX request for a list of items.
 		 * @param {string} term - The term to query items for.
-		 * @param {number} offset - The number of items to pass over
+		 * @param {number} offset - The number of items to pass over.
 		 * @param {function} success - If the request is successful this function will be invoked.
 		 */
 		queryItems: function( term, offset, success ) {
@@ -132,22 +131,22 @@
 		},
 		/**
 		 * Selects an item by cloning it, or adds an array of plain objects, to the right hand box.
-		 * @param {jQuery||object[]} arg - The jQuery object or an array of plain objects
+		 * @param {jQuery||object[]} arg - The jQuery object or an array of plain objects.
 		 */
 		selectItem: function( arg ) {
 
-			var input_name = this.options.inputName;
+			var inputName = this.options.inputName;
 
 			if ( $.isArray( arg ) ) {
-				this.renderMenu( this.$right, arg, input_name, true );
+				this.renderMenu( this.$right, arg, inputName, true );
 			} else {
 
-				input_name += '[' + arg.data( 'post_id' ) + ']';
+				inputName += '[' + arg.data( 'ID' ) + ']';
 
 				arg.clone( false )
-					.data( 'post_id', arg.data( 'post_id' ) )
+					.data( 'ID', arg.data( 'ID' ) )
 					.appendTo( this.$right )
-					.find( 'input.post-id' ).attr( 'name', input_name );
+					.find( 'input.post-id' ).attr( 'name', inputName );
 
 				arg.addClass( 'selected' );
 			}
@@ -156,10 +155,10 @@
 		 * Fills a menu with a list of items.
 		 * @param {jQuery} menu - The menu to fill.
 		 * @param {array} items - List of items to add to the menu.
-		 * @param {string} input_name - The input name to be passed to getItemTpl().
+		 * @param {string} inputName - The input name to be passed to getItemTpl().
 		 * @param {bool} append - Whether to append to the menu. Setting to false clears the menu's innerHTML first.
 		 */
-		renderMenu: function( menu, items, input_name, append ) {
+		renderMenu: function( menu, items, inputName, append ) {
 
 			var self = this,
 				$items = [ ];
@@ -169,7 +168,7 @@
 			}
 
 			$.each( items, function( i, item ) {
-				$items.push( self.getItemTpl( item, input_name + '[' + item.ID + ']' ) );
+				$items.push( self.getItemTpl( item, inputName + '[' + item.ID + ']' ) );
 			} );
 
 			menu.append( $items );
@@ -177,23 +176,24 @@
 		/**
 		 * Returns a jQuery object of an item to be appended to a menu.
 		 * @param {object} item       The item to build a jQuery object with.
-		 * @param {string} input_name The hidden input field name.
+		 * @param {string} inputName The hidden input field name.
 		 * @returns {jquery} The item as a jQuery object.
 		 */
-		getItemTpl: function( item, input_name ) {
+		getItemTpl: function( item, inputName ) {
 
-			if ( !input_name ) {
-				input_name = '';
+			if ( !inputName ) {
+				inputName = '';
 			}
 
 			var $item = $( '<li />' )
 				.addClass( 'post-' + item.ID )
-				.data( 'post_id', item.ID )
+				.data( 'ID', item.ID )
 				.append( '<span class="post-title">' + item.post_title + '</span>' +
 					'<span class="dashicons dashicons-no" title="Remove"></span>' +
 					'<span class="post-type">' + item.post_type + '</span>' +
-					'<input type="hidden" class="post-id" name="' + input_name + '" value="' + item.ID + '" />'
+					'<input type="hidden" class="post-id" name="' + inputName + '" value="' + item.ID + '" />'
 					);
+
 			if ( this.$right.find( '.post-' + item.ID ).length ) {
 				$item.addClass( 'selected' );
 			}
@@ -203,15 +203,13 @@
 
 	};
 
-	$.fn[pluginName] = function( ) {
+	$.fn[pluginName] = function( options ) {
 
-		var args = arguments;
 		return this.each( function( ) {
-
 			var plugin = $( this ).data( pluginName + '.plugin' );
 			if ( !plugin ) {
 
-				plugin = new Plugin( this, args[0] );
+				plugin = new Plugin( this, options );
 				$( this ).data( pluginName + '.plugin', plugin );
 			}
 
