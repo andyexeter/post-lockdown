@@ -94,8 +94,8 @@ final class PostLockdown {
 			return $allcaps;
 		}
 
-		/* If there are no locked or protected posts, or the user has
-		 * the required capability to bypass restrictions get out of here.
+		/* If the user has the required capability to bypass
+		 * restrictions get out of here.
 		 */
 		if ( ! empty( $allcaps[ $this->get_admin_cap() ] ) ) {
 			return $allcaps;
@@ -124,8 +124,8 @@ final class PostLockdown {
 	 * the 'redirect_post_location' hook is added to display an admin notice letting the user know we reverted it.
 	 */
 	public function prevent_status_change( $data, $postarr ) {
-		/* If there are no locked or protected posts, or the user has
-		 * the required capability to bypass restrictions get out of here.
+		/* If the user has the required capability to bypass
+		 * restrictions get out of here.
 		 */
 		if ( current_user_can( $this->get_admin_cap() ) ) {
 			return $data;
