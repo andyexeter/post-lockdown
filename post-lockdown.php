@@ -97,7 +97,7 @@ final class PostLockdown {
 		/* If there are no locked or protected posts, or the user has
 		 * the required capability to bypass restrictions get out of here.
 		 */
-		if ( ! $this->have_posts || ! empty( $allcaps[ $this->get_admin_cap() ] ) ) {
+		if ( ! empty( $allcaps[ $this->get_admin_cap() ] ) ) {
 			return $allcaps;
 		}
 
@@ -127,7 +127,7 @@ final class PostLockdown {
 		/* If there are no locked or protected posts, or the user has
 		 * the required capability to bypass restrictions get out of here.
 		 */
-		if ( ! $this->have_posts || current_user_can( $this->get_admin_cap() ) ) {
+		if ( current_user_can( $this->get_admin_cap() ) ) {
 			return $data;
 		}
 
@@ -308,10 +308,6 @@ final class PostLockdown {
 	 * Removes the deleted post's ID from both locked and protected arrays.
 	 */
 	public function update_option( $post_id ) {
-		if ( ! $this->have_posts ) {
-			return;
-		}
-
 		unset( $this->locked_post_ids[ $post_id ], $this->protected_post_ids[ $post_id ] );
 
 		update_option( self::KEY, array(
