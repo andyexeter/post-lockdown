@@ -53,6 +53,9 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed PHP warning about missing admin notices file.
+
 = 1.1 =
 
 * Added functionality to prevent non-admins changing the post status of a protected published post to something which could remove it from the front end e.g Draft, Private or Scheduled.
