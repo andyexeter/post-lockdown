@@ -9,12 +9,10 @@
  * Text Domain: postlockdown
  */
 if ( is_admin() ) {
-	PostLockdown::init();
+	PostLockdown::get_instance();
 }
 
-register_uninstall_hook( __FILE__, array( 'PostLockdown', 'uninstall' ) );
-
-class PostLockdown {
+final class PostLockdown {
 
 	/** Plugin key for options and the option page. */
 	const KEY = 'postlockdown';
@@ -26,29 +24,57 @@ class PostLockdown {
 	const QUERY_ARG = 'plstatuschange';
 
 	/** @var array List of post IDs which cannot be edited, trashed or deleted. */
-	private static $locked_post_ids = array();
+	private $locked_post_ids = array();
 
 	/** @var array List of post IDs which cannot be trashed or deleted. */
-	private static $protected_post_ids = array();
+	private $protected_post_ids = array();
+
+	/** @var boolean Whether there are any locked or protected posts. */
+	private $have_posts = false;
 
 	/** @var string Page hook returned by add_options_page(). */
-	private static $page_hook;
+	private $page_hook;
+	private static $instance = null;
+
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * Adds the required action and filter callbacks.
 	 */
-	public static function init() {
-		add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
-		add_action( 'admin_menu', array( __CLASS__, 'add_options_page' ) );
-		add_action( 'admin_notices', array( __CLASS__, 'output_admin_notices' ) );
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
-		add_action( 'delete_post', array( __CLASS__, 'update_option' ) );
-		add_action( 'wp_ajax_pl_autocomplete', array( __CLASS__, 'ajax_autocomplete' ) );
+	private function __construct() {
+		$this->have_posts = $this->load_options();
 
-		add_filter( 'user_has_cap', array( __CLASS__, 'filter_cap' ), 10, 3 );
-		add_filter( 'wp_insert_post_data', array( __CLASS__, 'prevent_status_change' ), 10, 2 );
-		add_filter( 'removable_query_args', array( __CLASS__, 'remove_query_arg' ) );
-		add_filter( 'option_page_capability_' . self::KEY, array( __CLASS__, 'get_admin_cap' ) );
+		add_action( 'admin_init', array( $this, 'register_setting' ) );
+		add_action( 'admin_menu', array( $this, 'add_options_page' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'wp_ajax_pl_autocomplete', array( $this, 'ajax_autocomplete' ) );
+
+		add_filter( 'option_page_capability_' . self::KEY, array( $this, 'get_admin_cap' ) );
+
+		if ( $this->have_posts ) {
+			add_action( 'admin_notices', array( $this, 'output_admin_notices' ) );
+			add_action( 'delete_post', array( $this, 'update_option' ) );
+
+			add_filter( 'user_has_cap', array( $this, 'filter_cap' ), 10, 3 );
+			add_filter( 'wp_insert_post_data', array( $this, 'prevent_status_change' ), 10, 2 );
+			add_filter( 'removable_query_args', array( $this, 'remove_query_arg' ) );
+		}
+
+		register_uninstall_hook( __FILE__, array( __CLASS__, 'uninstall' ) );
+	}
+
+	private function __clone() {
+
+	}
+
+	private function __wakeup() {
+
 	}
 
 	/**
@@ -57,7 +83,7 @@ class PostLockdown {
 	 * Sets the capability to false when current_user_can() has been called on
 	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
-	public static function filter_cap( $allcaps, $cap, $args ) {
+	public function filter_cap( $allcaps, $cap, $args ) {
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
 			'delete_post' => true,
 			'edit_post' => true,
@@ -71,7 +97,7 @@ class PostLockdown {
 		/* If there are no locked or protected posts, or the user has
 		 * the required capability to bypass restrictions get out of here.
 		 */
-		if ( ! empty( $allcaps[ self::get_admin_cap() ] ) || ! self::load_options() ) {
+		if ( ! $this->have_posts || ! empty( $allcaps[ $this->get_admin_cap() ] ) ) {
 			return $allcaps;
 		}
 
@@ -82,9 +108,9 @@ class PostLockdown {
 		}
 
 		if ( 'edit_post' === $args[0] ) {
-			$allcaps[ $cap[0] ] = ! self::is_post_locked( $post_id );
+			$allcaps[ $cap[0] ] = ! $this->is_post_locked( $post_id );
 		} else {
-			$allcaps[ $cap[0] ] = ! self::is_post_protected( $post_id ) && ! self::is_post_locked( $post_id );
+			$allcaps[ $cap[0] ] = ! $this->is_post_protected( $post_id ) && ! $this->is_post_locked( $post_id );
 		}
 
 		return $allcaps;
@@ -97,11 +123,11 @@ class PostLockdown {
 	 * Also reverts any date changes if they're set to a future date. If anything is changed a filter for
 	 * the 'redirect_post_location' hook is added to display an admin notice letting the user know we reverted it.
 	 */
-	public static function prevent_status_change( $data, $postarr ) {
+	public function prevent_status_change( $data, $postarr ) {
 		/* If there are no locked or protected posts, or the user has
 		 * the required capability to bypass restrictions get out of here.
 		 */
-		if ( current_user_can( self::get_admin_cap() ) || ! self::load_options() ) {
+		if ( ! $this->have_posts || current_user_can( $this->get_admin_cap() ) ) {
 			return $data;
 		}
 
@@ -110,7 +136,7 @@ class PostLockdown {
 		/* If it's not a protected post get out of here. No need
 		 * to check for locked posts because they can't be edited.
 		 */
-		if ( ! self::is_post_protected( $post_id ) ) {
+		if ( ! $this->is_post_protected( $post_id ) ) {
 			return $data;
 		}
 
@@ -138,7 +164,7 @@ class PostLockdown {
 		}
 
 		if ( $changed ) {
-			add_filter( 'redirect_post_location', array( __CLASS__, 'redirect_post_location' ) );
+			add_filter( 'redirect_post_location', array( $this, 'redirect_post_location' ) );
 		}
 
 		return $data;
@@ -151,7 +177,7 @@ class PostLockdown {
 	 * the status of a protected post changes to indicate that
 	 * an error message should be displayed.
 	 */
-	public static function redirect_post_location( $location ) {
+	public function redirect_post_location( $location ) {
 		return add_query_arg( self::QUERY_ARG, 1, $location );
 	}
 
@@ -161,7 +187,7 @@ class PostLockdown {
 	 * Adds the plugin's query arg to the array of args
 	 * removed by WordPress using the JavaScript History API.
 	 */
-	public static function remove_query_arg( $args ) {
+	public function remove_query_arg( $args ) {
 		$args[] = self::QUERY_ARG;
 
 		return $args;
@@ -172,10 +198,10 @@ class PostLockdown {
 	 *
 	 * Outputs the plugin's admin notices if there are any.
 	 */
-	public static function output_admin_notices() {
+	public function output_admin_notices() {
 		$notices = array();
 
-		if ( self::filter_input( self::QUERY_ARG ) ) {
+		if ( $this->filter_input( self::QUERY_ARG ) ) {
 
 			$notices[] = array(
 				'class' => 'error',
@@ -193,7 +219,7 @@ class PostLockdown {
 	 *
 	 * Registers the plugin's option name so it gets saved.
 	 */
-	public static function register_setting() {
+	public function register_setting() {
 		register_setting( self::KEY, self::KEY );
 	}
 
@@ -202,8 +228,8 @@ class PostLockdown {
 	 *
 	 * Adds the plugin's options page.
 	 */
-	public static function add_options_page() {
-		self::$page_hook = add_options_page( self::TITLE, self::TITLE, self::get_admin_cap(), self::KEY, array( __CLASS__, 'output_options_page' ) );
+	public function add_options_page() {
+		$this->page_hook = add_options_page( self::TITLE, self::TITLE, $this->get_admin_cap(), self::KEY, array( $this, 'output_options_page' ) );
 	}
 
 	/**
@@ -211,7 +237,7 @@ class PostLockdown {
 	 *
 	 * Gets an array of post types and their posts and includes the options page HTML.
 	 */
-	public static function output_options_page() {
+	public function output_options_page() {
 		include_once( plugin_dir_path( __FILE__ ) . 'view/options-page.php' );
 	}
 
@@ -220,10 +246,10 @@ class PostLockdown {
 	 *
 	 * Responds with a json encoded array of posts matching the query.
 	 */
-	public static function ajax_autocomplete() {
-		$posts = self::get_posts( array(
-			's' => self::filter_input( 'term' ),
-			'offset' => self::filter_input( 'offset', 'int' ),
+	public function ajax_autocomplete() {
+		$posts = $this->get_posts( array(
+			's' => $this->filter_input( 'term' ),
+			'offset' => $this->filter_input( 'offset', 'int' ),
 			'posts_per_page' => 10,
 		) );
 
@@ -235,9 +261,9 @@ class PostLockdown {
 	 *
 	 * Enqueues the required scripts and styles for the plugin options page.
 	 */
-	public static function enqueue_scripts( $hook ) {
+	public function enqueue_scripts( $hook ) {
 		// If it's not the plugin options page get out of here.
-		if ( $hook !== self::$page_hook ) {
+		if ( $hook !== $this->page_hook ) {
 			return;
 		}
 
@@ -255,19 +281,19 @@ class PostLockdown {
 
 		$data = array();
 
-		if ( self::load_options() ) {
+		if ( $this->have_posts ) {
 
-			$posts = self::get_posts( array(
+			$posts = $this->get_posts( array(
 				'nopaging' => true,
-				'post__in' => array_merge( self::$locked_post_ids, self::$protected_post_ids ),
+				'post__in' => array_merge( $this->locked_post_ids, $this->protected_post_ids ),
 			) );
 
 			foreach ( $posts as $post ) {
-				if ( self::is_post_locked( $post->ID ) ) {
+				if ( $this->is_post_locked( $post->ID ) ) {
 					$data['locked'][] = $post;
 				}
 
-				if ( self::is_post_protected( $post->ID ) ) {
+				if ( $this->is_post_protected( $post->ID ) ) {
 					$data['protected'][] = $post;
 				}
 			}
@@ -281,16 +307,16 @@ class PostLockdown {
 	 *
 	 * Removes the deleted post's ID from both locked and protected arrays.
 	 */
-	public static function update_option( $post_id ) {
-		if ( ! self::load_options() ) {
+	public function update_option( $post_id ) {
+		if ( ! $this->have_posts ) {
 			return;
 		}
 
-		unset( self::$locked_post_ids[ $post_id ], self::$protected_post_ids[ $post_id ] );
+		unset( $this->locked_post_ids[ $post_id ], $this->protected_post_ids[ $post_id ] );
 
 		update_option( self::KEY, array(
-			'locked_post_ids' => self::$locked_post_ids,
-			'protected_post_ids' => self::$protected_post_ids,
+			'locked_post_ids' => $this->locked_post_ids,
+			'protected_post_ids' => $this->protected_post_ids,
 		) );
 	}
 
@@ -308,9 +334,8 @@ class PostLockdown {
 	 * @param int $post_id
 	 * @return bool
 	 */
-	public static function is_post_locked( $post_id ) {
-		self::load_options();
-		return isset( self::$locked_post_ids[ $post_id ] );
+	public function is_post_locked( $post_id ) {
+		return isset( $this->locked_post_ids[ $post_id ] );
 	}
 
 	/**
@@ -318,9 +343,8 @@ class PostLockdown {
 	 * @param int $post_id
 	 * @return bool
 	 */
-	public static function is_post_protected( $post_id ) {
-		self::load_options();
-		return isset( self::$protected_post_ids[ $post_id ] );
+	public function is_post_protected( $post_id ) {
+		return isset( $this->protected_post_ids[ $post_id ] );
 	}
 
 	/**
@@ -330,7 +354,7 @@ class PostLockdown {
 	 * Also serves as a callback for the 'option_page_capability_{slug}' hook.
 	 * @return string The required capability.
 	 */
-	public static function get_admin_cap() {
+	public function get_admin_cap() {
 		return apply_filters( 'postlockdown_admin_capability', 'manage_options' );
 	}
 
@@ -341,26 +365,24 @@ class PostLockdown {
 	 * there are no locked or protected posts set.
 	 * @return bool Whether both arrays are empty.
 	 */
-	private static function load_options() {
-		if ( ! empty( self::$locked_post_ids ) && ! empty( self::$protected_post_ids ) ) {
-			return true;
-		}
-
+	private function load_options() {
 		$options = get_option( self::KEY, array() );
 
 		if ( ! empty( $options['locked_post_ids'] ) && is_array( $options['locked_post_ids'] ) ) {
-			self::$locked_post_ids = $options['locked_post_ids'];
+			$this->locked_post_ids = $options['locked_post_ids'];
 		}
 
-		self::$locked_post_ids = apply_filters( 'postlockdown_locked_posts', self::$locked_post_ids );
+		$this->locked_post_ids = apply_filters( 'postlockdown_locked_posts', $this->locked_post_ids );
 
 		if ( ! empty( $options['protected_post_ids'] ) && is_array( $options['protected_post_ids'] ) ) {
-			self::$protected_post_ids = $options['protected_post_ids'];
+			$this->protected_post_ids = $options['protected_post_ids'];
 		}
 
-		self::$protected_post_ids = apply_filters( 'postlockdown_protected_posts', self::$protected_post_ids );
+		$this->protected_post_ids = apply_filters( 'postlockdown_protected_posts', $this->protected_post_ids );
 
-		return ( ! empty( self::$locked_post_ids ) || ! empty( self::$protected_post_ids ) );
+		$have_posts = ( ! empty( $this->locked_post_ids ) || ! empty( $this->protected_post_ids ) );
+
+		return $have_posts;
 	}
 
 	/**
@@ -368,7 +390,7 @@ class PostLockdown {
 	 * @param array $args Array of args to merge with defaults passed to get_posts().
 	 * @return array Array of posts.
 	 */
-	private static function get_posts( $args = array() ) {
+	private function get_posts( $args = array() ) {
 		$excluded_post_types = array( 'nav_menu_item', 'revision' );
 
 		if ( class_exists( 'WooCommerce' ) ) {
@@ -399,7 +421,7 @@ class PostLockdown {
 	 * @param int $flags Additional flags to pass to filter_input().
 	 * @return mixed Filtered input.
 	 */
-	private static function filter_input( $key, $data_type = 'string', $type = INPUT_GET, $flags = 0 ) {
+	private function filter_input( $key, $data_type = 'string', $type = INPUT_GET, $flags = 0 ) {
 		switch ( $data_type ) {
 			case 'int':
 				$filter = FILTER_SANITIZE_NUMBER_INT;
