@@ -352,7 +352,7 @@ final class PostLockdown {
 	}
 
 	/**
-	 * Returns the required capability a user must be to bypass all
+	 * Returns the required capability a user must have to bypass all
 	 * locked and protected post restrictions. Defaults to 'manage_options'.
 	 *
 	 * Also serves as a callback for the 'option_page_capability_{slug}' hook.
