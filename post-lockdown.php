@@ -69,14 +69,6 @@ final class PostLockdown {
 		register_uninstall_hook( __FILE__, array( __CLASS__, 'uninstall' ) );
 	}
 
-	private function __clone() {
-
-	}
-
-	private function __wakeup() {
-
-	}
-
 	/**
 	 * Filter for the 'user_has_cap' hook.
 	 *
