@@ -23,17 +23,19 @@ final class PostLockdown {
 	/** Query arg used to determine if an admin notice is displayed */
 	const QUERY_ARG = 'plstatuschange';
 
+	/** @var boolean Whether there are any locked or protected posts. */
+	private $have_posts = false;
+
 	/** @var array List of post IDs which cannot be edited, trashed or deleted. */
 	private $locked_post_ids = array();
 
 	/** @var array List of post IDs which cannot be trashed or deleted. */
 	private $protected_post_ids = array();
 
-	/** @var boolean Whether there are any locked or protected posts. */
-	private $have_posts = false;
-
 	/** @var string Page hook returned by add_options_page(). */
 	private $page_hook;
+
+	/** @var object Reference to the unique instance of the class. */
 	private static $instance = null;
 
 	public static function get_instance() {
@@ -320,6 +322,15 @@ final class PostLockdown {
 	 */
 	public static function uninstall() {
 		delete_option( self::KEY );
+	}
+
+	/**
+	 * Returns whether there are any locked or protected posts set.
+	 *
+	 * @return bool Whether there are any locked or protected posts.
+	 */
+	public function have_posts() {
+		return (bool) $this->have_posts;
 	}
 
 	/**
