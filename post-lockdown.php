@@ -142,25 +142,30 @@ final class PostLockdown {
 
 		$post = get_post( $post_id );
 
+		/* If the post is not published we don't need to revert
+		 * anything so get out of here.
+		 */
+		if ( 'publish' !== $post->post_status ) {
+			return $data;
+		}
+
 		$changed = false;
 
-		if ( 'publish' === $post->post_status ) {
-			if ( 'publish' !== $data['post_status'] ) {
-				$changed = true;
-				$data['post_status'] = $post->post_status;
-			}
+		if ( 'publish' !== $data['post_status'] ) {
+			$changed = true;
+			$data['post_status'] = $post->post_status;
+		}
 
-			if ( $data['post_password'] !== $post->post_password ) {
-				$changed = true;
-				$data['post_password'] = $post->post_password;
-			}
+		if ( $data['post_password'] !== $post->post_password ) {
+			$changed = true;
+			$data['post_password'] = $post->post_password;
+		}
 
-			// Revert the post date if it's set to a future date.
-			if ( $data['post_date'] !== $post->post_date && strtotime( $data['post_date'] ) > time() ) {
-				$changed = true;
-				$data['post_date'] = $post->post_date;
-				$data['post_date_gmt'] = $post->post_date_gmt;
-			}
+		// Revert the post date if it's set to a future date.
+		if ( $data['post_date'] !== $post->post_date && strtotime( $data['post_date'] ) > time() ) {
+			$changed = true;
+			$data['post_date'] = $post->post_date;
+			$data['post_date_gmt'] = $post->post_date_gmt;
 		}
 
 		if ( $changed ) {
