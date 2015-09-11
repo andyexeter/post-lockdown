@@ -445,5 +445,4 @@ class PostLockdown {
 
 		return filter_input( $type, $key, $filter, $flags );
 	}
-
 }
