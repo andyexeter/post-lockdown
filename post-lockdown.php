@@ -59,14 +59,12 @@ class PostLockdown {
 
 		add_filter( 'option_page_capability_' . self::KEY, array( $this, 'get_admin_cap' ) );
 
-		if ( $this->have_posts() ) {
-			add_action( 'admin_notices', array( $this, 'output_admin_notices' ) );
-			add_action( 'delete_post', array( $this, 'update_option' ) );
+		add_action( 'admin_notices', array( $this, 'output_admin_notices' ) );
+		add_action( 'delete_post', array( $this, 'update_option' ) );
 
-			add_filter( 'user_has_cap', array( $this, 'filter_cap' ), 10, 3 );
-			add_filter( 'wp_insert_post_data', array( $this, 'prevent_status_change' ), 10, 2 );
-			add_filter( 'removable_query_args', array( $this, 'remove_query_arg' ) );
-		}
+		add_filter( 'user_has_cap', array( $this, 'filter_cap' ), 10, 3 );
+		add_filter( 'wp_insert_post_data', array( $this, 'prevent_status_change' ), 10, 2 );
+		add_filter( 'removable_query_args', array( $this, 'remove_query_arg' ) );
 
 		register_uninstall_hook( __FILE__, array( __CLASS__, 'uninstall' ) );
 	}
@@ -78,6 +76,11 @@ class PostLockdown {
 	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
 	public function filter_cap( $allcaps, $cap, $args ) {
+
+		if ( ! $this->have_posts() ) {
+			return $allcaps;
+		}
+
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
 			'delete_post' => true,
 			'edit_post' => true,
@@ -119,9 +122,9 @@ class PostLockdown {
 	 */
 	public function prevent_status_change( $data, $postarr ) {
 		/* If the user has the required capability to bypass
-		 * restrictions get out of here.
+		 * restrictions or there are no locked or protected posts get out of here.
 		 */
-		if ( current_user_can( $this->get_admin_cap() ) ) {
+		if ( current_user_can( $this->get_admin_cap() ) || ! $this->have_posts() ) {
 			return $data;
 		}
 
