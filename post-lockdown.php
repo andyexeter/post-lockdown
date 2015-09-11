@@ -12,7 +12,7 @@ if ( is_admin() ) {
 	PostLockdown::get_instance();
 }
 
-final class PostLockdown {
+class PostLockdown {
 
 	/** Plugin key for options and the option page. */
 	const KEY = 'postlockdown';
@@ -22,9 +22,6 @@ final class PostLockdown {
 
 	/** Query arg used to determine if an admin notice is displayed */
 	const QUERY_ARG = 'plstatuschange';
-
-	/** @var boolean Whether there are any locked or protected posts. */
-	private $have_posts = false;
 
 	/** @var array List of post IDs which cannot be edited, trashed or deleted. */
 	private $locked_post_ids = array();
@@ -36,8 +33,13 @@ final class PostLockdown {
 	private $page_hook;
 
 	/** @var object Reference to the unique instance of the class. */
-	private static $instance = null;
+	private static $instance;
 
+	/**
+	 * Returns a single instance of the PostLockdown class.
+	 *
+	 * @return PostLockdown object instance
+	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -46,20 +48,18 @@ final class PostLockdown {
 		return self::$instance;
 	}
 
-	/**
-	 * Adds the required action and filter callbacks.
-	 */
 	private function __construct() {
-		$this->have_posts = $this->load_options();
+		$this->load_options();
 
 		add_action( 'admin_init', array( $this, 'register_setting' ) );
+
 		add_action( 'admin_menu', array( $this, 'add_options_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'wp_ajax_pl_autocomplete', array( $this, 'ajax_autocomplete' ) );
 
 		add_filter( 'option_page_capability_' . self::KEY, array( $this, 'get_admin_cap' ) );
 
-		if ( $this->have_posts ) {
+		if ( $this->have_posts() ) {
 			add_action( 'admin_notices', array( $this, 'output_admin_notices' ) );
 			add_action( 'delete_post', array( $this, 'update_option' ) );
 
@@ -104,7 +104,7 @@ final class PostLockdown {
 		if ( 'edit_post' === $args[0] ) {
 			$allcaps[ $cap[0] ] = ! $this->is_post_locked( $post_id );
 		} else {
-			$allcaps[ $cap[0] ] = ! $this->is_post_protected( $post_id ) && ! $this->is_post_locked( $post_id );
+			$allcaps[ $cap[0] ] = ( ! $this->is_post_protected( $post_id ) && ! $this->is_post_locked( $post_id ) );
 		}
 
 		return $allcaps;
@@ -268,10 +268,7 @@ final class PostLockdown {
 
 		$assets_path = plugin_dir_url( __FILE__ ) . 'view/assets/';
 
-		$ext = '.min';
-		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-			$ext = '';
-		}
+		$ext = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		wp_enqueue_style( self::KEY, $assets_path . 'css/postlockdown' . $ext . '.css', null, null );
 
@@ -280,7 +277,7 @@ final class PostLockdown {
 
 		$data = array();
 
-		if ( $this->have_posts ) {
+		if ( $this->have_posts() ) {
 
 			$posts = $this->get_posts( array(
 				'nopaging' => true,
@@ -324,31 +321,45 @@ final class PostLockdown {
 		delete_option( self::KEY );
 	}
 
+	public function get_locked_post_ids() {
+		return apply_filters( 'postlockdown_locked_posts', $this->locked_post_ids );
+	}
+
+	public function get_protected_post_ids() {
+		return apply_filters( 'postlockdown_protected_posts', $this->protected_post_ids );
+	}
+
 	/**
 	 * Returns whether there are any locked or protected posts set.
 	 *
-	 * @return bool Whether there are any locked or protected posts.
+	 * @return bool
 	 */
 	public function have_posts() {
-		return (bool) $this->have_posts;
+		return ( $this->get_locked_post_ids() || $this->get_protected_post_ids() );
 	}
 
 	/**
-	 * Returns whether a post ID is locked.
-	 * @param int $post_id
+	 * Returns whether a post is locked.
+	 *
+	 * @param int $post_id The ID of the post to check.
 	 * @return bool
 	 */
 	public function is_post_locked( $post_id ) {
-		return isset( $this->locked_post_ids[ $post_id ] );
+		$locked_post_ids = $this->get_locked_post_ids();
+
+		return isset( $locked_post_ids[ $post_id ] );
 	}
 
 	/**
-	 * Returns whether a post ID is protected.
-	 * @param int $post_id
+	 * Returns whether a post is protected.
+	 *
+	 * @param int $post_id The ID of the post to check.
 	 * @return bool
 	 */
 	public function is_post_protected( $post_id ) {
-		return isset( $this->protected_post_ids[ $post_id ] );
+		$protected_post_ids = $this->get_protected_post_ids();
+
+		return isset( $protected_post_ids[ $post_id ] );
 	}
 
 	/**
@@ -356,6 +367,7 @@ final class PostLockdown {
 	 * locked and protected post restrictions. Defaults to 'manage_options'.
 	 *
 	 * Also serves as a callback for the 'option_page_capability_{slug}' hook.
+	 *
 	 * @return string The required capability.
 	 */
 	public function get_admin_cap() {
@@ -363,11 +375,8 @@ final class PostLockdown {
 	}
 
 	/**
-	 * Sets the array of locked and protected post IDs.
+	 * Sets the arrays of locked and protected post IDs.
 	 *
-	 * The return value is used to bail out of functions early if
-	 * there are no locked or protected posts set.
-	 * @return bool Whether both arrays are empty.
 	 */
 	private function load_options() {
 		$options = get_option( self::KEY, array() );
@@ -376,21 +385,14 @@ final class PostLockdown {
 			$this->locked_post_ids = $options['locked_post_ids'];
 		}
 
-		$this->locked_post_ids = apply_filters( 'postlockdown_locked_posts', $this->locked_post_ids );
-
 		if ( ! empty( $options['protected_post_ids'] ) && is_array( $options['protected_post_ids'] ) ) {
 			$this->protected_post_ids = $options['protected_post_ids'];
 		}
-
-		$this->protected_post_ids = apply_filters( 'postlockdown_protected_posts', $this->protected_post_ids );
-
-		$have_posts = ( ! empty( $this->locked_post_ids ) || ! empty( $this->protected_post_ids ) );
-
-		return $have_posts;
 	}
 
 	/**
 	 * Convenience wrapper for get_posts().
+	 *
 	 * @param array $args Array of args to merge with defaults passed to get_posts().
 	 * @return array Array of posts.
 	 */
@@ -419,6 +421,7 @@ final class PostLockdown {
 
 	/**
 	 * Convenience wrapper for PHP's filter_input() function.
+	 *
 	 * @param string $key Input key.
 	 * @param string $data_type Input data type.
 	 * @param int $type Type of input. INPUT_POST or INPUT_GET (Default).
