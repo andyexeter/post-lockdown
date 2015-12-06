@@ -7,46 +7,31 @@
 		</p>
 		<table class="form-table">
 			<tbody>
-				<tr>
-					<th><?php esc_html_e( 'Locked Posts', 'postlockdown' ); ?></th>
-					<td>
-						<div class="pl-posts-container">
-							<div class="pl-posts pl-posts-available">
-								<div class="pl-searchbox">
-									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="<?php esc_html_e( 'Search...', 'postlockdown' ); ?>" />
+				<?php foreach ( $blocks as $block ) { ?>
+					<tr>
+						<th><?php echo esc_html( $block['heading'] ); ?></th>
+						<td>
+							<div class="pl-posts-container">
+								<div class="pl-posts pl-posts-available">
+									<div class="pl-searchbox">
+										<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="<?php esc_html_e( 'Search...', 'postlockdown' ); ?>" />
+									</div>
+									<span class="spinner"></span>
+									<ul class="pl-multiselect">
+									</ul>
 								</div>
-								<span class="spinner"></span>
-								<ul class="pl-multiselect">
-								</ul>
-							</div>
-							<div class="pl-posts pl-posts-selected">
-								<ul class="pl-multiselect" data-key="locked" data-input_name="<?php esc_attr_e( PostLockdown::KEY ); ?>[locked_post_ids]">
-								</ul>
-							</div>
-						</div>
-						<p class="description"><?php esc_html_e( 'Locked posts cannot be edited, trashed or deleted by non-admins', 'postlockdown' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th><?php esc_html_e( 'Protected Posts', 'postlockdown' ); ?></th>
-					<td>
-						<div class="pl-posts-container">
-							<div class="pl-posts pl-posts-available">
-								<div class="pl-searchbox">
-									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="<?php esc_html_e( 'Search...', 'postlockdown' ); ?>" />
+								<div class="pl-posts pl-posts-selected">
+									<ul class="pl-multiselect"
+										data-key="<?php echo esc_attr( $block['key'] ); ?>"
+										data-input_name="<?php esc_attr_e( PostLockdown::KEY ); ?>[<?php echo esc_attr( $block['input_name'] ); ?>]"
+										>
+									</ul>
 								</div>
-								<span class="spinner"></span>
-								<ul class="pl-multiselect">
-								</ul>
 							</div>
-							<div class="pl-posts pl-posts-selected">
-								<ul class="pl-multiselect" data-key="protected" data-input_name="<?php esc_attr_e( PostLockdown::KEY ); ?>[protected_post_ids]">
-								</ul>
-							</div>
-						</div>
-						<p class="description"><?php esc_html_e( 'Protected posts cannot be trashed or deleted by non-admins', 'postlockdown' ); ?></p>
-					</td>
-				</tr>
+							<p class="description"><?php echo esc_html( $block['description'] ); ?></p>
+						</td>
+					</tr>
+				<?php } ?>
 			</tbody>
 		</table>
 		<input name="submit" type="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
