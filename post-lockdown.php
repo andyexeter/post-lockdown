@@ -9,7 +9,7 @@
  * Text Domain: postlockdown
  */
 if ( is_admin() ) {
-	PostLockdown::get_instance();
+	add_action( 'init', array( 'PostLockdown', 'get_instance' ), 99 );
 }
 
 class PostLockdown {
@@ -76,7 +76,6 @@ class PostLockdown {
 	 * one of the capabilities we're interested in on a locked or protected post.
 	 */
 	public function filter_cap( $allcaps, $cap, $args ) {
-
 		if ( ! $this->have_posts() ) {
 			return $allcaps;
 		}
@@ -281,7 +280,6 @@ class PostLockdown {
 		$data = array();
 
 		if ( $this->have_posts() ) {
-
 			$posts = $this->get_posts( array(
 				'nopaging' => true,
 				'post__in' => array_merge( $this->locked_post_ids, $this->protected_post_ids ),
