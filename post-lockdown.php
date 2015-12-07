@@ -69,11 +69,19 @@ class PostLockdown {
 		register_uninstall_hook( __FILE__, array( __CLASS__, '_uninstall' ) );
 	}
 
-	public function get_locked_post_ids() {
+	public function get_locked_post_ids( $suppress_filters = false ) {
+		if ( $suppress_filters ) {
+			return $this->locked_post_ids;
+		}
+
 		return apply_filters( 'postlockdown_locked_posts', $this->locked_post_ids );
 	}
 
-	public function get_protected_post_ids() {
+	public function get_protected_post_ids( $suppress_filters = false ) {
+		if ( $suppress_filters ) {
+			return $this->protected_post_ids;
+		}
+
 		return apply_filters( 'postlockdown_protected_posts', $this->protected_post_ids );
 	}
 
@@ -92,7 +100,11 @@ class PostLockdown {
 	 * @param int $post_id The ID of the post to check.
 	 * @return bool
 	 */
-	public function is_post_locked( $post_id ) {
+	public function is_post_locked( $post_id, $suppress_filters = false ) {
+		if ( $suppress_filters ) {
+			return isset( $this->locked_post_ids[ $post_id ] );
+		}
+
 		$locked_post_ids = $this->get_locked_post_ids();
 
 		return isset( $locked_post_ids[ $post_id ] );
@@ -104,7 +116,11 @@ class PostLockdown {
 	 * @param int $post_id The ID of the post to check.
 	 * @return bool
 	 */
-	public function is_post_protected( $post_id ) {
+	public function is_post_protected( $post_id, $suppress_filters = false ) {
+		if ( $suppress_filters ) {
+			return isset( $this->protected_post_ids[ $post_id ] );
+		}
+
 		$protected_post_ids = $this->get_protected_post_ids();
 
 		return isset( $protected_post_ids[ $post_id ] );
@@ -352,7 +368,7 @@ class PostLockdown {
 		if ( $this->have_posts() ) {
 			$posts = $this->get_posts( array(
 				'nopaging' => true,
-				'post__in' => array_merge( $this->locked_post_ids, $this->protected_post_ids ),
+				'post__in' => array_merge( $this->get_locked_post_ids( true ), $this->get_protected_post_ids( true ) ),
 			) );
 
 			foreach ( $posts as $post ) {
