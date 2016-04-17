@@ -296,7 +296,7 @@ class PostLockdown {
 		}
 
 		if ( ! empty( $notices ) ) {
-			include_once( __DIR__ . 'view/admin-notices.php' );
+			include_once( __DIR__ . '/view/admin-notices.php' );
 		}
 	}
 
@@ -340,7 +340,7 @@ class PostLockdown {
 			'description' => __( 'Protected posts cannot be trashed or deleted by non-admins', 'postlockdown' ),
 		);
 
-		include_once( __DIR__ . 'view/options-page.php' );
+		include_once( __DIR__ . '/view/options-page.php' );
 	}
 
 	/**
