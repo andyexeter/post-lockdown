@@ -197,7 +197,7 @@ class PostLockdown {
 	 * Reverts any changes made by a non-admin to a published protected post's status, privacy and password.
 	 * Also reverts any date changes if they're set to a future date. If anything is changed a filter for
 	 * the 'redirect_post_location' hook is added to display an admin notice letting the user know we reverted it.
-	 * @param array $data Sanitized post data.
+	 * @param array $data    Sanitized post data.
 	 * @param array $postarr Raw post data. Contains post ID.
 	 * @return array
 	 */
@@ -291,7 +291,7 @@ class PostLockdown {
 		if ( $this->filter_input( self::QUERY_ARG ) ) {
 			$notices[] = array(
 				'class'   => 'error',
-				'message' => esc_html( 'This post is protected by Post Lockdown and must stay published.', 'postlockdown' ),
+				'message' => esc_html( 'This post is protected by Post Lockdown and must stay published.' ),
 			);
 		}
 
