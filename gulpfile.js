@@ -2,9 +2,7 @@
 	'use strict';
 
 	var gulp = require( 'gulp' ),
-		//debug = require( 'gulp-debug' ),
 		jshint = require( 'gulp-jshint' ),
-		//watch = require( 'gulp-watch' ),
 		concat = require( 'gulp-concat' ),
 		uglify = require( 'gulp-uglify' ),
 		rename = require( 'gulp-rename' ),
