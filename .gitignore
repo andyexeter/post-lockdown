@@ -23,5 +23,5 @@
 ehthumbs.db
 Thumbs.db
 
-node_modules/*
-nbproject/*
+/node_modules/*
+/.idea/*
