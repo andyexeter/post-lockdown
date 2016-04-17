@@ -97,7 +97,8 @@ class PostLockdown {
 	/**
 	 * Returns whether a post is locked.
 	 *
-	 * @param int $post_id The ID of the post to check.
+	 * @param int  $post_id The ID of the post to check.
+	 * @param bool $suppress_filters
 	 * @return bool
 	 */
 	public function is_post_locked( $post_id, $suppress_filters = false ) {
@@ -113,7 +114,8 @@ class PostLockdown {
 	/**
 	 * Returns whether a post is protected.
 	 *
-	 * @param int $post_id The ID of the post to check.
+	 * @param int  $post_id The ID of the post to check.
+	 * @param bool $suppress_filters
 	 * @return bool
 	 */
 	public function is_post_protected( $post_id, $suppress_filters = false ) {
@@ -143,6 +145,12 @@ class PostLockdown {
 	 *
 	 * Sets the capability to false when current_user_can() has been called on
 	 * one of the capabilities we're interested in on a locked or protected post.
+	 * @param array $allcaps All capabilities of the user.
+	 * @param array $cap     [0] Required capability.
+	 * @param array $args    [0] Requested capability.
+	 *                       [1] User ID.
+	 *                       [2] Post ID.
+	 * @return array
 	 */
 	public function _filter_cap( $allcaps, $cap, $args ) {
 		/* If there are no locked or protected posts, or the user
@@ -154,7 +162,7 @@ class PostLockdown {
 
 		$the_caps = apply_filters( 'postlockdown_capabilities', array(
 			'delete_post' => true,
-			'edit_post' => true,
+			'edit_post'   => true,
 		) );
 
 		// If it's not a capability we're interested in get out of here.
@@ -189,6 +197,9 @@ class PostLockdown {
 	 * Reverts any changes made by a non-admin to a published protected post's status, privacy and password.
 	 * Also reverts any date changes if they're set to a future date. If anything is changed a filter for
 	 * the 'redirect_post_location' hook is added to display an admin notice letting the user know we reverted it.
+	 * @param array $data Sanitized post data.
+	 * @param array $postarr Raw post data. Contains post ID.
+	 * @return array
 	 */
 	public function _prevent_status_change( $data, $postarr ) {
 		/* If the user has the required capability to bypass
@@ -248,6 +259,8 @@ class PostLockdown {
 	 * Adds the plugin's query arg to the redirect URI when
 	 * the status of a protected post changes to indicate that
 	 * an error message should be displayed.
+	 * @param string $location The redirect URL.
+	 * @return string
 	 */
 	public function _redirect_post_location( $location ) {
 		return add_query_arg( self::QUERY_ARG, 1, $location );
@@ -258,6 +271,8 @@ class PostLockdown {
 	 *
 	 * Adds the plugin's query arg to the array of args
 	 * removed by WordPress using the JavaScript History API.
+	 * @param array $args Array of query args to be removed.
+	 * @return array
 	 */
 	public function _remove_query_arg( $args ) {
 		$args[] = self::QUERY_ARG;
@@ -275,7 +290,7 @@ class PostLockdown {
 
 		if ( $this->filter_input( self::QUERY_ARG ) ) {
 			$notices[] = array(
-				'class' => 'error',
+				'class'   => 'error',
 				'message' => esc_html( 'This post is protected by Post Lockdown and must stay published.', 'postlockdown' ),
 			);
 		}
@@ -312,16 +327,16 @@ class PostLockdown {
 		$blocks = array();
 
 		$blocks[] = array(
-			'key' => 'locked',
-			'heading' => __( 'Locked Posts', 'postlockdown' ),
-			'input_name' => 'locked_post_ids',
+			'key'         => 'locked',
+			'heading'     => __( 'Locked Posts', 'postlockdown' ),
+			'input_name'  => 'locked_post_ids',
 			'description' => __( 'Locked posts cannot be edited, trashed or deleted by non-admins', 'postlockdown' ),
 		);
 
 		$blocks[] = array(
-			'key' => 'protected',
-			'heading' => __( 'Protected Posts', 'postlockdown' ),
-			'input_name' => 'protected_post_ids',
+			'key'         => 'protected',
+			'heading'     => __( 'Protected Posts', 'postlockdown' ),
+			'input_name'  => 'protected_post_ids',
 			'description' => __( 'Protected posts cannot be trashed or deleted by non-admins', 'postlockdown' ),
 		);
 
@@ -335,8 +350,8 @@ class PostLockdown {
 	 */
 	public function _ajax_autocomplete() {
 		$posts = $this->get_posts( array(
-			's' => $this->filter_input( 'term' ),
-			'offset' => $this->filter_input( 'offset', 'int' ),
+			's'              => $this->filter_input( 'term' ),
+			'offset'         => $this->filter_input( 'offset', 'int' ),
 			'posts_per_page' => 10,
 		) );
 
@@ -347,6 +362,7 @@ class PostLockdown {
 	 * Callback for the 'admin_enqueue_scripts' hook.
 	 *
 	 * Enqueues the required scripts and styles for the plugin options page.
+	 * @param string $hook The current admin screen.
 	 */
 	public function _enqueue_scripts( $hook ) {
 		// If it's not the plugin options page get out of here.
@@ -389,12 +405,13 @@ class PostLockdown {
 	 * Callback for the 'delete_post' hook.
 	 *
 	 * Removes the deleted post's ID from both locked and protected arrays.
+	 * @param int $post_id Deleted post's ID.
 	 */
 	public function _update_option( $post_id ) {
 		unset( $this->locked_post_ids[ $post_id ], $this->protected_post_ids[ $post_id ] );
 
 		update_option( self::KEY, array(
-			'locked_post_ids' => $this->locked_post_ids,
+			'locked_post_ids'    => $this->locked_post_ids,
 			'protected_post_ids' => $this->protected_post_ids,
 		) );
 	}
@@ -444,7 +461,7 @@ class PostLockdown {
 		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
 
 		$defaults = array(
-			'post_type' => array_diff( get_post_types(), $excluded_post_types ),
+			'post_type'   => array_diff( get_post_types(), $excluded_post_types ),
 			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
 		);
 
@@ -456,10 +473,10 @@ class PostLockdown {
 	/**
 	 * Convenience wrapper for PHP's filter_input() function.
 	 *
-	 * @param string $key Input key.
+	 * @param string $key       Input key.
 	 * @param string $data_type Input data type.
-	 * @param int $type Type of input. INPUT_POST or INPUT_GET (Default).
-	 * @param int $flags Additional flags to pass to filter_input().
+	 * @param int    $type      Type of input. INPUT_POST or INPUT_GET (Default).
+	 * @param int    $flags     Additional flags to pass to filter_input().
 	 * @return mixed Filtered input.
 	 */
 	private function filter_input( $key, $data_type = 'string', $type = INPUT_GET, $flags = 0 ) {
