@@ -5,10 +5,10 @@ class PostLockdown_OptionsPage {
 	/** @var string Page hook returned by add_options_page(). */
 	private $page_hook;
 	/** @var  PostLockdown */
-	private $post_lockdown;
+	private $postlockdown;
 
 	public function __construct( $postlockdown ) {
-		$this->post_lockdown = $postlockdown;
+		$this->postlockdown = $postlockdown;
 
 		add_action( 'admin_init', array( $this, '_register_setting' ) );
 		add_action( 'admin_menu', array( $this, '_add_options_page' ) );
@@ -16,7 +16,7 @@ class PostLockdown_OptionsPage {
 		add_action( 'admin_enqueue_scripts', array( $this, '_enqueue_scripts' ) );
 		add_action( 'wp_ajax_pl_autocomplete', array( $this, '_ajax_autocomplete' ) );
 
-		add_filter( 'option_page_capability_' . PostLockdown::KEY, array( $this->post_lockdown, 'get_admin_cap' ) );
+		add_filter( 'option_page_capability_' . PostLockdown::KEY, array( $this->postlockdown, 'get_admin_cap' ) );
 	}
 
 	/**
@@ -37,7 +37,7 @@ class PostLockdown_OptionsPage {
 		$this->page_hook = add_options_page(
 			self::PAGE_TITLE,
 			self::PAGE_TITLE,
-			$this->post_lockdown->get_admin_cap(),
+			$this->postlockdown->get_admin_cap(),
 			PostLockdown::KEY,
 			array( $this, '_output_options_page' )
 		);
@@ -46,7 +46,7 @@ class PostLockdown_OptionsPage {
 	/**
 	 * Callback used by add_options_page().
 	 *
-	 * Gets an array of post types and their posts and includes the options page HTML.
+	 * Outputs the options page HTML.
 	 */
 	public function _output_options_page() {
 		$blocks = array();
@@ -65,7 +65,7 @@ class PostLockdown_OptionsPage {
 			'description' => __( 'Protected posts cannot be trashed or deleted by non-admins', 'postlockdown' ),
 		);
 
-		include_once( $this->post_lockdown->plugin_path . 'view/options-page.php' );
+		include_once( $this->postlockdown->plugin_path . 'view/options-page.php' );
 	}
 
 	/**
@@ -87,6 +87,7 @@ class PostLockdown_OptionsPage {
 	 * Callback for the 'admin_enqueue_scripts' hook.
 	 *
 	 * Enqueues the required scripts and styles for the plugin options page.
+	 *
 	 * @param string $hook The current admin screen.
 	 */
 	public function _enqueue_scripts( $hook ) {
@@ -95,7 +96,7 @@ class PostLockdown_OptionsPage {
 			return;
 		}
 
-		$assets_path = $this->post_lockdown->plugin_url . 'view/assets/';
+		$assets_path = $this->postlockdown->plugin_url . 'view/assets/';
 
 		$ext = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
@@ -106,21 +107,21 @@ class PostLockdown_OptionsPage {
 
 		$data = array();
 
-		if ( $this->post_lockdown->have_posts() ) {
+		if ( $this->postlockdown->have_posts() ) {
 			$posts = $this->get_posts( array(
 				'nopaging' => true,
 				'post__in' => array_merge(
-					$this->post_lockdown->get_locked_post_ids( true ),
-					$this->post_lockdown->get_protected_post_ids( true )
+					$this->postlockdown->get_locked_post_ids( true ),
+					$this->postlockdown->get_protected_post_ids( true )
 				),
 			) );
 
 			foreach ( $posts as $post ) {
-				if ( $this->post_lockdown->is_post_locked( $post->ID ) ) {
+				if ( $this->postlockdown->is_post_locked( $post->ID ) ) {
 					$data['locked'][] = $post;
 				}
 
-				if ( $this->post_lockdown->is_post_protected( $post->ID ) ) {
+				if ( $this->postlockdown->is_post_protected( $post->ID ) ) {
 					$data['protected'][] = $post;
 				}
 			}

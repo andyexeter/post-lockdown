@@ -13,7 +13,6 @@ if ( is_admin() ) {
 	require_once __DIR__ . '/classes/class.post-lockdown-options-page.php';
 	require_once __DIR__ . '/classes/class.post-lockdown-admin-notice.php';
 	require_once __DIR__ . '/classes/class.post-lockdown-status-column.php';
-	require_once __DIR__ . '/classes/class.post-lockdown-update.php';
 
 	global $postlockdown;
 	$postlockdown = new PostLockdown( plugin_dir_path( __FILE__ ), plugin_dir_url( __FILE__ ) );

@@ -13,6 +13,8 @@ class PostLockdown_StatusColumn {
 	}
 
 	/**
+	 * Callback for the 'admin_init' hook.
+	 *
 	 * Adds filters for user options retrieval to modify their hidden columns lists
 	 * for each post type.
 	 */
@@ -35,6 +37,13 @@ class PostLockdown_StatusColumn {
 	}
 
 	/**
+	 * Filter for all 'get_user_option_manageedit-{$post_type}columnshidden' hooks
+	 * added in the _set_post_type_hooks() method
+	 * @see PostLockdown_StatusColumn::_set_post_type_hooks()
+	 *
+	 * Hides the status column for the user if they haven't already hidden any columns
+	 * on the current screen.
+	 *
 	 * @param         $result
 	 * @param         $option
 	 * @param WP_User $user
@@ -56,7 +65,11 @@ class PostLockdown_StatusColumn {
 	}
 
 	/**
-	 * Adds our status column into the post list.
+	 * Filter for the manage_{$type}_columns hook where $type is one of
+	 * 'page' or 'post'.
+	 *
+	 * Adds the plugin's status column to all post list tables.
+	 *
 	 * @param array $columns
 	 * @return array
 	 */
@@ -77,9 +90,13 @@ class PostLockdown_StatusColumn {
 	}
 
 	/**
+	 * Callback for the manage_{$type}_custom_column hook where $type is one of
+	 * 'page' or 'post'.
+	 *
+	 * Prints the relevant output, if any, for the status column.
 	 *
 	 * @param string $column
-	 * @param int $post_id
+	 * @param int    $post_id
 	 */
 	public function _column_output( $column, $post_id ) {
 		/** @var PostLockdown $postlockdown */

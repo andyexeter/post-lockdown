@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class PostLockdown
+ */
 class PostLockdown {
 	/** Plugin key for options and the option page. */
 	const KEY = 'postlockdown';
@@ -21,7 +24,7 @@ class PostLockdown {
 		$this->plugin_path = $plugin_path;
 		$this->plugin_url = $plugin_url;
 
-		$this->setup_registry();
+		$this->load_registry();
 		$this->load_options();
 
 		add_action( 'delete_post', array( $this, '_update_option' ) );
@@ -119,6 +122,7 @@ class PostLockdown {
 	 *
 	 * Sets the capability to false when current_user_can() has been called on
 	 * one of the capabilities we're interested in on a locked or protected post.
+	 *
 	 * @param array $allcaps All capabilities of the user.
 	 * @param array $cap     [0] Required capability.
 	 * @param array $args    [0] Requested capability.
@@ -171,6 +175,7 @@ class PostLockdown {
 	 * Reverts any changes made by a non-admin to a published protected post's status, privacy and password.
 	 * Also reverts any date changes if they're set to a future date. If anything is changed a filter for
 	 * the 'redirect_post_location' hook is added to display an admin notice letting the user know we reverted it.
+	 *
 	 * @param array $data    Sanitized post data.
 	 * @param array $postarr Raw post data. Contains post ID.
 	 * @return array
@@ -216,6 +221,7 @@ class PostLockdown {
 	 * Callback for the 'delete_post' hook.
 	 *
 	 * Removes the deleted post's ID from both locked and protected arrays.
+	 *
 	 * @param int $post_id Deleted post's ID.
 	 */
 	public function _update_option( $post_id ) {
@@ -231,18 +237,16 @@ class PostLockdown {
 	 * Callback for register_uninstall_hook() function.
 	 *
 	 * Removes the plugin option from the database when it is uninstalled.
-	 * @access private
 	 */
 	public static function _uninstall() {
 		delete_option( self::KEY );
 	}
 
 	/**
-	 *
+	 * Initialises class instances and adds them to our registry array.
 	 */
-	private function setup_registry() {
+	private function load_registry() {
 		$this->registry = array(
-			'Update'       => new PostLockdown_Update( $this->plugin_path ),
 			'AdminNotice'  => new PostLockdown_AdminNotice( $this->plugin_path ),
 			'OptionsPage'  => new PostLockdown_OptionsPage( $this ),
 			'StatusColumn' => new PostLockdown_StatusColumn(),
