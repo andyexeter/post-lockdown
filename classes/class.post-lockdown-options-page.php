@@ -140,11 +140,7 @@ class PostLockdown_OptionsPage {
 		$excluded_post_types = array( 'nav_menu_item', 'revision' );
 
 		if ( class_exists( 'WooCommerce' ) ) {
-			$excluded_post_types = array_merge( $excluded_post_types, array(
-				'product_variation',
-				'shop_order',
-				'shop_coupon',
-			) );
+			array_push( $excluded_post_types, 'product_variation', 'shop_order', 'shop_coupon' );
 		}
 
 		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
