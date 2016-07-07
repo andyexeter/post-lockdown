@@ -23,5 +23,7 @@
 ehthumbs.db
 Thumbs.db
 
-/node_modules/*
-/.idea/*
+node_modules/*
+.idea/*
+
+/view/assets/*
