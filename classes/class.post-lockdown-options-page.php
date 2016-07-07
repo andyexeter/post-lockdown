@@ -102,8 +102,7 @@ class PostLockdown_OptionsPage {
 
 		wp_enqueue_style( PostLockdown::KEY, $assets_path . 'css/postlockdown' . $ext . '.css', null, null );
 
-		wp_enqueue_script( 'plmultiselect', $assets_path . 'js/jquery.plmultiselect' . $ext . '.js', array( 'jquery-ui-autocomplete' ), null, true );
-		wp_enqueue_script( PostLockdown::KEY, $assets_path . 'js/postlockdown' . $ext . '.js', array( 'plmultiselect' ), null, true );
+		wp_enqueue_script( PostLockdown::KEY, $assets_path . 'js/postlockdown' . $ext . '.js', array( 'jquery-ui-autocomplete' ), null, true );
 
 		$data = array();
 
