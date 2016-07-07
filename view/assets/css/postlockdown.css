@@ -15,7 +15,6 @@
   float: left;
   width: 49%;
   position: relative;
-  /* Test */
 }
 
 .pl-posts:first-child {
@@ -106,4 +105,8 @@
 
 .ui-autocomplete {
   display: none !important;
+}
+
+.fixed .column-postlockdown_status {
+  width: 10%;
 }

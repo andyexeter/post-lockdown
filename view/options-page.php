@@ -1,5 +1,5 @@
 <div class="wrap">
-	<h2><?php echo esc_html( PostLockdown::TITLE ); ?></h2>
+	<h2><?php echo esc_html( PostLockdown_OptionsPage::PAGE_TITLE ); ?></h2>
 	<form action="options.php" method="post">
 		<?php settings_fields( PostLockdown::KEY ); ?>
 		<p>

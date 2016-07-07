@@ -47,18 +47,13 @@ The following filters are used throughout the plugin:
 
 = How do I migrate from v1.x.x to v2.0? =
 
-The plugin now uses the singleton design pattern for the main class instead of a static class.
+The plugin now stores an instance of the class in a global variable instead of using static class methods.
 If you use any of the methods like `PostLockdown::is_post_protected( $post_id )` in v1.x.x then you'll need to update
-your code to the following: `PostLockdown::get_instance()->is_post_protected( $post_id );`
-
-The instance can be saved into a variable for reuse:
+your code to the following:
 
 `
-$pl = PostLockdown::get_instance();
-
-if ( $pl->have_posts() ) {
-	echo $pl->is_post_locked( 7 );
-}
+global $postlockdown;
+$postlockdown->is_post_protected( $post_id );
 `
 
 == Screenshots ==
@@ -71,10 +66,9 @@ if ( $pl->have_posts() ) {
 
 = 2.0 =
 This is a major version update. Please read the following notes carefully before updating.
-The main plugin class has been rewritten using the singleton design pattern. This means if you
-are a developer using any of the static methods from the class i.e `PostLockdown::is_post_protected()`
-then you will need to update your code to get an instance of the class instead. Please see the FAQ for
-more information.
+The main plugin class has been rewritten using an instance of the class instead of static class methods.
+This means if you are a developer using any of the static methods from the class  then you will need
+to update your code to get an instance of the class instead. Please see the FAQ for more information.
 
 = 1.1.1 =
 * Fixed PHP warning about missing admin notices file.
