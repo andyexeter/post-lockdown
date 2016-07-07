@@ -23,7 +23,7 @@ module.exports = function( grunt ) {
 		},
 
 		clean: {
-			build: [ 'view/assets' ]
+			build: [ 'view/assets/js', 'view/assets/css' ]
 		},
 
 		sass: {
