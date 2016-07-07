@@ -27,6 +27,8 @@ class PostLockdown_StatusColumn {
 
 		foreach ( $post_types as $post_type ) {
 			/*
+			 * Credit: Yoast SEO
+			 *
 			 * Use the `get_user_option_{$option}` filter to change the output of the get_user_option
 			 * function for the `manage{$screen}columnshidden` option, which is based on the current
 			 * admin screen. The admin screen we want to target is the `edit-{$post_type}` screen.
@@ -47,6 +49,7 @@ class PostLockdown_StatusColumn {
 	 * @param         $result
 	 * @param         $option
 	 * @param WP_User $user
+	 *
 	 * @return array
 	 */
 	public function _column_hidden( $result, $option, $user ) {
@@ -71,6 +74,7 @@ class PostLockdown_StatusColumn {
 	 * Adds the plugin's status column to all post list tables.
 	 *
 	 * @param array $columns
+	 *
 	 * @return array
 	 */
 	public function _column_add( $columns ) {
@@ -105,10 +109,19 @@ class PostLockdown_StatusColumn {
 			return;
 		}
 
+		$status = false;
+		$html   = '';
 		if ( $postlockdown->is_post_locked( $post_id ) ) {
-			echo '<span title="Locked" class="dashicons dashicons-lock"></span> Locked';
+			$html   = '<span title="Locked" class="dashicons dashicons-lock"></span> Locked';
+			$status = 'locked';
 		} else if ( $postlockdown->is_post_protected( $post_id ) ) {
-			echo '<span title="Protected" class="dashicons dashicons-lock"></span> Protected';
+			$html   = '<span title="Protected" class="dashicons dashicons-lock"></span> Protected';
+			$status = 'protected';
+		}
+
+		if ( false !== $status ) {
+			$html = apply_filters( 'postlockdown_column_html', $html, $status, $post_id );
+			echo $html;
 		}
 	}
 }
