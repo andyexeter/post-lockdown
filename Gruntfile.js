@@ -7,12 +7,23 @@ module.exports = function( grunt ) {
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
+		paths: {
+			src: {
+				js: 'src/assets/js',
+				css: 'src/assets/sass'
+			},
+			build: {
+				js: 'view/assets/js',
+				css: 'view/assets/css'
+			}
+		},
+
 		jshint: {
 			options: {
 				jshintrc: '.jshintrc'
 			},
 			build: {
-				src: 'src/assets/js/*.js'
+				src: '<%= paths.src.js %>/*.js'
 			},
 			grunt: {
 				options: {
@@ -23,7 +34,8 @@ module.exports = function( grunt ) {
 		},
 
 		clean: {
-			build: [ 'view/assets/js', 'view/assets/css' ]
+			buildJs: [ '<%= paths.build.js %>' ],
+			buildCss: [ '<%= paths.build.css %>' ]
 		},
 
 		sass: {
@@ -32,8 +44,8 @@ module.exports = function( grunt ) {
 				outputStyle: 'expanded'
 			},
 			build: {
-				src: 'src/assets/sass/postlockdown.scss',
-				dest: 'view/assets/css/postlockdown.css'
+				src: '<%= paths.src.css %>/postlockdown.scss',
+				dest: '<%= paths.build.css %>/postlockdown.css'
 			}
 		},
 
@@ -43,8 +55,8 @@ module.exports = function( grunt ) {
 				report: 'gzip'
 			},
 			build: {
-				src: 'view/assets/css/postlockdown.css',
-				dest: 'view/assets/css/postlockdown.min.css'
+				src: '<%= paths.build.css %>/postlockdown.css',
+				dest: '<%= paths.build.css %>/postlockdown.min.css'
 			}
 		},
 
@@ -53,24 +65,22 @@ module.exports = function( grunt ) {
 				sourceMap: true
 			},
 			build: {
-				src: 'src/assets/js/*.js',
-				dest: 'view/assets/js/postlockdown.js'
+				src: '<%= paths.src.js %>/*.js',
+				dest: '<%= paths.build.js %>/postlockdown.js'
 			}
 		},
 
 		uglify: {
 			options: {
 				sourceMap: true,
-				compress: true,
-				mangle: true,
 				report: 'gzip'
 			},
 			build: {
 				files: [ {
 					expand: true,
-					cwd: 'view/assets/js',
+					cwd: '<%= paths.build.js %>',
 					src: '*.js',
-					dest: 'view/assets/js',
+					dest: '<%= paths.build.js %>',
 					ext: '.min.js',
 					extDot: 'last'
 				} ]
@@ -80,12 +90,12 @@ module.exports = function( grunt ) {
 		watch: {
 			options: { livereload: true, spawn: false },
 			sass: {
-				files: [ 'src/assets/sass/*.scss' ],
-				tasks: [ 'build-css' ]
+				files: [ '<%= paths.src.css %>/*.scss' ],
+				tasks: [ 'buildCss' ]
 			},
 			js: {
-				files: [ 'src/assets/js/*.js' ],
-				tasks: [ 'build-js' ]
+				files: [ '<%= paths.src.js %>/*.js' ],
+				tasks: [ 'buildJs' ]
 			},
 			grunt: {
 				options: { livereload: false },
@@ -93,7 +103,7 @@ module.exports = function( grunt ) {
 				tasks: [ 'jshint:grunt' ]
 			},
 			livereload: {
-				files: [ 'view/assets/css/postlockdown.css' ]
+				files: [ '<%= paths.build.css %>/postlockdown.css' ]
 			}
 		}
 
@@ -101,22 +111,22 @@ module.exports = function( grunt ) {
 
 	require( 'load-grunt-tasks' )( grunt );
 
-	grunt.registerTask( 'build-js', [
+	grunt.registerTask( 'buildJs', [
 		'jshint:build',
+		'clean:buildJs',
 		'concat:build',
 		'uglify:build'
 	] );
 
-	grunt.registerTask( 'build-css', [
+	grunt.registerTask( 'buildCss', [
+		'clean:buildCss',
 		'sass:build',
 		'cssmin:build'
 	] );
 
 	grunt.registerTask( 'default', [
 		'jshint:grunt',
-		'clean:build',
-		'build-js',
-		'build-css'
+		'buildJs',
+		'buildCss'
 	] );
-
 };
