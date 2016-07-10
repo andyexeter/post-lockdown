@@ -1,6 +1,8 @@
 module.exports = function( grunt ) {
 	'use strict';
 
+	require( 'load-grunt-tasks' )( grunt );
+
 	grunt.util.linefeed = '\n';
 	grunt.option( 'stack', true );
 
@@ -36,6 +38,11 @@ module.exports = function( grunt ) {
 		clean: {
 			buildJs: [ '<%= paths.build.js %>' ],
 			buildCss: [ '<%= paths.build.css %>' ]
+		},
+
+		sasslint: {
+			options: {},
+			target: [ '<%= paths.src.css %>/*.scss' ]
 		},
 
 		sass: {
@@ -108,8 +115,6 @@ module.exports = function( grunt ) {
 		}
 
 	} );
-
-	require( 'load-grunt-tasks' )( grunt );
 
 	grunt.registerTask( 'buildJs', [
 		'jshint:build',
