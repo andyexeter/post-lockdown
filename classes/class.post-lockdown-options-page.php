@@ -104,25 +104,23 @@ class PostLockdown_OptionsPage {
 
 		wp_enqueue_script( PostLockdown::KEY, $assets_path . 'js/postlockdown' . $ext . '.js', array( 'jquery-ui-autocomplete' ), null, true );
 
+		$posts = $this->get_posts( array(
+			'nopaging' => true,
+			'post__in' => array_merge(
+				$this->postlockdown->get_locked_post_ids( true ),
+				$this->postlockdown->get_protected_post_ids( true )
+			),
+		) );
+
 		$data = array();
 
-		if ( $this->postlockdown->have_posts() ) {
-			$posts = $this->get_posts( array(
-				'nopaging' => true,
-				'post__in' => array_merge(
-					$this->postlockdown->get_locked_post_ids( true ),
-					$this->postlockdown->get_protected_post_ids( true )
-				),
-			) );
+		foreach ( $posts as $post ) {
+			if ( $this->postlockdown->is_post_locked( $post->ID ) ) {
+				$data['locked'][] = $post;
+			}
 
-			foreach ( $posts as $post ) {
-				if ( $this->postlockdown->is_post_locked( $post->ID ) ) {
-					$data['locked'][] = $post;
-				}
-
-				if ( $this->postlockdown->is_post_protected( $post->ID ) ) {
-					$data['protected'][] = $post;
-				}
+			if ( $this->postlockdown->is_post_protected( $post->ID ) ) {
+				$data['protected'][] = $post;
 			}
 		}
 
