@@ -4,19 +4,13 @@ class PostLockdown_StatusColumn {
 	const COLUMN_KEY = 'postlockdown_status';
 
 	public function __construct() {
-		foreach ( array( 'posts', 'pages' ) as $type ) {
-			add_filter( "manage_{$type}_columns", array( $this, '_column_add' ) );
-			add_action( "manage_{$type}_custom_column", array( $this, '_column_output' ), 10, 2 );
-		}
-
 		add_action( 'admin_init', array( $this, '_set_post_type_hooks' ) );
+		add_action( 'admin_head', array( $this, '_column_output_style' ) );
 	}
 
 	/**
 	 * Callback for the 'admin_init' hook.
 	 *
-	 * Adds filters for user options retrieval to modify their hidden columns lists
-	 * for each post type.
 	 */
 	public function _set_post_type_hooks() {
 		$post_types = get_post_types( array( 'public' => true ), 'names' );
@@ -25,17 +19,45 @@ class PostLockdown_StatusColumn {
 			return;
 		}
 
+		$column_hidden = apply_filters( 'postlockdown_column_hidden_default', true );
+
 		foreach ( $post_types as $post_type ) {
-			/*
-			 * Credit: Yoast SEO
-			 *
-			 * Use the `get_user_option_{$option}` filter to change the output of the get_user_option
-			 * function for the `manage{$screen}columnshidden` option, which is based on the current
-			 * admin screen. The admin screen we want to target is the `edit-{$post_type}` screen.
-			 */
-			$filter = sprintf( 'get_user_option_%s', sprintf( 'manage%scolumnshidden', 'edit-' . $post_type ) );
-			add_filter( $filter, array( $this, '_column_hidden' ), 10, 3 );
+			add_filter( "manage_{$post_type}_posts_columns", array( $this, '_column_add' ) );
+			add_action( "manage_{$post_type}_posts_custom_column", array( $this, '_column_output' ), 10, 2 );
+
+			if ( $column_hidden ) {
+				/*
+				 * Credit: Yoast SEO
+				 *
+				 * Use the `get_user_option_{$option}` filter to change the output of the get_user_option
+				 * function for the `manage{$screen}columnshidden` option, which is based on the current
+				 * admin screen. The admin screen we want to target is the `edit-{$post_type}` screen.
+				 */
+				$filter = sprintf( 'get_user_option_%s', sprintf( 'manage%scolumnshidden', 'edit-' . $post_type ) );
+				add_filter( $filter, array( $this, '_column_hidden' ), 10, 3 );
+			}
 		}
+	}
+
+	public function _column_output_style() {
+		global $pagenow;
+
+		if ( 'edit.php' !== $pagenow ) {
+			return;
+		}
+
+		?>
+		<style>
+			.fixed .column-postlockdown_status {
+				width: 10%;
+			}
+
+			.fixed td.column-postlockdown_status .dashicons {
+				color: #444;
+				font-size: 22px;
+			}
+		</style>
+		<?php
 	}
 
 	/**
@@ -68,8 +90,7 @@ class PostLockdown_StatusColumn {
 	}
 
 	/**
-	 * Filter for the manage_{$type}_columns hook where $type is one of
-	 * 'page' or 'post'.
+	 * Filter for the manage_{$post_type}_posts_columns hook.
 	 *
 	 * Adds the plugin's status column to all post list tables.
 	 *
@@ -80,22 +101,28 @@ class PostLockdown_StatusColumn {
 	public function _column_add( $columns ) {
 		$label = apply_filters( 'postlockdown_column_label', 'Post Lockdown' );
 
-		$new_columns = array();
+		$new_columns  = array();
+		$column_added = false;
 
 		foreach ( $columns as $key => $column ) {
 			$new_columns[ $key ] = $column;
 
-			if ( 'title' === $key ) {
+			if ( ! $column_added && ( 'title' === $key || 'name' === $key ) ) {
 				$new_columns[ self::COLUMN_KEY ] = $label;
+
+				$column_added = true;
 			}
+		}
+
+		if ( ! $column_added ) {
+			$new_columns[ self::COLUMN_KEY ] = $label;
 		}
 
 		return $new_columns;
 	}
 
 	/**
-	 * Callback for the manage_{$type}_custom_column hook where $type is one of
-	 * 'page' or 'post'.
+	 * Callback for the manage_{$post_type}_posts_custom_column hook.
 	 *
 	 * Prints the relevant output, if any, for the status column.
 	 *
@@ -112,10 +139,10 @@ class PostLockdown_StatusColumn {
 		$status = false;
 		$html   = '';
 		if ( $postlockdown->is_post_locked( $post_id ) ) {
-			$html   = '<span title="Locked" class="dashicons dashicons-lock"></span> Locked';
+			$html   = '<span title="Locked - Cannot be edited, trashed or deleted" class="dashicons dashicons-lock"></span> Locked';
 			$status = 'locked';
 		} else if ( $postlockdown->is_post_protected( $post_id ) ) {
-			$html   = '<span title="Protected" class="dashicons dashicons-lock"></span> Protected';
+			$html   = '<span title="Protected - Cannot be trashed or deleted" class="dashicons dashicons-unlock"></span> Protected';
 			$status = 'protected';
 		}
 
