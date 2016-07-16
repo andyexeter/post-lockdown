@@ -211,7 +211,7 @@ class PostLockdown {
 		}
 
 		if ( $changed ) {
-			add_filter( 'redirect_post_location', array( 'PostLockdown_AdminNotice', '_add_query_arg' ) );
+			add_filter( 'redirect_post_location', array( $this->registry['AdminNotice'], '_add_query_arg' ) );
 		}
 
 		return $data;

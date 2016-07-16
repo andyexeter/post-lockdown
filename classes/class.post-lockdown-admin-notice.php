@@ -19,7 +19,7 @@ class PostLockdown_AdminNotice {
 	 * @param string $location
 	 * @return string
 	 */
-	public static function _add_query_arg( $location ) {
+	public function _add_query_arg( $location ) {
 		return add_query_arg( self::QUERY_ARG, 1, $location );
 	}
 
