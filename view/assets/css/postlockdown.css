@@ -38,8 +38,6 @@
   background-color: #fff;
   color: #32373c;
   outline: 0;
-  -webkit-transition: .05s border-color ease-in-out;
-  transition: .05s border-color ease-in-out;
   margin: 0;
 }
 
