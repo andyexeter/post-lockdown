@@ -39,27 +39,6 @@ class PostLockdown_StatusColumn {
 		}
 	}
 
-	public function _column_output_style() {
-		global $pagenow;
-
-		if ( 'edit.php' !== $pagenow ) {
-			return;
-		}
-
-		?>
-		<style>
-			.fixed .column-postlockdown_status {
-				width: 10%;
-			}
-
-			.fixed td.column-postlockdown_status .dashicons {
-				color: #444;
-				font-size: 22px;
-			}
-		</style>
-		<?php
-	}
-
 	/**
 	 * Filter for all 'get_user_option_manageedit-{$post_type}columnshidden' hooks
 	 * added in the _set_post_type_hooks() method
@@ -150,5 +129,26 @@ class PostLockdown_StatusColumn {
 			$html = apply_filters( 'postlockdown_column_html', $html, $status, $post_id );
 			echo $html;
 		}
+	}
+
+	public function _column_output_style() {
+		global $pagenow;
+
+		if ( 'edit.php' !== $pagenow ) {
+			return;
+		}
+
+		?>
+		<style>
+			.fixed .column-postlockdown_status {
+				width: 10%;
+			}
+
+			.fixed td.column-postlockdown_status .dashicons {
+				color: #444;
+				font-size: 22px;
+			}
+		</style>
+		<?php
 	}
 }
