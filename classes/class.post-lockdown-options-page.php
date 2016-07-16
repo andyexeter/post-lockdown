@@ -97,12 +97,10 @@ class PostLockdown_OptionsPage {
 		}
 
 		$assets_path = $this->postlockdown->plugin_url . 'view/assets/';
+		$extension   = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		$ext = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
-
-		wp_enqueue_style( PostLockdown::KEY, $assets_path . 'css/postlockdown' . $ext . '.css', null, null );
-
-		wp_enqueue_script( PostLockdown::KEY, $assets_path . 'js/postlockdown' . $ext . '.js', array( 'jquery-ui-autocomplete' ), null, true );
+		wp_enqueue_style( PostLockdown::KEY, $assets_path . 'css/postlockdown' . $extension . '.css', null, null );
+		wp_enqueue_script( PostLockdown::KEY, $assets_path . 'js/postlockdown' . $extension . '.js', array( 'jquery-ui-autocomplete' ), null, true );
 
 		$posts = $this->get_posts( array(
 			'nopaging' => true,
@@ -131,19 +129,20 @@ class PostLockdown_OptionsPage {
 	 * Convenience wrapper for get_posts().
 	 *
 	 * @param array $args Array of args to merge with defaults passed to get_posts().
-	 * @return array Array of posts.
+	 *
+	 * @return WP_Post[] Array of post objects.
 	 */
 	private function get_posts( $args = array() ) {
-		$excluded_post_types = array( 'nav_menu_item', 'revision' );
+		$excluded_post_types = array();
 
 		if ( class_exists( 'WooCommerce' ) ) {
-			array_push( $excluded_post_types, 'product_variation', 'shop_order', 'shop_coupon' );
+			array_push( $excluded_post_types, 'shop_order', 'shop_coupon' );
 		}
 
 		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
 
 		$defaults = array(
-			'post_type'   => array_diff( get_post_types(), $excluded_post_types ),
+			'post_type'   => array_diff( get_post_types( array( 'show_ui' => true ) ), $excluded_post_types ),
 			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
 		);
 
@@ -151,6 +150,8 @@ class PostLockdown_OptionsPage {
 
 		$args = apply_filters( 'postlockdown_get_posts', $args );
 
-		return get_posts( $args );
+		$query = new WP_Query( $args );
+
+		return $query->posts;
 	}
 }
