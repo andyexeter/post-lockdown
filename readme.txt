@@ -1,9 +1,9 @@
 === Post Lockdown ===
 Contributors: andyexeter
-Donate link: http://bit.ly/1b2f6OL
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
-Tested up to: 4.4
+Tested up to: 4.5
 Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -29,6 +29,17 @@ See the screenshots for an example of what an Editor would see when they view a 
 
 == Frequently Asked Questions ==
 
+= Are there any breaking changes in v2.0? =
+
+The plugin now stores an instance of the class in a global variable instead of using static class methods.
+If you use any of the methods like `PostLockdown::is_post_protected( $post_id )` in your theme then you'll need to update
+your code to the following:
+
+`
+global $postlockdown;
+$postlockdown->is_post_protected( $post_id );
+`
+
 = What is a "non-admin user"? =
 
 By default, the plugin classes a non-admin as a user who does not have the `manage_options` capability e.g an Editor.
@@ -44,17 +55,9 @@ The following filters are used throughout the plugin:
 * `postlockdown_get_posts` - Array of args to pass to get_posts().
 * `postlockdown_locked_posts` - Array of locked post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID
 * `postlockdown_protected_posts` - Array of protected post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID
-
-= How do I migrate from v1.x.x to v2.0? =
-
-The plugin now stores an instance of the class in a global variable instead of using static class methods.
-If you use any of the methods like `PostLockdown::is_post_protected( $post_id )` in v1.x.x then you'll need to update
-your code to the following:
-
-`
-global $postlockdown;
-$postlockdown->is_post_protected( $post_id );
-`
+* `postlockdown_column_hidden_default` - Boolean which dictates whether the status column should appear by default on post lists. Defaults to false.
+* `postlockdown_column_html` - String of HTML showing the locked or protected status of a post in the status column on post lists.
+* `postlockdown_column_label` - String containing the heading/label for the status column on post lists.
 
 == Screenshots ==
 
@@ -65,10 +68,12 @@ $postlockdown->is_post_protected( $post_id );
 == Changelog ==
 
 = 2.0 =
-This is a major version update. Please read the following notes carefully before updating.
-The main plugin class has been rewritten using an instance of the class instead of static class methods.
-This means if you are a developer using any of the static methods from the class  then you will need
-to update your code to get an instance of the class instead. Please see the FAQ for more information.
+This is a major version release. Please read the following notes carefully before updating.
+
+* Major refactor of code base for performance and future scalability. If you are a developer using any of the plugin class static methods read the FAQ before updating.
+* Added a column to post lists to show the locked or protected status of each post.
+* Added new filters: `postlockdown_column_hidden_default`, `postlockdown_column_html` and `postlockdown_column_label`.
+* Lots of optimisations and general improvements.
 
 = 1.1.1 =
 * Fixed PHP warning about missing admin notices file.
@@ -80,7 +85,6 @@ to update your code to get an instance of the class instead. Please see the FAQ 
 * Added new version of multi select plugin.
 * Lots of optimisations and general improvements.
 
-
 = 1.0.1 =
 
 * Fixed an issue where post IDs could not be filtered if none were set on the options page.
@@ -91,3 +95,8 @@ to update your code to get an instance of the class instead. Please see the FAQ 
 = 1.0.0 =
 
 * Initial release
+
+== Upgrade Notice ==
+
+= 2.0 =
+This is a major version release. Please check the change log before updating.
