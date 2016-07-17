@@ -1,0 +1,16 @@
+{
+  "name": "andyexeter/post-lockdown",
+  "description": "A WordPress plugin to stop posts being deleted and/or edited",
+  "type": "project",
+  "license": "GPL2",
+  "require": {},
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^2.6",
+    "wp-coding-standards/wpcs": "2014-12-11"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs"
+    ]
+  }
+}
