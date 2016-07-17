@@ -17,6 +17,22 @@ class PostLockdown_OptionsPage {
 		add_action( 'wp_ajax_pl_autocomplete', array( $this, '_ajax_autocomplete' ) );
 
 		add_filter( 'option_page_capability_' . PostLockdown::KEY, array( $this->postlockdown, 'get_admin_cap' ) );
+
+		add_filter( 'admin_footer_text', array( $this, '_filter_admin_footer_text' ) );
+	}
+
+	public function _filter_admin_footer_text( $html ) {
+		$screen = get_current_screen();
+
+		if ( $screen->id !== $this->page_hook ) {
+			return $html;
+		}
+
+		$text = sprintf( __( 'Thank you for using Post Lockdown. If you like it, please consider <a href="%s" target="_blank">leaving a review.</a>' ), __( 'https://wordpress.org/support/view/plugin-reviews/post-lockdown?rate=5#postform' ) );
+
+		$html = '<span id="footer-thankyou">' . $text . '</span>';
+
+		return $html;
 	}
 
 	/**
