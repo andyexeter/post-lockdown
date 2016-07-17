@@ -7,7 +7,7 @@ matrix:
     - php: hhvm
   include:
     - php: 7.0
-      env: WP_VERSION=master WP_MULTISITE=0 PHPSNIFF=1 PHPLINT=1
+      env: WP_VERSION=master WP_MULTISITE=0 PHPSNIFF=1 PHPLINT=1 JSHINT=1
     - php: 5.6
       env: WP_VERSION=master WP_MULTISITE=0 PHPLINT=1
     - php: 5.2
@@ -47,3 +47,4 @@ before_script:
 script:
 - if [[ "$PHPLINT" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
 - if [[ "$PHPSNIFF" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 vendor/bin/phpcs --standard="WordPress-Extra" -v; fi
+- if [[ "$JSHINT" == "1" ]]; then npm install -g grunt-cli && npm install --no-optional && grunt jshint:build; fi
