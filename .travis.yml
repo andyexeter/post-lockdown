@@ -45,5 +45,5 @@ before_script:
 - phpenv rehash
 
 script:
-- if [[ "$PHPSNIFF" == "1" ]]; then find -L . -mindepth 1 -maxdepth 2 -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
-- if [[ "$PHPSNIFF" == "1" ]]; then find -L . -mindepth 1 -maxdepth 2 -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 vendor/bin/phpcs --standard="WordPress-Extra" -v; fi
+- if [[ "$PHPSNIFF" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
+- if [[ "$PHPSNIFF" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 vendor/bin/phpcs --standard="WordPress-Extra" -v; fi
