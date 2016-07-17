@@ -127,7 +127,7 @@ class PostLockdown_StatusColumn {
 
 		if ( false !== $status ) {
 			$html = apply_filters( 'postlockdown_column_html', $html, $status, $post_id );
-			echo $html;
+			echo esc_html( $html );
 		}
 	}
 

@@ -99,4 +99,4 @@ This is a major version release. Please read the following notes carefully befor
 == Upgrade Notice ==
 
 = 2.0 =
-This is a major version release. Please check the change log before updating.
+This is a major version release. Please read the changelog before updating.
