@@ -3,33 +3,27 @@ language: php
 sudo: false
 
 matrix:
+  allow_failures:
+    - php: hhvm
   include:
-    - php: '5.6'
+    - php: 7.0
       env: WP_VERSION=master WP_MULTISITE=0 PHPSNIFF=1
-    - php: '5.2'
-      env: WP_VERSION=master WP_MULTISITE=1
-    - php: '5.6'
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: '5.5'
-      env: WP_VERSION=master WP_MULTISITE=0
-    - php: '5.5'
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: '5.4'
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: '5.4'
-      env: WP_VERSION=4.1 WP_MULTISITE=1
-    - php: '5.5'
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: '5.5'
-      env: WP_VERSION=4.0 WP_MULTISITE=1
-    - php: '5.3'
-      env: WP_VERSION=4.0 WP_MULTISITE=0 PHPSNIFF=1
-    - php: '5.4'
+    - php: 5.6
+      env: WP_VERSION=master WP_MULTISITE=0 PHPSNIFF=1
+    - php: 5.2
+      env: WP_VERSION=master WP_MULTISITE=1 PHPSNIFF=1
+    - php: 5.6
+      env: WP_VERSION=4.5 WP_MULTISITE=1
+    - php: 5.5
+      env: WP_VERSION=4.5 WP_MULTISITE=0
+    - php: 5.4
+      env: WP_VERSION=4.5 WP_MULTISITE=0
+    - php: 5.3
+      env: WP_VERSION=4.5 WP_MULTISITE=0 PHPSNIFF=1
+    - php: 5.6
       env: WP_VERSION=3.9 WP_MULTISITE=0
-    - php: 'hhvm'
-      env: WP_VERSION=4.1 WP_MULTISITE=0
-    - php: 'hhvm'
-      env: WP_VERSION=4.1 WP_MULTISITE=1
+    - php: hhvm
+      env: WP_VERSION=4.5 WP_MULTISITE=0
 
 before_script:
 - phpenv local 5.6
