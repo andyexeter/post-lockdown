@@ -21,20 +21,6 @@ class PostLockdown_OptionsPage {
 		add_filter( 'admin_footer_text', array( $this, '_filter_admin_footer_text' ) );
 	}
 
-	public function _filter_admin_footer_text( $html ) {
-		$screen = get_current_screen();
-
-		if ( $screen->id !== $this->page_hook ) {
-			return $html;
-		}
-
-		$text = sprintf( __( 'Thank you for using Post Lockdown. If you like it, please consider <a href="%s" target="_blank">leaving a review.</a>' ), __( 'https://wordpress.org/support/view/plugin-reviews/post-lockdown?rate=5#postform' ) );
-
-		$html = '<span id="footer-thankyou">' . $text . '</span>';
-
-		return $html;
-	}
-
 	/**
 	 * Callback for the 'admin_init' hook.
 	 *
@@ -139,6 +125,28 @@ class PostLockdown_OptionsPage {
 		}
 
 		wp_localize_script( PostLockdown::KEY, PostLockdown::KEY, $data );
+	}
+
+	/**
+	 * Filter for the 'admin_footer_text' hook.
+	 * Changes the footer message on the plugin options page.
+	 *
+	 * @param string $html
+	 *
+	 * @return string
+	 */
+	public function _filter_admin_footer_text( $html ) {
+		$screen = get_current_screen();
+
+		if ( $screen->id !== $this->page_hook ) {
+			return $html;
+		}
+
+		$text = sprintf( __( 'Thank you for using Post Lockdown. If you like it, please consider <a href="%s" target="_blank">leaving a review.</a>' ), __( 'https://wordpress.org/support/view/plugin-reviews/post-lockdown?rate=5#postform' ) );
+
+		$html = '<span id="footer-thankyou">' . $text . '</span>';
+
+		return $html;
 	}
 
 	/**
