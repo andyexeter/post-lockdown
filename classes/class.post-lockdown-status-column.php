@@ -139,7 +139,7 @@ class PostLockdown_StatusColumn {
 		}
 
 		?>
-		<style>
+		<style id="postlockdown-column-styles">
 			.fixed .column-postlockdown_status {
 				width: 10%;
 			}
