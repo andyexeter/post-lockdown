@@ -2,7 +2,7 @@
 
 # Post Lockdown
 
-This is the official git repository for the Post Lockdown WordPress plugin
+This is the official git repository for the [Post Lockdown WordPress plugin](https://wordpress.org/plugins/post-lockdown/)
 
 Please see [readme.txt](readme.txt) for more information
 
