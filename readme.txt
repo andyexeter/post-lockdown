@@ -61,7 +61,7 @@ The following filters are used throughout the plugin:
 
 == Screenshots ==
 
-1. A page list showing one regular page, one locked page and one protected page.
+1. A page list showing one regular page, one locked page and one protected page with the plugin's status column visible.
 2. The Publish metabox for a protected page logged in as an Editor. See how the plugin removes the Move to Trash link.
 3. The Post Lockdown administration page.
 
