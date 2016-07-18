@@ -8,12 +8,12 @@ Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Allows admins to lock selected posts and pages so they cannot be edited or deleted by non-admin users.
+Allows admins to protect selected posts and pages so they cannot be trashed or deleted by non-admin users.
 
 == Description ==
 
-Post Lockdown locks your site-critical pages and posts by disabling all non-admin users' ability to edit or delete them.
-It can also protect pages and posts, which will allow editing of them but still disable trashing and deleting.
+Post Lockdown protects your site-critical pages and posts by disabling all non-admin users' ability to trash or delete them.
+It can also lock pages and posts, which will disable editing of the post as well as disabling trashing/deleting.
 
 The plugin adds a new options page under the Settings menu in WordPress admin panel which allows you to quickly search and
 select for all pages and posts of any post type. When you find the item you want to select, simply click it to move it to the right
