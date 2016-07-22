@@ -3,7 +3,11 @@
 class PostLockdown_StatusColumn {
 	const COLUMN_KEY = 'postlockdown_status';
 
-	public function __construct() {
+	/** @var  PostLockdown */
+	private $postlockdown;
+
+	public function __construct( PostLockdown $postlockdown ) {
+		$this->postlockdown = $postlockdown;
 		add_action( 'admin_init', array( $this, '_set_post_type_hooks' ) );
 		add_action( 'admin_head', array( $this, '_column_output_style' ) );
 	}
@@ -109,18 +113,16 @@ class PostLockdown_StatusColumn {
 	 * @param int    $post_id
 	 */
 	public function _column_output( $column, $post_id ) {
-		/** @var PostLockdown $postlockdown */
-		global $postlockdown;
 		if ( self::COLUMN_KEY !== $column ) {
 			return;
 		}
 
 		$status = false;
 		$html   = '';
-		if ( $postlockdown->is_post_locked( $post_id ) ) {
+		if ( $this->postlockdown->is_post_locked( $post_id ) ) {
 			$html   = '<span title="Locked - Cannot be edited, trashed or deleted" class="dashicons dashicons-lock"></span> Locked';
 			$status = 'locked';
-		} else if ( $postlockdown->is_post_protected( $post_id ) ) {
+		} else if ( $this->postlockdown->is_post_protected( $post_id ) ) {
 			$html   = '<span title="Protected - Cannot be trashed or deleted" class="dashicons dashicons-unlock"></span> Protected';
 			$status = 'protected';
 		}

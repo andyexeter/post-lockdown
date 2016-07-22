@@ -7,7 +7,7 @@ class PostLockdown_OptionsPage {
 	/** @var  PostLockdown */
 	private $postlockdown;
 
-	public function __construct( $postlockdown ) {
+	public function __construct( PostLockdown $postlockdown ) {
 		$this->postlockdown = $postlockdown;
 
 		add_action( 'admin_init', array( $this, '_register_setting' ) );

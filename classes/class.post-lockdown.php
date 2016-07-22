@@ -22,7 +22,7 @@ class PostLockdown {
 
 	public function __construct( $plugin_path, $plugin_url ) {
 		$this->plugin_path = $plugin_path;
-		$this->plugin_url = $plugin_url;
+		$this->plugin_url  = $plugin_url;
 
 		$this->load_registry();
 		$this->load_options();
@@ -37,6 +37,7 @@ class PostLockdown {
 	 *
 	 * @param bool $suppress_filters Whether to suppress filters and only return IDs
 	 *                               selected on the Post Lockdown options page.
+	 *
 	 * @return array
 	 */
 	public function get_locked_post_ids( $suppress_filters = false ) {
@@ -52,6 +53,7 @@ class PostLockdown {
 	 *
 	 * @param bool $suppress_filters Whether to suppress filters and only return IDs
 	 *                               selected on the Post Lockdown options page.
+	 *
 	 * @return array
 	 */
 	public function get_protected_post_ids( $suppress_filters = false ) {
@@ -76,6 +78,7 @@ class PostLockdown {
 	 *
 	 * @param int  $post_id The ID of the post to check.
 	 * @param bool $suppress_filters
+	 *
 	 * @return bool
 	 */
 	public function is_post_locked( $post_id, $suppress_filters = false ) {
@@ -93,6 +96,7 @@ class PostLockdown {
 	 *
 	 * @param int  $post_id The ID of the post to check.
 	 * @param bool $suppress_filters
+	 *
 	 * @return bool
 	 */
 	public function is_post_protected( $post_id, $suppress_filters = false ) {
@@ -128,6 +132,7 @@ class PostLockdown {
 	 * @param array $args    [0] Requested capability.
 	 *                       [1] User ID.
 	 *                       [2] Post ID.
+	 *
 	 * @return array
 	 */
 	public function _filter_cap( $allcaps, $cap, $args ) {
@@ -178,11 +183,12 @@ class PostLockdown {
 	 *
 	 * @param array $data    Sanitized post data.
 	 * @param array $postarr Raw post data. Contains post ID.
+	 *
 	 * @return array
 	 */
 	public function _prevent_status_change( $data, $postarr ) {
 		$post_id = $postarr['ID'];
-		$post = get_post( $post_id );
+		$post    = get_post( $post_id );
 
 		/* If the user has the required capability to bypass
 		 * restrictions or there are no protected posts get out of here.
@@ -194,19 +200,19 @@ class PostLockdown {
 		$changed = false;
 
 		if ( 'publish' !== $data['post_status'] ) {
-			$changed = true;
+			$changed             = true;
 			$data['post_status'] = $post->post_status;
 		}
 
 		if ( $data['post_password'] !== $post->post_password ) {
-			$changed = true;
+			$changed               = true;
 			$data['post_password'] = $post->post_password;
 		}
 
 		// Revert the post date if it's set to a future date.
 		if ( $data['post_date'] !== $post->post_date && strtotime( $data['post_date'] ) > time() ) {
-			$changed = true;
-			$data['post_date'] = $post->post_date;
+			$changed               = true;
+			$data['post_date']     = $post->post_date;
 			$data['post_date_gmt'] = $post->post_date_gmt;
 		}
 
@@ -249,7 +255,7 @@ class PostLockdown {
 		$this->registry = array(
 			'AdminNotice'  => new PostLockdown_AdminNotice( $this->plugin_path ),
 			'OptionsPage'  => new PostLockdown_OptionsPage( $this ),
-			'StatusColumn' => new PostLockdown_StatusColumn(),
+			'StatusColumn' => new PostLockdown_StatusColumn( $this ),
 		);
 	}
 
