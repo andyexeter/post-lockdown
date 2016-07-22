@@ -24,8 +24,11 @@ module.exports = function( grunt ) {
 			options: {
 				jshintrc: '.jshintrc'
 			},
-			build: {
+			src: {
 				src: '<%= paths.src.js %>/*.js'
+			},
+			build: {
+				src: [ '<%= paths.build.js %>/*.js', '!<%= paths.build.js %>/*.min.js' ]
 			},
 			grunt: {
 				options: {
@@ -117,13 +120,14 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'buildJs', [
-		'jshint:build',
+		'jshint:src',
 		'clean:buildJs',
 		'concat:build',
 		'uglify:build'
 	] );
 
 	grunt.registerTask( 'buildCss', [
+		'sasslint',
 		'clean:buildCss',
 		'sass:build',
 		'cssmin:build'
