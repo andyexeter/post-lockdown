@@ -15,11 +15,11 @@ Allows admins to protect selected posts and pages so they cannot be trashed or d
 Post Lockdown protects your site-critical pages and posts by disabling all non-admin users' ability to trash or delete them.
 It can also lock pages and posts, which will disable editing of the post as well as disabling trashing/deleting.
 
-The plugin adds a new options page under the Settings menu in WordPress admin panel which allows you to quickly search and
+The plugin adds a new options page under the Settings menu in your WordPress admin panel which allows you to quickly search and
 select for all pages and posts of any post type. When you find the item you want to select, simply click it to move it to the right
 box and click Save Changes.
 
-See the screenshots for an example of what an Editor would see when they view a list of posts with some locked and protected
+See the screenshots for an example of what an Editor would see when they view a list of posts with some locked and protected.
 
 == Installation ==
 
@@ -29,11 +29,11 @@ See the screenshots for an example of what an Editor would see when they view a 
 
 == Frequently Asked Questions ==
 
-= Are there any breaking changes in v2.0? =
+= Are there any major changes in v2.0? =
 
-The plugin now stores an instance of the class in a global variable instead of using static class methods.
-If you use any of the methods like `PostLockdown::is_post_protected( $post_id )` in your theme then you'll need to update
-your code to the following:
+The plugin now stores an instance of the class in a global variable (`$postlockdown`) instead of using static class methods.
+If you use any of the static methods like `PostLockdown::is_post_protected( $post_id )` in your theme then
+you'll need to update your code to the following to be able to use v2.0:
 
 `
 global $postlockdown;
@@ -53,8 +53,8 @@ The following filters are used throughout the plugin:
 * `postlockdown_capabilities` - Array of capabilities to restrict.
 * `postlockdown_excluded_post_types` - Array of post types to exclude from search.
 * `postlockdown_get_posts` - Array of args to pass to get_posts().
-* `postlockdown_locked_posts` - Array of locked post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID
-* `postlockdown_protected_posts` - Array of protected post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID
+* `postlockdown_locked_posts` - Array of locked post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID.
+* `postlockdown_protected_posts` - Array of protected post IDs. Allows you to programmatically add or remove post IDs. Both the key AND value must be set to the post ID.
 * `postlockdown_column_hidden_default` - Boolean which dictates whether the status column should appear by default on post lists. Defaults to false.
 * `postlockdown_column_html` - String of HTML showing the locked or protected status of a post in the status column on post lists.
 * `postlockdown_column_label` - String containing the heading/label for the status column on post lists.
