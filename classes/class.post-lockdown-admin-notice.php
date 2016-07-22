@@ -48,7 +48,7 @@ class PostLockdown_AdminNotice {
 		if ( ! empty( $_GET[ self::QUERY_ARG ] ) ) {
 			$notices[] = array(
 				'class'   => 'error',
-				'message' => esc_html( 'This post is protected by Post Lockdown and must stay published.' ),
+				'message' => __( 'This post is protected by Post Lockdown and must stay published.', 'postlockdown' ),
 			);
 		}
 

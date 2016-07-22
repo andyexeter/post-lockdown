@@ -7,33 +7,33 @@
 		</p>
 		<table class="form-table">
 			<tbody>
-				<?php foreach ( $blocks as $block ) { ?>
-					<tr>
-						<th><?php echo esc_html( $block['heading'] ); ?></th>
-						<td>
-							<div class="pl-posts-container">
-								<div class="pl-posts pl-posts-available">
-									<div class="pl-searchbox">
-										<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="<?php esc_html_e( 'Search...', 'postlockdown' ); ?>" />
-									</div>
-									<span class="spinner"></span>
-									<ul class="pl-multiselect">
-									</ul>
+			<?php foreach ( $blocks as $block ) { ?>
+				<tr>
+					<th><?php echo esc_html( $block['heading'] ); ?></th>
+					<td>
+						<div class="pl-posts-container">
+							<div class="pl-posts pl-posts-available">
+								<div class="pl-searchbox">
+									<input type="text" autocomplete="off" class="pl-autocomplete" placeholder="<?php esc_attr_e( 'Search...', 'postlockdown' ); ?>"/>
 								</div>
-								<div class="pl-posts pl-posts-selected">
-									<ul class="pl-multiselect"
-										data-key="<?php echo esc_attr( $block['key'] ); ?>"
-										data-input_name="<?php esc_attr_e( PostLockdown::KEY ); ?>[<?php echo esc_attr( $block['input_name'] ); ?>]"
-										>
-									</ul>
-								</div>
+								<span class="spinner"></span>
+								<ul class="pl-multiselect">
+								</ul>
 							</div>
-							<p class="description"><?php echo esc_html( $block['description'] ); ?></p>
-						</td>
-					</tr>
-				<?php } ?>
+							<div class="pl-posts pl-posts-selected">
+								<ul class="pl-multiselect"
+								    data-key="<?php echo esc_attr( $block['key'] ); ?>"
+								    data-input_name="<?php echo esc_attr( PostLockdown::KEY ); ?>[<?php echo esc_attr( $block['input_name'] ); ?>]"
+								>
+								</ul>
+							</div>
+						</div>
+						<p class="description"><?php echo esc_html( $block['description'] ); ?></p>
+					</td>
+				</tr>
+			<?php } ?>
 			</tbody>
 		</table>
-		<input name="submit" type="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
+		<input name="submit" type="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>"/>
 	</form>
 </div>
