@@ -1,19 +1,34 @@
 module.exports = function( grunt ) {
-
 	'use strict';
 
-	grunt.util.linefeed = '\n';
+	require( 'load-grunt-tasks' )( grunt );
 
+	grunt.util.linefeed = '\n';
 	grunt.option( 'stack', true );
 
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
+
+		paths: {
+			src: {
+				js: 'src/assets/js',
+				css: 'src/assets/sass'
+			},
+			build: {
+				js: 'view/assets/js',
+				css: 'view/assets/css'
+			}
+		},
+
 		jshint: {
 			options: {
 				jshintrc: '.jshintrc'
 			},
+			src: {
+				src: '<%= paths.src.js %>/*.js'
+			},
 			build: {
-				src: 'src/assets/js/*.js'
+				src: [ '<%= paths.build.js %>/*.js', '!<%= paths.build.js %>/*.min.js' ]
 			},
 			grunt: {
 				options: {
@@ -22,62 +37,75 @@ module.exports = function( grunt ) {
 				src: 'Gruntfile.js'
 			}
 		},
+
 		clean: {
-			build: [ 'view/assets' ]
+			buildJs: [ '<%= paths.build.js %>' ],
+			buildCss: [ '<%= paths.build.css %>' ]
 		},
-		copy: {
-			js: {
-				files: [ {
-						expand: true,
-						cwd: 'src/assets/js',
-						src: '*.js',
-						dest: 'view/assets/js'
-					} ]
+
+		sasslint: {
+			options: {},
+			target: [ '<%= paths.src.css %>/*.scss' ]
+		},
+
+		sass: {
+			options: {
+				sourceMap: true,
+				outputStyle: 'expanded'
+			},
+			build: {
+				src: '<%= paths.src.css %>/postlockdown.scss',
+				dest: '<%= paths.build.css %>/postlockdown.css'
 			}
 		},
+
 		cssmin: {
 			options: {
+				sourceMap: true,
 				report: 'gzip'
 			},
 			build: {
-				files: {
-					'view/assets/css/postlockdown.min.css': 'view/assets/css/postlockdown.css'
-				}
+				src: '<%= paths.build.css %>/postlockdown.css',
+				dest: '<%= paths.build.css %>/postlockdown.min.css'
 			}
 		},
-		less: {
+
+		concat: {
+			options: {
+				sourceMap: true
+			},
 			build: {
-				files: {
-					'view/assets/css/postlockdown.css': 'src/assets/less/postlockdown.less'
-				}
+				src: '<%= paths.src.js %>/*.js',
+				dest: '<%= paths.build.js %>/postlockdown.js'
 			}
 		},
+
 		uglify: {
 			options: {
-				compress: true,
-				mangle: true,
+				sourceMap: true,
 				report: 'gzip'
 			},
 			build: {
 				files: [ {
-						expand: true,
-						cwd: 'view/assets/js',
-						src: '*.js',
-						dest: 'view/assets/js',
-						ext: '.min.js',
-						extDot: 'last'
-					} ]
+					expand: true,
+					cwd: '<%= paths.build.js %>',
+					src: '*.js',
+					dest: '<%= paths.build.js %>',
+					ext: '.min.js',
+					extDot: 'last'
+				} ]
 			}
 		},
+
 		watch: {
 			options: { livereload: true, spawn: false },
-			less: {
-				files: [ 'src/assets/less/*.less' ],
-				tasks: [ 'less:build' ]
+			sass: {
+				files: [ '<%= paths.src.css %>/*.scss' ],
+				tasks: [ 'buildCss' ]
 			},
 			js: {
-				files: [ 'src/assets/js/*.js' ],
-				tasks: [ 'jshint:build', 'copy:js', 'uglify' ]
+				files: [ '<%= paths.src.js %>/*.js' ],
+				tasks: [ 'buildJs' ]
 			},
 			grunt: {
 				options: { livereload: false },
@@ -85,21 +113,29 @@ module.exports = function( grunt ) {
 				tasks: [ 'jshint:grunt' ]
 			},
 			livereload: {
-				files: [ 'build/assets/css/style.css' ]
+				files: [ '<%= paths.build.css %>/postlockdown.css' ]
 			}
 		}
 
 	} );
 
-	grunt.loadNpmTasks( 'grunt-contrib-clean' );
-	grunt.loadNpmTasks( 'grunt-contrib-concat' );
-	grunt.loadNpmTasks( 'grunt-contrib-copy' );
-	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
-	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
-	grunt.loadNpmTasks( 'grunt-contrib-less' );
-	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
-	grunt.loadNpmTasks( 'grunt-contrib-watch' );
+	grunt.registerTask( 'buildJs', [
+		'jshint:src',
+		'clean:buildJs',
+		'concat:build',
+		'uglify:build'
+	] );
 
-	grunt.registerTask( 'default', [ 'jshint', 'clean:build', 'copy:js', 'uglify:build', 'less:build', 'cssmin:build' ] );
+	grunt.registerTask( 'buildCss', [
+		'sasslint',
+		'clean:buildCss',
+		'sass:build',
+		'cssmin:build'
+	] );
 
+	grunt.registerTask( 'default', [
+		'jshint:grunt',
+		'buildJs',
+		'buildCss'
+	] );
 };
