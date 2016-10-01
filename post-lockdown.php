@@ -9,10 +9,10 @@
  * Text Domain: postlockdown
  */
 if ( is_admin() ) {
-	require_once __DIR__ . '/classes/class.post-lockdown.php';
-	require_once __DIR__ . '/classes/class.post-lockdown-options-page.php';
-	require_once __DIR__ . '/classes/class.post-lockdown-admin-notice.php';
-	require_once __DIR__ . '/classes/class.post-lockdown-status-column.php';
+	require_once dirname( __FILE__ ) . '/classes/class.post-lockdown.php';
+	require_once dirname( __FILE__ ) . '/classes/class.post-lockdown-options-page.php';
+	require_once dirname( __FILE__ ) . '/classes/class.post-lockdown-admin-notice.php';
+	require_once dirname( __FILE__ ) . '/classes/class.post-lockdown-status-column.php';
 
 	global $postlockdown;
 	$postlockdown = new PostLockdown( plugin_dir_path( __FILE__ ), plugin_dir_url( __FILE__ ) );
