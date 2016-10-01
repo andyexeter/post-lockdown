@@ -1,10 +1,10 @@
 (function( $ ) {
 	'use strict';
 
-	$( document ).on( 'ready', function() {
+	$( function() {
 		$( '.pl-posts-container' ).each( function() {
 			var selectedKey = $( this ).find( '.pl-posts-selected .pl-multiselect' ).data( 'key' ),
-				inputName = $( this ).find( '.pl-posts-selected .pl-multiselect' ).data( 'input_name' );
+				inputName   = $( this ).find( '.pl-posts-selected .pl-multiselect' ).data( 'input_name' );
 
 			$( this ).plmultiselect( {
 				ajaxAction: 'pl_autocomplete',
