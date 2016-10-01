@@ -3,7 +3,7 @@ Contributors: andyexeter
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
-Tested up to: 4.5
+Tested up to: 4.6.1
 Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -32,7 +32,7 @@ See the screenshots for an example of what an Editor would see when they view a 
 = Are there any major changes in v2.0? =
 
 The plugin now stores an instance of the class in a global variable (`$postlockdown`) instead of using static class methods.
-If you use any of the static methods like `PostLockdown::is_post_protected( $post_id )` in your theme then
+If you're a developer and use any of the static methods like `PostLockdown::is_post_protected( $post_id )` in your theme code then
 you'll need to update your code to the following to be able to use v2.0:
 
 `
