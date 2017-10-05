@@ -34,7 +34,7 @@ cache:
 
 before_script:
 - phpenv local 5.6
-- composer selfupdate 1.0.0 --no-interaction
+- composer selfupdate --no-interaction
 - composer install --no-interaction
 - phpenv local --unset
 - PLUGIN_SLUG=$(basename $(pwd))
@@ -54,4 +54,4 @@ before_script:
 script:
 - if [[ "$PHPLINT" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
 - if [[ "$PHPSNIFF" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 vendor/bin/phpcs --standard="WordPress-Extra" -v; fi
-- if [[ "$JSHINT" == "1" ]]; then npm install -g grunt-cli && npm install load-grunt-tasks grunt-contrib-jshint && grunt jshint --verbose; fi
+- if [[ "$JSHINT" == "1" ]]; then npm install -g grunt-cli && npm install grunt load-grunt-tasks grunt-contrib-jshint && grunt jshint --verbose; fi
