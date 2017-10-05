@@ -167,7 +167,7 @@ class PostLockdown_OptionsPage {
 
 		$defaults = array(
 			'post_type'   => array_diff( get_post_types( array( 'show_ui' => true ) ), $excluded_post_types ),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+			'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
 		);
 
 		$args = wp_parse_args( $args, $defaults );
