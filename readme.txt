@@ -67,8 +67,12 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 2.0.3 =
+* Added private posts to the list of available posts to protect or lock.
+
 = 2.0.2 =
 * Fixed missing call to get_post_types() when retrieving posts.
+* Removed unnecessary files
 
 = 2.0.1 =
 * Added private posts to the list of available posts to protect or lock.
