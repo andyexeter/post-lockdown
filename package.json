@@ -1,6 +1,6 @@
 {
   "name": "post-lockdown",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "private": true,
   "author": "andyexeter",
   "description": "A WordPress plugin to protect posts from being deleted and/or edited",
