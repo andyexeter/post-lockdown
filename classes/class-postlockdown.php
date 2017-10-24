@@ -6,7 +6,7 @@
 class PostLockdown {
 	/** Plugin key for options and the option page. */
 	const KEY = 'postlockdown';
-	const VERSION = '2.0.1';
+	const VERSION = '2.0.2';
 
 	/** @var array List of post IDs which cannot be edited, trashed or deleted. */
 	private $locked_post_ids = array();
