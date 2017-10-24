@@ -67,6 +67,9 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 2.0.1 =
+* Added private posts to the list of available posts to protect or lock.
+
 = 2.0 =
 This is a major version release. Please read the following notes carefully before updating.
 
