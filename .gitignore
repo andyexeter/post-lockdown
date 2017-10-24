@@ -27,3 +27,4 @@ node_modules/
 .idea/
 
 /vendor/
+/bin/release
