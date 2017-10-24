@@ -122,7 +122,7 @@ class PostLockdown_StatusColumn {
 		if ( $this->postlockdown->is_post_locked( $post_id ) ) {
 			$html   = '<span title="Locked - Cannot be edited, trashed or deleted" class="dashicons dashicons-lock"></span> Locked';
 			$status = 'locked';
-		} else if ( $this->postlockdown->is_post_protected( $post_id ) ) {
+		} elseif ( $this->postlockdown->is_post_protected( $post_id ) ) {
 			$html   = '<span title="Protected - Cannot be trashed or deleted" class="dashicons dashicons-unlock"></span> Protected';
 			$status = 'protected';
 		}
