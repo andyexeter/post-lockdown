@@ -165,9 +165,13 @@ class PostLockdown_OptionsPage {
 
 		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
 
+		$post_types = array(
+			'show_ui' => true,
+		);
+
 		$defaults = array(
-			'post_type'   => array_diff( get_post_types( array( 'show_ui' => true ) ), $excluded_post_types ),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+			'post_type'   => array_diff( $post_types, $excluded_post_types ),
+			'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
 		);
 
 		$args = wp_parse_args( $args, $defaults );

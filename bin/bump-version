@@ -21,7 +21,7 @@ fi
 
 read -r -p "Bump version number from $1 to $2? [Y/n]: " confirm
 
-case $confirm in
+case "$confirm" in
 	[Nn][Oo]|[Nn])
 		echo "Exiting"
 		exit
