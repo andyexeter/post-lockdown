@@ -1,3 +1,11 @@
+/node_modules
+
+/vendor/
+/bin/release-secrets
+
+# IDE
+/.idea
+
 # Packages #
 *.7z
 *.dmg
@@ -22,9 +30,3 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-node_modules/
-.idea/
-
-/vendor/
-/bin/release
