@@ -42,7 +42,7 @@ echo "--------------------------------------------"
 read -p "TAG AND RELEASE VERSION: " VERSION
 echo "--------------------------------------------"
 echo ""
-echo "Before continuing, confirm that you have done the following :)"
+echo "Before continuing, confirm that you have done the following:"
 echo ""
 read -p " - Added a changelog for "${VERSION}"?"
 read -p " - Set version in the readme.txt and main file to "${VERSION}"?"
@@ -94,10 +94,9 @@ read -p "PRESS [ENTER] TO DEPLOY BRANCH "${BRANCH}
 
 # REMOVE UNWANTED FILES & FOLDERS
 echo "Removing unwanted files"
-rm -Rf .git
-rm -Rf .github
-rm -Rf tests
-rm -Rf apigen
+rm -rf .git
+rm -rf .github
+rm -rf bin
 rm -f .gitattributes
 rm -f .gitignore
 rm -f .gitmodules
