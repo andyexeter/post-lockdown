@@ -157,21 +157,9 @@ class PostLockdown_OptionsPage {
 	 * @return WP_Post[] Array of post objects.
 	 */
 	private function get_posts( $args = array() ) {
-		$excluded_post_types = array();
-
-		if ( class_exists( 'WooCommerce' ) ) {
-			array_push( $excluded_post_types, 'shop_order', 'shop_coupon' );
-		}
-
-		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
-
-		$post_types = get_post_types( array(
-			'show_ui' => true,
-		) );
-
 		$defaults = array(
-			'post_type'   => array_diff( $post_types, $excluded_post_types ),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+			'post_type'   => $this->postlockdown->get_post_types(),
+			'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' ),
 		);
 
 		$args = wp_parse_args( $args, $defaults );

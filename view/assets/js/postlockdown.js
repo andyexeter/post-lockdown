@@ -11,7 +11,6 @@
 	var pluginName = 'plmultiselect';
 
 	function Plugin( element, options ) {
-
 		this.$el = $( element );
 		this.options = $.extend( { }, options );
 
@@ -30,7 +29,6 @@
 		 * Initialises the plugin instance.
 		 */
 		init: function( ) {
-
 			var self = this;
 
 			this.$right.height( this.$left.parent( ).height( ) );
@@ -38,7 +36,6 @@
 			this.$search.autocomplete( {
 				minLength: 0,
 				source: function( request ) {
-
 					self.queryItems( request.term, 0, function( json ) {
 						self.renderMenu( self.$left, json.data );
 					} );
@@ -51,7 +48,6 @@
 
 			// Attach the click handler for available items
 			this.$left.on( 'click', '> li', function( ) {
-
 				if ( !$( this ).is( '.selected' ) ) {
 					self.selectItem.call( self, $( this ) );
 				}
@@ -60,7 +56,6 @@
 
 			// Attach the click handler for remove buttons on selected items.
 			this.$right.on( 'click', '> li .dashicons-no', function( ) {
-
 				var ID = $( this ).closest( 'li' ).data( 'ID' );
 				$( this ).closest( 'li' ).remove( );
 				self.$left.find( '.post-' + ID ).removeClass( 'selected' );
@@ -73,15 +68,17 @@
 
 			// Paginate scrolling of the available items menu.
 			this.$left.on( 'scroll', function( ) {
-
 				// Go to next page if the scrollbar is 15px or less from the bottom.
 				if ( this.scrollHeight - $( this ).scrollTop( ) - 15 <= $( this ).height( ) ) {
 					self.nextPage( );
 				}
 			} );
 		},
-		nextPage: function( ) {
 
+        /**
+         * Loads the next page of available items.
+         */
+        nextPage: function( ) {
 			var self = this,
 				term = this.options.inputSearch.val( ),
 				offset = this.$left.children( 'li' ).length;
@@ -91,6 +88,7 @@
 			} );
 
 		},
+
 		/**
 		 * Makes an AJAX request for a list of items.
 		 * @param {string} term - The term to query items for.
@@ -98,7 +96,6 @@
 		 * @param {function} success - If the request is successful this function will be invoked.
 		 */
 		queryItems: function( term, offset, success ) {
-
 			// Only allow one AJAX request at a time
 			if ( this.doingAjax ) {
 				return false;
@@ -129,12 +126,12 @@
 				}
 			} );
 		},
+
 		/**
 		 * Selects an item by cloning it, or adds an array of plain objects, to the right hand box.
-		 * @param {jQuery||object[]} arg - The jQuery object or an array of plain objects.
+		 * @param {jQuery|object[]} arg - The jQuery object or an array of plain objects.
 		 */
 		selectItem: function( arg ) {
-
 			var inputName = this.options.inputName;
 
 			if ( $.isArray( arg ) ) {
@@ -151,15 +148,15 @@
 				arg.addClass( 'selected' );
 			}
 		},
+
 		/**
 		 * Fills a menu with a list of items.
 		 * @param {jQuery} menu - The menu to fill.
-		 * @param {array} items - List of items to add to the menu.
+		 * @param {Array} items - List of items to add to the menu.
 		 * @param {string} inputName - The input name to be passed to getItemTpl().
-		 * @param {bool} append - Whether to append to the menu. Setting to false clears the menu's innerHTML first.
+		 * @param {boolean} append - Whether to append to the menu. Setting to false clears the menu's innerHTML first.
 		 */
 		renderMenu: function( menu, items, inputName, append ) {
-
 			var self = this,
 				$items = [ ];
 
@@ -173,14 +170,14 @@
 
 			menu.append( $items );
 		},
+
 		/**
 		 * Returns a jQuery object of an item to be appended to a menu.
 		 * @param {object} item       The item to build a jQuery object with.
 		 * @param {string} inputName The hidden input field name.
-		 * @returns {jquery} The item as a jQuery object.
+		 * @returns {jQuery} The item as a jQuery object.
 		 */
 		getItemTpl: function( item, inputName ) {
-
 			if ( !inputName ) {
 				inputName = '';
 			}
@@ -204,11 +201,9 @@
 	};
 
 	$.fn[pluginName] = function( options ) {
-
 		return this.each( function( ) {
 			var plugin = $( this ).data( pluginName + '.plugin' );
 			if ( !plugin ) {
-
 				plugin = new Plugin( this, options );
 				$( this ).data( pluginName + '.plugin', plugin );
 			}

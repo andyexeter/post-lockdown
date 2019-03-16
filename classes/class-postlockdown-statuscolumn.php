@@ -17,15 +17,9 @@ class PostLockdown_StatusColumn {
 	 *
 	 */
 	public function _set_post_type_hooks() {
-		$post_types = get_post_types( array( 'public' => true ), 'names' );
-
-		if ( empty( $post_types ) || ! is_array( $post_types ) ) {
-			return;
-		}
-
 		$column_hidden = apply_filters( 'postlockdown_column_hidden_default', true );
 
-		foreach ( $post_types as $post_type ) {
+		foreach ( $this->postlockdown->get_post_types() as $post_type ) {
 			add_filter( "manage_{$post_type}_posts_columns", array( $this, '_column_add' ) );
 			add_action( "manage_{$post_type}_posts_custom_column", array( $this, '_column_output' ), 10, 2 );
 
