@@ -159,7 +159,7 @@ class PostLockdown_OptionsPage {
 	private function get_posts( $args = array() ) {
 		$defaults = array(
 			'post_type'   => $this->postlockdown->get_post_types(),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+			'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' ),
 		);
 
 		$args = wp_parse_args( $args, $defaults );
