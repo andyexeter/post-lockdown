@@ -67,6 +67,9 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 2.1 =
+* Added the ability to lock and protect attachments.
+
 = 2.0.3 =
 * Added private posts to the list of available posts to protect or lock.
 
