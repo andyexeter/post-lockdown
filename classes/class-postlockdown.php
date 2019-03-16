@@ -110,6 +110,27 @@ class PostLockdown {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_post_types() {
+		$excluded_post_types = array();
+
+		if ( class_exists( 'WooCommerce' ) ) {
+			array_push( $excluded_post_types, 'shop_order', 'shop_coupon' );
+		}
+
+		$excluded_post_types = apply_filters( 'postlockdown_excluded_post_types', $excluded_post_types );
+
+		$post_types = get_post_types( array(
+			'show_ui' => true,
+		) );
+
+		$post_types = array_diff( $post_types, $excluded_post_types );
+
+		return apply_filters( 'postlockdown_post_types', $post_types );
+	}
+
+	/**
 	 * Returns the required capability a user must have to bypass all
 	 * locked and protected post restrictions. Defaults to 'manage_options'.
 	 *
@@ -190,8 +211,9 @@ class PostLockdown {
 		$post_id = $postarr['ID'];
 		$post    = get_post( $post_id );
 
-		/* If the user has the required capability to bypass
-		 * restrictions or there are no protected posts get out of here.
+		/*
+		 * Only continue if the current user is a non-admin
+		 * and the post is both published and protected.
 		 */
 		if ( current_user_can( $this->get_admin_cap() ) || 'publish' !== $post->post_status || ! $this->is_post_protected( $post_id ) ) {
 			return $data;
