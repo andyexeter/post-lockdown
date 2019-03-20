@@ -51,7 +51,8 @@ module.exports = function( grunt ) {
 		sass: {
 			options: {
 				sourceMap: true,
-				outputStyle: 'expanded'
+				outputStyle: 'expanded',
+                implementation: require('node-sass')
 			},
 			build: {
 				src: '<%= paths.src.css %>/postlockdown.scss',
@@ -127,7 +128,6 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'buildCss', [
-		'sasslint',
 		'clean:buildCss',
 		'sass:build',
 		'cssmin:build'
