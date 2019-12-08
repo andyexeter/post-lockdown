@@ -1,0 +1,29 @@
+<?php
+
+use PhpCsFixer\Config;
+
+$config = new Config();
+$config
+    ->setRiskyAllowed(true)
+    ->setRules([
+        '@Symfony'                      => true,
+        '@Symfony:risky'                => true,
+        'array_syntax'                  => ['syntax' => 'short'],
+        'concat_space'                  => ['spacing' => 'one'],
+        'fopen_flags'                   => false,
+        'ordered_imports'               => true,
+        'protected_to_private'          => false,
+        'binary_operator_spaces'        => ['align_double_arrow' => true, 'align_equals' => true],
+        'yoda_style'                    => false,
+        'phpdoc_inline_tag'             => false,
+        'phpdoc_annotation_without_dot' => false,
+        'cast_spaces'                   => ['space' => 'none'],
+        'native_function_invocation'    => true,
+    ])
+    ->getFinder()
+    ->in(__DIR__ . '/src')
+    ->in(__DIR__ . '/view')
+    ->append([__FILE__])
+    ->append(['post-lockdown.php']);
+
+return $config;

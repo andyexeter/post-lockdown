@@ -1,23 +1,18 @@
 {
-  "name": "post-lockdown",
-  "version": "2.1",
-  "private": true,
-  "author": "andyexeter",
-  "description": "A WordPress plugin to protect posts from being deleted and/or edited",
-  "license": "http://www.gnu.org/licenses/gpl-2.0.html",
-  "devDependencies": {
-    "grunt": "^1.0.3",
-    "grunt-contrib-clean": "^2.0.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-cssmin": "^3.0.0",
-    "grunt-contrib-jshint": "^2.1.0",
-    "grunt-contrib-uglify": "^4.0.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-sass": "^3.0.2",
-    "load-grunt-tasks": "^4.0.0",
-    "node-sass": "^4.11.0"
-  },
-  "dependencies": {
-    "prettier": "^1.16.4"
-  }
+    "private": true,
+    "devDependencies": {
+        "grunt": "^1.0.3",
+        "grunt-contrib-clean": "^2.0.0",
+        "grunt-contrib-concat": "^1.0.1",
+        "grunt-contrib-cssmin": "^3.0.0",
+        "grunt-contrib-jshint": "^2.1.0",
+        "grunt-contrib-uglify": "^4.0.0",
+        "grunt-contrib-watch": "^1.1.0",
+        "grunt-sass": "^3.0.2",
+        "load-grunt-tasks": "^4.0.0",
+        "node-sass": "^4.11.0"
+    },
+    "dependencies": {
+        "prettier": "^1.16.4"
+    }
 }
