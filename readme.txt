@@ -3,8 +3,8 @@ Contributors: andyexeter
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
-Tested up to: 5.2
-Stable tag: 2.1
+Tested up to: 5.3
+Stable tag: 3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,14 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 3.0 =
+This is a major version release. Please read the following notes carefully before updating.
+
+* Added WP-CLI integration. You can now edit locked and protected posts via the WordPress CLI! Run `wp postlockdown` to see the list of available commands
+* Bumped PHP version requirement to 5.6 and refactored codebase to use namespaces and PSR-2 coding standards
+* Moved get_posts wrapper method from OptionsPage to PostLockdown so it can be used by the CLI
+* Added `add_locked_post`, `add_protected_post`, `remove_locked_post` and `remove_protected_post` methods to main class
+
 = 2.1 =
 * Added the ability to lock and protect attachments.
 
@@ -110,6 +118,9 @@ This is a major version release. Please read the following notes carefully befor
 * Initial release
 
 == Upgrade Notice ==
+
+= 3.0 =
+This is a major version release. Please read the changelog before updating.
 
 = 2.0 =
 This is a major version release. Please read the changelog before updating.
