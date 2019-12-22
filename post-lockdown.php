@@ -21,6 +21,6 @@ if (is_admin() || (\defined('WP_CLI') && WP_CLI)) {
     register_uninstall_hook(__FILE__, ['PostLockdown', '_uninstall']);
 
     if (\defined('WP_CLI') && WP_CLI) {
-        \WP_CLI::add_command('postlockdown', new \PostLockdown\WpCl($postlockdown));
+        \WP_CLI::add_command('postlockdown', new \PostLockdown\WpCli($postlockdown));
     }
 }
