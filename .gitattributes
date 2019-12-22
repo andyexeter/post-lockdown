@@ -1,6 +1,5 @@
 # Used to remove files from deployment using `git archive`
 
-src export-ignore
 scripts export-ignore
 composer.lock export-ignore
 .gitattributes export-ignore
