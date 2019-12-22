@@ -84,7 +84,7 @@ class OptionsPage
      */
     public function _ajax_autocomplete()
     {
-        $posts = $this->get_posts([
+        $posts = $this->postlockdown->get_posts([
             's'              => $_REQUEST['term'],
             'offset'         => (int)$_REQUEST['offset'],
             'posts_per_page' => 10,
@@ -113,7 +113,7 @@ class OptionsPage
         wp_enqueue_style(PostLockdown::KEY, $assets_path . 'css/postlockdown' . $extension . '.css', null, null);
         wp_enqueue_script(PostLockdown::KEY, $assets_path . 'js/postlockdown' . $extension . '.js', ['jquery-ui-autocomplete'], null, true);
 
-        $posts = $this->get_posts([
+        $posts = $this->postlockdown->get_posts([
             'nopaging' => true,
             'post__in' => \array_merge(
                 $this->postlockdown->get_locked_post_ids(true),
@@ -157,28 +157,5 @@ class OptionsPage
         $html = '<span id="footer-thankyou">' . $text . '</span>';
 
         return $html;
-    }
-
-    /**
-     * Convenience wrapper for get_posts().
-     *
-     * @param array $args Array of args to merge with defaults passed to get_posts().
-     *
-     * @return \WP_Post[] Array of post objects.
-     */
-    private function get_posts($args = [])
-    {
-        $defaults = [
-            'post_type'   => $this->postlockdown->get_post_types(),
-            'post_status' => ['publish', 'pending', 'draft', 'future', 'private', 'inherit'],
-        ];
-
-        $args = wp_parse_args($args, $defaults);
-
-        $args = apply_filters('postlockdown_get_posts', $args);
-
-        $query = new \WP_Query($args);
-
-        return $query->posts;
     }
 }

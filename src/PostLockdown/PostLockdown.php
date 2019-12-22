@@ -5,7 +5,7 @@ namespace PostLockdown;
 class PostLockdown
 {
     /** Plugin key for options and the option page. */
-    const KEY = 'postlockdown';
+    const KEY     = 'postlockdown';
     const VERSION = '2.1';
 
     /** @var array List of post IDs which cannot be edited, trashed or deleted. */
@@ -13,9 +13,11 @@ class PostLockdown
 
     /** @var array List of post IDs which cannot be trashed or deleted. */
     private $protected_post_ids = [];
-
+    /** @var string */
     public $plugin_path;
+    /** @var string */
     public $plugin_url;
+    /** @var string */
     public $db_version;
 
     public $registry = [];
@@ -28,7 +30,7 @@ class PostLockdown
         $this->load_registry();
         $this->load_options();
 
-        add_action('delete_post', [$this, '_update_option']);
+        add_action('delete_post', [$this, '_remove_deleted_post']);
         add_filter('user_has_cap', [$this, '_filter_cap'], 10, 3);
         add_filter('wp_insert_post_data', [$this, '_prevent_status_change'], 10, 2);
     }
@@ -80,7 +82,7 @@ class PostLockdown
     /**
      * Returns whether a post is locked.
      *
-     * @param int  $post_id The ID of the post to check.
+     * @param int  $post_id          The ID of the post to check.
      * @param bool $suppress_filters
      *
      * @return bool
@@ -99,7 +101,7 @@ class PostLockdown
     /**
      * Returns whether a post is protected.
      *
-     * @param int  $post_id The ID of the post to check.
+     * @param int  $post_id          The ID of the post to check.
      * @param bool $suppress_filters
      *
      * @return bool
@@ -113,6 +115,85 @@ class PostLockdown
         $protected_post_ids = $this->get_protected_post_ids();
 
         return isset($protected_post_ids[$post_id]);
+    }
+
+    /**
+     * Adds the given post ID or post IDs to the list of locked posts.
+     *
+     * @param int ...$post_ids
+     */
+    public function add_locked_post(...$post_ids)
+    {
+        foreach ($post_ids as $post_id) {
+            $this->locked_post_ids[$post_id] = $post_id;
+        }
+
+        $this->update_option();
+    }
+
+    /**
+     * Removes the given post ID or post IDs from the list of locked posts.
+     *
+     * @param int ...$post_ids
+     */
+    public function remove_locked_post(...$post_ids)
+    {
+        foreach ($post_ids as $post_id) {
+            unset($this->locked_post_ids[$post_id]);
+        }
+
+        $this->update_option();
+    }
+
+    /**
+     * Adds the given post ID or post IDs to the list of protected posts.
+     *
+     * @param int ...$post_ids
+     */
+    public function add_protected_post(...$post_ids)
+    {
+        foreach ($post_ids as $post_id) {
+            $this->protected_post_ids[$post_id] = $post_id;
+        }
+
+        $this->update_option();
+    }
+
+    /**
+     * Removes the given post ID or post IDs to the list of protected posts.
+     *
+     * @param int ...$post_ids
+     */
+    public function remove_protected_post(...$post_ids)
+    {
+        foreach ($post_ids as $post_id) {
+            unset($this->protected_post_ids[$post_id]);
+        }
+
+        $this->update_option();
+    }
+
+    /**
+     * Convenience wrapper for get_posts().
+     *
+     * @param array $args Array of args to merge with defaults passed to get_posts().
+     *
+     * @return \WP_Post[] Array of post objects.
+     */
+    public function get_posts($args = [])
+    {
+        $defaults = [
+            'post_type'   => $this->get_post_types(),
+            'post_status' => ['publish', 'pending', 'draft', 'future', 'private', 'inherit'],
+        ];
+
+        $args = wp_parse_args($args, $defaults);
+
+        $args = apply_filters('postlockdown_get_posts', $args);
+
+        $query = new \WP_Query($args);
+
+        return $query->posts;
     }
 
     /**
@@ -262,10 +343,15 @@ class PostLockdown
      *
      * @param int $post_id Deleted post's ID.
      */
-    public function _update_option($post_id)
+    public function _remove_deleted_post($post_id)
     {
         unset($this->locked_post_ids[$post_id], $this->protected_post_ids[$post_id]);
 
+        $this->update_option();
+    }
+
+    public function update_option()
+    {
         update_option(self::KEY, [
             'locked_post_ids'    => $this->locked_post_ids,
             'protected_post_ids' => $this->protected_post_ids,
