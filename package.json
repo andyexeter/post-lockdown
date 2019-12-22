@@ -1,5 +1,6 @@
 {
     "private": true,
+    "license": "GPL2",
     "devDependencies": {
         "grunt": "^1.0.3",
         "grunt-contrib-clean": "^2.0.0",
