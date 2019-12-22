@@ -8,7 +8,6 @@
  * License: GPL2
  * Text Domain: postlockdown.
  */
-
 if (is_admin() || (\defined('WP_CLI') && WP_CLI)) {
     require_once __DIR__ . '/src/PostLockdown/PostLockdown.php';
     require_once __DIR__ . '/src/PostLockdown/OptionsPage.php';
