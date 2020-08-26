@@ -3,8 +3,8 @@ Contributors: andyexeter
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
-Tested up to: 5.3
-Stable tag: 3.0.1
+Tested up to: 5.4
+Stable tag: 3.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
