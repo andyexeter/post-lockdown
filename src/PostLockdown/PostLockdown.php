@@ -189,6 +189,7 @@ class PostLockdown
             'update_post_term_cache' => false,
             'no_found_rows'          => true,
             'cache_results'          => false,
+            'ignore_sticky_posts'    => true,
         ];
 
         $args = wp_parse_args($args, $defaults);
