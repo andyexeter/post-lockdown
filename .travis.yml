@@ -3,6 +3,9 @@ language: php
 
 sudo: false
 
+services:
+    - mysql
+
 matrix:
   allow_failures:
     - php: hhvm
