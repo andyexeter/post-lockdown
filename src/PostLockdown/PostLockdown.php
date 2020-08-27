@@ -183,8 +183,12 @@ class PostLockdown
     public function get_posts($args = [])
     {
         $defaults = [
-            'post_type'   => $this->get_post_types(),
-            'post_status' => ['publish', 'pending', 'draft', 'future', 'private', 'inherit'],
+            'post_type'              => $this->get_post_types(),
+            'post_status'            => ['publish', 'pending', 'draft', 'future', 'private', 'inherit'],
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+            'no_found_rows'          => true,
+            'cache_results'          => false,
         ];
 
         $args = wp_parse_args($args, $defaults);
