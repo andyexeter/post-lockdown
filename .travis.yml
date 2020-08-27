@@ -32,8 +32,6 @@ matrix:
       env: WP_VERSION=3.9 WP_MULTISITE=1
     - php: 5.6
       env: WP_VERSION=3.8 WP_MULTISITE=0
-    - php: hhvm
-      env: WP_VERSION=master WP_MULTISITE=0
 
 
 cache:
@@ -66,4 +64,4 @@ before_script:
 script:
 - if [[ "$PHPLINT" == "1" ]]; then composer lint; fi
 - if [[ "$PHPSNIFF" == "1" ]]; then composer sniff; fi
-- if [[ "$JSHINT" == "1" ]]; then yarn add global grunt-cli && yarn add grunt load-grunt-tasks grunt-contrib-jshint && grunt jshint --verbose; fi
+- if [[ "$JSHINT" == "1" ]]; then yarn add grunt load-grunt-tasks grunt-contrib-jshint && ./node_modules/.bin/grunt jshint --verbose; fi
