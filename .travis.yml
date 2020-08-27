@@ -1,7 +1,10 @@
-dist: trusty
+dist: xenial
 language: php
 
 sudo: false
+
+services:
+    - mysql
 
 matrix:
   allow_failures:
@@ -29,8 +32,6 @@ matrix:
       env: WP_VERSION=3.9 WP_MULTISITE=1
     - php: 5.6
       env: WP_VERSION=3.8 WP_MULTISITE=0
-    - php: hhvm
-      env: WP_VERSION=master WP_MULTISITE=0
 
 
 cache:
@@ -41,10 +42,8 @@ cache:
     - node_modules
 
 before_script:
-- phpenv local 5.6
-- composer selfupdate --no-interaction
-- composer install --no-interaction
-- phpenv local --unset
+- if [[ "$PHPSNIFF" == "1" ]]; then composer install --no-interaction; fi
+- if [[ "$JSHINT" == "1" ]]; then nvm install lts/*; fi
 - PLUGIN_SLUG=$(basename $(pwd))
 - export WP_DEVELOP_DIR=/tmp/wordpress/
 - git clone --depth=50 --branch="$WP_VERSION" git://develop.git.wordpress.org/ /tmp/wordpress
@@ -57,9 +56,8 @@ before_script:
 - sed -i "s/yourpasswordhere//" wp-tests-config.php
 - mysql -e "CREATE DATABASE wordpress_tests;" -uroot
 - cd "/tmp/wordpress/src/wp-content/plugins/$PLUGIN_SLUG"
-- phpenv rehash
 
 script:
 - if [[ "$PHPLINT" == "1" ]]; then composer lint; fi
 - if [[ "$PHPSNIFF" == "1" ]]; then composer sniff; fi
-- if [[ "$JSHINT" == "1" ]]; then yarn add global grunt-cli && yarn add grunt load-grunt-tasks grunt-contrib-jshint && grunt jshint --verbose; fi
+- if [[ "$JSHINT" == "1" ]]; then yarn add grunt load-grunt-tasks grunt-contrib-jshint && ./node_modules/.bin/grunt jshint --verbose; fi
