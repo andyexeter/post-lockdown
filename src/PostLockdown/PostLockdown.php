@@ -208,8 +208,8 @@ class PostLockdown
     {
         $excluded_post_types = [];
 
-        if (\class_exists('WooCommerce')) {
-            \array_push($excluded_post_types, 'shop_order', 'shop_coupon');
+        if (class_exists('WooCommerce')) {
+            array_push($excluded_post_types, 'shop_order', 'shop_coupon');
         }
 
         $excluded_post_types = apply_filters('postlockdown_excluded_post_types', $excluded_post_types);
@@ -218,7 +218,7 @@ class PostLockdown
             'show_ui' => true,
         ]);
 
-        $post_types = \array_diff($post_types, $excluded_post_types);
+        $post_types = array_diff($post_types, $excluded_post_types);
 
         return apply_filters('postlockdown_post_types', $post_types);
     }
@@ -328,7 +328,7 @@ class PostLockdown
         }
 
         // Revert the post date if it's set to a future date.
-        if ($data['post_date'] !== $post->post_date && \strtotime($data['post_date']) > \time()) {
+        if ($data['post_date'] !== $post->post_date && strtotime($data['post_date']) > time()) {
             $changed               = true;
             $data['post_date']     = $post->post_date;
             $data['post_date_gmt'] = $post->post_date_gmt;

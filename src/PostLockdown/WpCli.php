@@ -34,7 +34,7 @@ class WpCli
     {
         list($post) = $args;
 
-        if (!\is_numeric($post)) {
+        if (!is_numeric($post)) {
             $posts = $this->postlockdown->get_posts([
                 'posts_per_page' => 1,
                 'name'           => $post,
@@ -44,7 +44,7 @@ class WpCli
                 \WP_CLI::error("Could not find post '$post'", true);
             }
 
-            $post = \reset($posts)->ID;
+            $post = reset($posts)->ID;
         }
 
         if ($this->postlockdown->is_post_locked($post)) {
@@ -199,8 +199,8 @@ class WpCli
 
     private function getPostIds($arg)
     {
-        return \array_map(function ($post) {
-            if (\is_numeric($post)) {
+        return array_map(function ($post) {
+            if (is_numeric($post)) {
                 return (int)$post;
             }
 
@@ -213,8 +213,8 @@ class WpCli
                 \WP_CLI::error("Could not find post '$post'", true);
             }
 
-            return (int)\reset($posts)->ID;
-        }, \explode(',', $arg));
+            return (int)reset($posts)->ID;
+        }, explode(',', $arg));
     }
 
     /**
