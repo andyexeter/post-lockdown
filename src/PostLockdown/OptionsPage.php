@@ -115,7 +115,7 @@ class OptionsPage
 
         $posts = $this->postlockdown->get_posts([
             'nopaging' => true,
-            'post__in' => \array_merge(
+            'post__in' => array_merge(
                 $this->postlockdown->get_locked_post_ids(true),
                 $this->postlockdown->get_protected_post_ids(true)
             ),
@@ -152,7 +152,7 @@ class OptionsPage
             return $html;
         }
 
-        $text = \sprintf(__('Thank you for using Post Lockdown. If you like it, please consider <a href="%s" target="_blank">leaving a review.</a>'), __('https://wordpress.org/support/view/plugin-reviews/post-lockdown?rate=5#postform'));
+        $text = sprintf(__('Thank you for using Post Lockdown. If you like it, please consider <a href="%s" target="_blank">leaving a review.</a>'), __('https://wordpress.org/support/view/plugin-reviews/post-lockdown?rate=5#postform'));
 
         $html = '<span id="footer-thankyou">' . $text . '</span>';
 

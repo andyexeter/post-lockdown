@@ -8,7 +8,7 @@
  * License: GPL2
  * Text Domain: postlockdown.
  */
-if (is_admin() || (\defined('WP_CLI') && WP_CLI)) {
+if (is_admin() || (defined('WP_CLI') && WP_CLI)) {
     require_once __DIR__ . '/src/PostLockdown/PostLockdown.php';
     require_once __DIR__ . '/src/PostLockdown/OptionsPage.php';
     require_once __DIR__ . '/src/PostLockdown/AdminNotice.php';
@@ -20,7 +20,7 @@ if (is_admin() || (\defined('WP_CLI') && WP_CLI)) {
 
     register_uninstall_hook(__FILE__, ['PostLockdown', '_uninstall']);
 
-    if (\defined('WP_CLI') && WP_CLI) {
+    if (defined('WP_CLI') && WP_CLI) {
         \WP_CLI::add_command('postlockdown', new \PostLockdown\WpCli($postlockdown));
     }
 }
