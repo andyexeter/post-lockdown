@@ -3,8 +3,8 @@ Contributors: andyexeter
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
-Tested up to: 5.4
-Stable tag: 3.0.2
+Tested up to: 5.5
+Stable tag: 3.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,9 @@ The following filters are used throughout the plugin:
 3. The Post Lockdown administration page.
 
 == Changelog ==
+
+= 3.0.3 =
+* Improved performance whilst fetching posts (Thanks to joshuadavidnelson)
 
 = 3.0 =
 This is a major version release. Please read the following notes carefully before updating.
