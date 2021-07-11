@@ -252,6 +252,16 @@ class PostLockdown
      */
     public function _filter_cap($allcaps, $cap, $args)
     {
+        /* If the user doesn't have the required capabilities to begin with we can return early
+         * because we never want to give users more capabilities than they already have.
+         * We only want to restrict capabilities based on whether the post is locked or protected.
+         */
+        foreach ($cap as $requiredCap) {
+            if (empty($allcaps[$requiredCap])) {
+                return $allcaps;
+            }
+        }
+
         /* If there are no locked or protected posts, or the user
          * has the required capability to bypass restrictions get out of here.
          */
@@ -275,17 +285,15 @@ class PostLockdown
             return $allcaps;
         }
 
-        // If the post is locked set the capability to false.
-        $has_cap = !$this->is_post_locked($post_id);
+        $has_cap = true;
 
-        /* If the user still has the capability and we're not editing a post,
-         * set the capability to false if the post is protected.
-         */
-        if ($has_cap && 'edit_post' !== $args[0]) {
-            $has_cap = !$this->is_post_protected($post_id);
+        if ($this->is_post_locked($post_id) || ('edit_post' !== $args[0] && $this->is_post_protected($post_id))) {
+            $has_cap = false;
         }
 
-        $allcaps[$cap[0]] = $has_cap;
+        foreach ($cap as $requiredCap) {
+            $allcaps[$requiredCap] = $has_cap;
+        }
 
         return $allcaps;
     }
