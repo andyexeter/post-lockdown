@@ -73,5 +73,4 @@ function bump() {
 
 bump post-lockdown.php "* Version: $1" "* Version: $2"
 bump classes/class-postlockdown.php "const VERSION = '$1';" "const VERSION = '$2';"
-bump package.json "\"version\": \"$1\"" "\"version\": \"$2\""
 bump readme.txt "Stable tag: $1" "Stable tag: $2"
