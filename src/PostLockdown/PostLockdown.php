@@ -313,6 +313,12 @@ class PostLockdown
     public function _prevent_status_change($data, $postarr)
     {
         $post_id = $postarr['ID'];
+
+        if ($post_id === 0) {
+            // New post
+            return $data;
+        }
+
         $post    = get_post($post_id);
 
         /*
