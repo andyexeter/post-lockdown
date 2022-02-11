@@ -3,3 +3,4 @@
 /node_modules
 /bin/release-secrets
 /.php_cs.cache
+/wordpress

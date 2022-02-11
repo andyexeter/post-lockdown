@@ -8,11 +8,17 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
-        "wp-cli/wp-cli": "^2.4"
+        "wp-cli/wp-cli": "^2.4",
+        "roots/wordpress": "^5.9"
     },
     "scripts": {
         "sniff": "vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff",
         "fix": "vendor/bin/php-cs-fixer fix --diff",
         "lint": "find -L src -path src -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
+    },
+    "config": {
+        "allow-plugins": {
+            "roots/wordpress-core-installer": true
+        }
     }
 }
