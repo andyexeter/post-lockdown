@@ -74,6 +74,8 @@ class OptionsPage
             'description' => __('Protected posts cannot be trashed or deleted by non-admins', 'postlockdown'),
         ];
 
+        $bulk_actions_enabled = $this->postlockdown->is_bulk_actions_enabled();
+
         include_once $this->postlockdown->plugin_path . 'view/options-page.php';
     }
 

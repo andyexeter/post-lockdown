@@ -13,6 +13,7 @@ if (is_admin() || (defined('WP_CLI') && WP_CLI)) {
     require_once __DIR__ . '/src/PostLockdown/OptionsPage.php';
     require_once __DIR__ . '/src/PostLockdown/AdminNotice.php';
     require_once __DIR__ . '/src/PostLockdown/StatusColumn.php';
+    require_once __DIR__ . '/src/PostLockdown/BulkActions.php';
     require_once __DIR__ . '/src/PostLockdown/WpCli.php';
 
     global $postlockdown;

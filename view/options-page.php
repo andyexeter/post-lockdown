@@ -9,7 +9,7 @@
             <tbody>
             <?php foreach ($blocks as $block): ?>
                 <tr>
-                    <th><?= esc_html($block['heading']); ?></th>
+                    <th scope="row"><?= esc_html($block['heading']); ?></th>
                     <td>
                         <div class="pl-posts-container">
                             <div class="pl-posts pl-posts-available">
@@ -31,6 +31,18 @@
                     </td>
                 </tr>
             <?php endforeach; ?>
+            <tr>
+                <th scope="row">Bulk Actions</th>
+                <td>
+                    <fieldset>
+                        <legend class="screen-reader-text"><span>Bulk Actions</span></legend>
+                        <label for="bulk_actions_enabled">
+                            <input name="<?= esc_attr(PostLockdown\PostLockdown::KEY); ?>[bulk_actions_enabled]" type="checkbox" id="bulk_actions_enabled" value="1" <?php checked($bulk_actions_enabled); ?>>
+                            Enable bulk actions on post list screens
+                        </label>
+                    </fieldset>
+                </td>
+            </tr>
             </tbody>
         </table>
         <input name="submit" type="submit" class="button button-primary" value="<?= esc_attr('Save Changes'); ?>">

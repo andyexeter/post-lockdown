@@ -10,9 +10,10 @@ class PostLockdown
 
     /** @var array List of post IDs which cannot be edited, trashed or deleted. */
     private $locked_post_ids = [];
-
     /** @var array List of post IDs which cannot be trashed or deleted. */
     private $protected_post_ids = [];
+    /** @var bool */
+    private $bulk_actions_enabled = false;
     /** @var string */
     public $plugin_path;
     /** @var string */
@@ -237,6 +238,14 @@ class PostLockdown
     }
 
     /**
+     * @return bool
+     */
+    public function is_bulk_actions_enabled()
+    {
+        return $this->bulk_actions_enabled;
+    }
+
+    /**
      * Filter for the 'user_has_cap' hook.
      *
      * Sets the capability to false when current_user_can() has been called on
@@ -372,8 +381,9 @@ class PostLockdown
     public function update_option()
     {
         update_option(self::KEY, [
-            'locked_post_ids'    => $this->locked_post_ids,
-            'protected_post_ids' => $this->protected_post_ids,
+            'locked_post_ids'      => $this->locked_post_ids,
+            'protected_post_ids'   => $this->protected_post_ids,
+            'bulk_actions_enabled' => $this->bulk_actions_enabled,
         ]);
     }
 
@@ -396,6 +406,7 @@ class PostLockdown
             'AdminNotice'  => new AdminNotice($this->plugin_path),
             'OptionsPage'  => new OptionsPage($this),
             'StatusColumn' => new StatusColumn($this),
+            'BulkActions'  => new BulkActions($this),
         ];
     }
 
@@ -412,6 +423,10 @@ class PostLockdown
 
         if (!empty($options['protected_post_ids']) && \is_array($options['protected_post_ids'])) {
             $this->protected_post_ids = $options['protected_post_ids'];
+        }
+
+        if (!empty($options['bulk_actions_enabled'])) {
+            $this->bulk_actions_enabled = true;
         }
     }
 }
