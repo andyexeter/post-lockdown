@@ -13,10 +13,10 @@ class BulkActions
     {
         $this->postlockdown = $postlockdown;
         $this->bulk_actions = [
-            'postlockdown-lock'      => __('PostLockdown: Lock', 'postlockdown'),
-            'postlockdown-unlock'    => __('PostLockdown: Unlock', 'postlockdown'),
-            'postlockdown-protect'   => __('PostLockdown: Protect', 'postlockdown'),
-            'postlockdown-unprotect' => __('PostLockdown: Unprotect', 'postlockdown'),
+            'postlockdown-lock'      => __('Post Lockdown: Lock', 'postlockdown'),
+            'postlockdown-unlock'    => __('Post Lockdown: Unlock', 'postlockdown'),
+            'postlockdown-protect'   => __('Post Lockdown: Protect', 'postlockdown'),
+            'postlockdown-unprotect' => __('Post Lockdown: Unprotect', 'postlockdown'),
         ];
 
         add_action('admin_init', [$this, '_set_post_type_hooks']);
@@ -43,12 +43,14 @@ class BulkActions
         return array_merge($bulk_actions, $this->bulk_actions);
     }
 
+    /**
+     * @param string $redirect_to
+     * @param string $doaction
+     * @param array $post_ids
+     * @return string
+     */
     public function _handle_bulk_actions($redirect_to, $doaction, $post_ids)
     {
-        if (!\in_array($doaction, array_keys($this->bulk_actions))) {
-            return $redirect_to;
-        }
-
         switch ($doaction) {
             case 'postlockdown-lock':
                 $this->postlockdown->add_locked_post(...$post_ids);
