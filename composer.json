@@ -14,7 +14,7 @@
     "scripts": {
         "sniff": "vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no --diff --diff-format=udiff",
         "fix": "vendor/bin/php-cs-fixer fix --diff",
-        "lint": "find -L src -path src -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
+        "lint": "find -L . -path ./vendor -prune -o -path ./wordpress -prune -o -type f -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
     },
     "config": {
         "allow-plugins": {

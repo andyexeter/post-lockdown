@@ -36,6 +36,7 @@ class BulkActions
 
     /**
      * @param array $bulk_actions
+     *
      * @return array
      */
     public function _add_bulk_actions($bulk_actions)
@@ -46,7 +47,8 @@ class BulkActions
     /**
      * @param string $redirect_to
      * @param string $doaction
-     * @param array $post_ids
+     * @param array  $post_ids
+     *
      * @return string
      */
     public function _handle_bulk_actions($redirect_to, $doaction, $post_ids)
