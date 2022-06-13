@@ -24,6 +24,10 @@ class BulkActions
 
     public function _set_post_type_hooks()
     {
+        if (!current_user_can($this->postlockdown->get_admin_cap())) {
+            return;
+        }
+
         if (!$this->postlockdown->is_bulk_actions_enabled()) {
             return;
         }
