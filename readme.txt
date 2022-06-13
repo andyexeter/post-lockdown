@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET4
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
 Tested up to: 6.0
-Stable tag: 3.0.5
+Stable tag: 3.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,9 @@ The following filters are used throughout the plugin:
 3. The Post Lockdown administration page.
 
 == Changelog ==
+
+= 3.0.6 =
+* Fixed a bug which allowed non-admins access to Post Lockdown's bulk actions
 
 = 3.0.5 =
 * New feature: Added bulk actions to post list screens. This is an opt-in feature which must be enabled on the Post Lockdown settings page. (h/t @khaliel for the idea)
