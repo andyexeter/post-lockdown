@@ -6,7 +6,7 @@
  * Author: Andy Palmer
  * Author URI: https://andypalmer.me
  * License: GPL2
- * Text Domain: postlockdown
+ * Text Domain: post-lockdown
  * Domain Path: /languages
  */
 if (is_admin() || (defined('WP_CLI') && WP_CLI)) {
