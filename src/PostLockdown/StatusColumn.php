@@ -121,11 +121,19 @@ class StatusColumn
 
         $html   = '';
         $status = false;
-        if ($this->postlockdown->is_post_locked($post_id)) {
-            $html   = '<span title="Locked - Cannot be edited, trashed or deleted" class="dashicons dashicons-lock"></span> Locked';
+        if ( $this->postlockdown->is_post_locked( $post_id ) ) {
+            $html   = sprintf(
+                '<span title="%s" class="dashicons dashicons-lock"></span> %s',
+                __( 'Locked - Cannot be edited, trashed or deleted', 'postlockdown' ),
+                __( 'Locked', 'postlockdown' )
+            );
             $status = 'locked';
-        } elseif ($this->postlockdown->is_post_protected($post_id)) {
-            $html   = '<span title="Protected - Cannot be trashed or deleted" class="dashicons dashicons-unlock"></span> Protected';
+        } elseif ( $this->postlockdown->is_post_protected( $post_id ) ) {
+            $html   = sprintf(
+                '<span title="%s" class="dashicons dashicons-unlock"></span> %s',
+                __( 'Protected - Cannot be trashed or deleted', 'postlockdown' ),
+                __( 'Protected', 'postlockdown' )
+            );
             $status = 'protected';
         }
 
