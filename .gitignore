@@ -4,3 +4,4 @@
 /bin/release-secrets
 /.php_cs.cache
 /wordpress
+/.php-cs-fixer.cache

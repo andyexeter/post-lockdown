@@ -121,6 +121,7 @@ class WpCli
      * ---
      *
      * @when       after_wp_load
+     *
      * @subcommand protected
      */
     public function _protected(array $args, array $assoc_args)
