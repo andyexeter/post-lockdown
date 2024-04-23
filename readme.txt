@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET4
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 3.8
 Tested up to: 6.5
-Stable tag: 3.0.7
+Stable tag: 3.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,9 @@ The following filters are used throughout the plugin:
 3. The Post Lockdown administration page.
 
 == Changelog ==
+
+= 3.0.8 =
+* Updated text domain to match plugin slug for localization (Thanks to @huubl)
 
 = 3.0.7 =
 * Added internationalization support to post list status column (Thanks to @huubl)
