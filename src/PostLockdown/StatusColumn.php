@@ -50,8 +50,8 @@ class StatusColumn
      * Hides the status column for the user if they haven't already hidden any columns
      * on the current screen.
      *
-     * @param          $result
-     * @param          $option
+     * @param array    $result
+     * @param string   $option
      * @param \WP_User $user
      *
      * @return array
@@ -124,15 +124,15 @@ class StatusColumn
         if ($this->postlockdown->is_post_locked($post_id)) {
             $html   = sprintf(
                 '<span title="%s" class="dashicons dashicons-lock"></span> %s',
-                __( 'Locked - Cannot be edited, trashed or deleted', 'post-lockdown' ),
-                __( 'Locked', 'post-lockdown' )
+                __('Locked - Cannot be edited, trashed or deleted', 'post-lockdown'),
+                __('Locked', 'post-lockdown')
             );
             $status = 'locked';
         } elseif ($this->postlockdown->is_post_protected($post_id)) {
             $html   = sprintf(
                 '<span title="%s" class="dashicons dashicons-unlock"></span> %s',
-                __( 'Protected - Cannot be trashed or deleted', 'post-lockdown' ),
-                __( 'Protected', 'post-lockdown' )
+                __('Protected - Cannot be trashed or deleted', 'post-lockdown'),
+                __('Protected', 'post-lockdown')
             );
             $status = 'protected';
         }
