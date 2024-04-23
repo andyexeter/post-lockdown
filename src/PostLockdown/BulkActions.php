@@ -13,10 +13,10 @@ class BulkActions
     {
         $this->postlockdown = $postlockdown;
         $this->bulk_actions = [
-            'postlockdown-lock'      => __('Post Lockdown: Lock', 'postlockdown'),
-            'postlockdown-unlock'    => __('Post Lockdown: Unlock', 'postlockdown'),
-            'postlockdown-protect'   => __('Post Lockdown: Protect', 'postlockdown'),
-            'postlockdown-unprotect' => __('Post Lockdown: Unprotect', 'postlockdown'),
+            'postlockdown-lock'      => __('Post Lockdown: Lock', 'post-lockdown'),
+            'postlockdown-unlock'    => __('Post Lockdown: Unlock', 'post-lockdown'),
+            'postlockdown-protect'   => __('Post Lockdown: Protect', 'post-lockdown'),
+            'postlockdown-unprotect' => __('Post Lockdown: Unprotect', 'post-lockdown'),
         ];
 
         add_action('admin_init', [$this, '_set_post_type_hooks']);

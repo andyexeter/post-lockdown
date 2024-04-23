@@ -62,16 +62,16 @@ class OptionsPage
 
         $blocks[] = [
             'key'         => 'locked',
-            'heading'     => __('Locked Posts', 'postlockdown'),
+            'heading'     => __('Locked Posts', 'post-lockdown'),
             'input_name'  => 'locked_post_ids',
-            'description' => __('Locked posts cannot be edited, trashed or deleted by non-admins', 'postlockdown'),
+            'description' => __('Locked posts cannot be edited, trashed or deleted by non-admins', 'post-lockdown'),
         ];
 
         $blocks[] = [
             'key'         => 'protected',
-            'heading'     => __('Protected Posts', 'postlockdown'),
+            'heading'     => __('Protected Posts', 'post-lockdown'),
             'input_name'  => 'protected_post_ids',
-            'description' => __('Protected posts cannot be trashed or deleted by non-admins', 'postlockdown'),
+            'description' => __('Protected posts cannot be trashed or deleted by non-admins', 'post-lockdown'),
         ];
 
         $bulk_actions_enabled = $this->postlockdown->is_bulk_actions_enabled();
