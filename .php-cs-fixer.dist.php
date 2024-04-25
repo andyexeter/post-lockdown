@@ -26,10 +26,14 @@ $config
         'visibility_required' => [
             'elements' => ['property', 'method'],
         ],
+        'phpdoc_summary' => false,
     ]))
     ->getFinder()
     ->in(__DIR__ . '/src')
-    ->append([__FILE__])
+    ->append([
+        __FILE__,
+        __DIR__ . '/post-lockdown.php',
+    ])
 ;
 
 return $config;
