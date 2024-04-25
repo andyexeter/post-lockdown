@@ -1,8 +1,9 @@
 name: Release to WordPress.org
 
 on:
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - "v*"
 
 jobs:
   release:
