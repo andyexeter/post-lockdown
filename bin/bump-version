@@ -4,7 +4,6 @@
 #	postlockdown.php - Bumps the version number in the top comment block.
 #	classes/class-postlockdown.php - Bumps the version number constant.
 #	readme.txt - Bumps the Stable tag.
-#	package.json - Bumps the version field.
 #
 # Usage: bin/bump-version <major|minor|patch> - Increments the relevant version part by one.
 #

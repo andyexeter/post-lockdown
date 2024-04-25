@@ -1,0 +1,19 @@
+name: Release to WordPress.org
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  trunk:
+    name: Update trunk
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Release
+        uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
