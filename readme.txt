@@ -67,6 +67,9 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 3.0.13 =
+* Updated minimum required WordPress version to 4.6 so translations are loaded from translate.wordpress.org (Thanks to @huubl)
+
 = 3.0.8 =
 * Updated text domain to match plugin slug for localization (Thanks to @huubl)
 
