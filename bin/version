@@ -64,7 +64,7 @@ new_tag="v$new_version"
 confirm "Publish $new_tag?"
 
 echo "Committing changed files..."
-git add src/PostLockdown/PostLockdown.php
+git add src/PostLockdown/PostLockdown.php readme.txt post-lockdown.php
 git commit -m "Bump version to $new_version"
 
 echo "Adding new version tag: $new_tag..."
@@ -72,5 +72,5 @@ git tag "$new_tag"
 
 current_branch=$(git symbolic-ref --short HEAD)
 
-echo "Pushing branch $current_branch and tag $new_tag upstream..."
-git push origin "$current_branch" "$new_tag"
+#echo "Pushing branch $current_branch and tag $new_tag upstream..."
+#git push origin "$current_branch" "$new_tag"
