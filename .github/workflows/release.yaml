@@ -1,0 +1,43 @@
+name: Release to WordPress.org
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Version Check
+        run: |
+          class_version=$(php -r 'require("src/PostLockdown/PostLockdown.php");echo PostLockdown\PostLockdown::VERSION;')
+          if [ "v$class_version" != "$GITHUB_REF_NAME" ]; then
+            echo "Version in src/PostLockdown/PostLockdown.php (v$class_version) does not match the tag ($GITHUB_REF_NAME)"
+            exit 1
+          fi
+
+          readme_version=$(grep 'Stable tag: ' readme.txt | cut -d':' -f2 | xargs)
+          if [ "v$readme_version" != "$GITHUB_REF_NAME" ]; then
+              echo "Version in readme.txt (v$readme_version) does not match the tag ($GITHUB_REF_NAME)"
+              exit 1
+          fi
+
+          plugin_version=$(grep 'Version: ' post-lockdown.php | cut -d':' -f2 | xargs)
+          if [ "v$plugin_version" != "$GITHUB_REF_NAME" ]; then
+              echo "Version in post-lockdown.php (v$plugin_version) does not match the tag ($GITHUB_REF_NAME)"
+              exit 1
+          fi
+
+      - name: Release
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+          dry-run: true
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}

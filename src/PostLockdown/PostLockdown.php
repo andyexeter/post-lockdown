@@ -5,8 +5,8 @@ namespace PostLockdown;
 class PostLockdown
 {
     /** Plugin key for options and the option page. */
-    const KEY     = 'postlockdown';
-    const VERSION = '3.0.4';
+    public const KEY     = 'postlockdown';
+    public const VERSION = '3.0.11';
 
     /** @var array List of post IDs which cannot be edited, trashed or deleted. */
     private $locked_post_ids = [];

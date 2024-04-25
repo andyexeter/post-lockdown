@@ -5,7 +5,7 @@ namespace PostLockdown;
 class AdminNotice
 {
     /** Query arg used to determine if an admin notice should be displayed. */
-    const QUERY_ARG = 'plstatuschange';
+    public const QUERY_ARG = 'plstatuschange';
 
     private $plugin_path;
 

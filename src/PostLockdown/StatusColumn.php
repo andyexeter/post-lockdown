@@ -4,7 +4,7 @@ namespace PostLockdown;
 
 class StatusColumn
 {
-    const COLUMN_KEY = 'postlockdown_status';
+    public const COLUMN_KEY = 'postlockdown_status';
 
     /** @var PostLockdown */
     private $postlockdown;
