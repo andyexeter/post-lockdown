@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Usage: bin/version [major|minor|patch] (default: patch)
+
+set -e
+
+function confirm() {
+	read -r -p "$* [Y/n]: " confirm
+
+	case "$confirm" in
+		[Nn][Oo]|[Nn])
+			echo "Aborting."
+			exit
+			;;
+	esac
+}
+
+part="${1:-patch}"
+
+if ! [[ "$part" =~ ^(major|minor|patch)$ ]]; then
+    echo >&2 "Expected argument of 'major', 'minor' or 'patch'. '$part' given. Aborting."
+    exit 1
+fi
+
+current_version=$(php -r 'require("src/PostLockdown/PostLockdown.php");echo PostLockdown\PostLockdown::VERSION;')
+
+IFS='.' read -r -a version_parts <<< "$current_version"
+
+major=${version_parts[0]}
+minor=${version_parts[1]}
+patch=${version_parts[2]}
+
+if [[ "$part" == "major" ]]; then
+    major=$((major + 1))
+    minor=0
+    patch=0
+elif [[ "$part" == "minor" ]]; then
+    minor=$((minor + 1))
+    patch=0
+else
+    patch=$((patch + 1))
+fi
+
+new_version="$major.$minor.$patch"
+
+if ! [[ "$new_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+	echo >&2 "'to' version doesn't look like a valid semver version tag (e.g: 1.2.3). Aborting."
+	exit 1
+fi
+
+confirm "Bump version number from $current_version to $new_version?"
+
+composer fix
+
+git add --all
+git commit -m "Code formatting" || true
+
+sed -i "s/public const VERSION = '$current_version'/public const VERSION = '$new_version'/" src/PostLockdown/PostLockdown.php
+sed -i "s/Stable tag: $current_version/Stable tag: $new_version/" readme.txt
+sed -i "s/Version: $current_version/Version: $new_version/" post-lockdown.php
+
+new_tag="v$new_version"
+
+confirm "Publish $new_tag?"
+
+echo "Committing changed files..."
+git add src/PostLockdown/PostLockdown.php
+git commit -m "Bump version to $new_version"
+
+echo "Adding new version tag: $new_tag..."
+git tag "$new_tag"
+
+current_branch=$(git symbolic-ref --short HEAD)
+
+echo "Pushing branch $current_branch and tag $new_tag upstream..."
+git push origin "$current_branch" "$new_tag"
