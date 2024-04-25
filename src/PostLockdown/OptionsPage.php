@@ -4,7 +4,7 @@ namespace PostLockdown;
 
 class OptionsPage
 {
-    const PAGE_TITLE = 'Post Lockdown';
+    public const PAGE_TITLE = 'Post Lockdown';
     /** @var string Page hook returned by add_options_page(). */
     private $page_hook;
     /** @var PostLockdown */
