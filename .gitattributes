@@ -1,5 +1,6 @@
 # Used to remove files from deployment using `git archive`
 
+/.wordpress-org         export-ignore
 /.github                export-ignore
 /bin                    export-ignore
 /.editorconfig          export-ignore
