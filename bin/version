@@ -72,5 +72,5 @@ git tag "$new_tag"
 
 current_branch=$(git symbolic-ref --short HEAD)
 
-#echo "Pushing branch $current_branch and tag $new_tag upstream..."
-#git push origin "$current_branch" "$new_tag"
+echo "Pushing branch $current_branch and tag $new_tag upstream..."
+git push origin "$current_branch" "$new_tag"
