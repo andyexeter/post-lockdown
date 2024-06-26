@@ -23,7 +23,7 @@ require_once __DIR__ . '/src/PostLockdown/WpCli.php';
 global $postlockdown;
 $postlockdown = new PostLockdown\PostLockdown(plugin_dir_path(__FILE__), plugin_dir_url(__FILE__));
 
-register_uninstall_hook(__FILE__, ['PostLockdown', '_uninstall']);
+register_uninstall_hook(__FILE__, [PostLockdown\PostLockdown::class, '_uninstall']);
 
 if (defined('WP_CLI') && WP_CLI) {
     WP_CLI::add_command('postlockdown', new PostLockdown\WpCli($postlockdown));
