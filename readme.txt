@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET4
 Tags: posts, lock, protect, capabilities, capability, trash, delete
 Requires at least: 4.6
 Tested up to: 6.5
-Stable tag: 3.0.13
+Stable tag: 4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,12 @@ The following filters are used throughout the plugin:
 3. The Post Lockdown administration page.
 
 == Changelog ==
+
+= 4.0 =
+This is a major version release. Please read the following notes carefully before updating.
+
+* Fixed a bug which caused the plugin to not work correctly with the new block editor (Gutenberg). This is fixed by loading the plugin for all requests (including REST requests) rather than just the admin area
+* Fixed a bug which caused the uninstall hook to not be called when the plugin was deleted
 
 = 3.0.13 =
 * Updated minimum required WordPress version to 4.6 so translations are loaded from translate.wordpress.org (Thanks to @huubl)
@@ -140,6 +146,9 @@ This is a major version release. Please read the following notes carefully befor
 * Initial release
 
 == Upgrade Notice ==
+
+= 4.0 =
+This is a major version release. Please read the changelog before updating.
 
 = 3.0 =
 This is a major version release. Please read the changelog before updating.
