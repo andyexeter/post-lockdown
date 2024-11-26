@@ -6,18 +6,10 @@ class BulkActions
 {
     /** @var PostLockdown */
     private $postlockdown;
-    /** @var array */
-    private $bulk_actions;
 
     public function __construct(PostLockdown $postlockdown)
     {
         $this->postlockdown = $postlockdown;
-        $this->bulk_actions = [
-            'postlockdown-lock'      => __('Post Lockdown: Lock', 'post-lockdown'),
-            'postlockdown-unlock'    => __('Post Lockdown: Unlock', 'post-lockdown'),
-            'postlockdown-protect'   => __('Post Lockdown: Protect', 'post-lockdown'),
-            'postlockdown-unprotect' => __('Post Lockdown: Unprotect', 'post-lockdown'),
-        ];
 
         add_action('admin_init', [$this, '_set_post_type_hooks']);
     }
@@ -45,7 +37,12 @@ class BulkActions
      */
     public function _add_bulk_actions($bulk_actions)
     {
-        return array_merge($bulk_actions, $this->bulk_actions);
+        return array_merge($bulk_actions, [
+            'postlockdown-lock'      => __('Post Lockdown: Lock', 'post-lockdown'),
+            'postlockdown-unlock'    => __('Post Lockdown: Unlock', 'post-lockdown'),
+            'postlockdown-protect'   => __('Post Lockdown: Protect', 'post-lockdown'),
+            'postlockdown-unprotect' => __('Post Lockdown: Unprotect', 'post-lockdown'),
+        ]);
     }
 
     /**
