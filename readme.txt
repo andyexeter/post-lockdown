@@ -67,6 +67,10 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 4.0.2 =
+
+* Fixed a warning in WordPress 6.7 related to loading translations to early
+
 = 4.0 =
 This is a major version release. Please read the following notes carefully before updating.
 
