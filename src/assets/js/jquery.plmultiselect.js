@@ -114,7 +114,8 @@
                 data: {
                     action: this.options.ajaxAction,
                     term: term,
-                    offset: offset
+                    offset: offset,
+                    _ajax_nonce: this.options.ajaxNonce
                 },
                 context: this,
                 success: function(json) {

@@ -8,10 +8,12 @@
                     .data('key'),
                 inputName = $(this)
                     .find('.pl-posts-selected .pl-multiselect')
-                    .data('input_name');
+                    .data('input_name'),
+                $table = $(this).closest('table.form-table');
 
             $(this).plmultiselect({
-                ajaxAction: 'pl_autocomplete',
+                ajaxAction: $table.data('ajax_action'),
+                ajaxNonce: $table.data('ajax_nonce'),
                 inputName: inputName,
                 inputSearch: $(this).find('.pl-autocomplete'),
                 ulAvailable: $(this).find(
