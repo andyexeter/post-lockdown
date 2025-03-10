@@ -5,6 +5,7 @@ namespace PostLockdown;
 class OptionsPage
 {
     public const PAGE_TITLE = 'Post Lockdown';
+    public const AJAX_ACTION = 'pl_autocomplete';
     /** @var string Page hook returned by add_options_page(). */
     private $page_hook;
     /** @var PostLockdown */
@@ -18,7 +19,7 @@ class OptionsPage
         add_action('admin_menu', [$this, '_add_options_page']);
 
         add_action('admin_enqueue_scripts', [$this, '_enqueue_scripts']);
-        add_action('wp_ajax_pl_autocomplete', [$this, '_ajax_autocomplete']);
+        add_action(sprintf('wp_ajax_%s', self::AJAX_ACTION), [$this, '_ajax_autocomplete']);
 
         add_filter('option_page_capability_' . PostLockdown::KEY, [$this->postlockdown, 'get_admin_cap']);
 
@@ -86,6 +87,12 @@ class OptionsPage
      */
     public function _ajax_autocomplete()
     {
+        check_ajax_referer(self::AJAX_ACTION);
+
+        if (!current_user_can($this->postlockdown->get_admin_cap())) {
+            wp_send_json_error(null, 403);
+        }
+
         $posts = $this->postlockdown->get_posts([
             's'              => $_REQUEST['term'],
             'offset'         => (int)$_REQUEST['offset'],
@@ -110,10 +117,9 @@ class OptionsPage
         }
 
         $assets_path = $this->postlockdown->plugin_url . 'view/assets/';
-        $extension   = (\defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
-        wp_enqueue_style(PostLockdown::KEY, $assets_path . 'css/postlockdown' . $extension . '.css', null, null);
-        wp_enqueue_script(PostLockdown::KEY, $assets_path . 'js/postlockdown' . $extension . '.js', ['jquery-ui-autocomplete'], null, true);
+        wp_enqueue_style(PostLockdown::KEY, $assets_path . 'postlockdown.css', null, null);
+        wp_enqueue_script(PostLockdown::KEY, $assets_path . 'postlockdown.js', ['jquery-ui-autocomplete'], null, true);
 
         $posts = $this->postlockdown->get_posts([
             'nopaging' => true,

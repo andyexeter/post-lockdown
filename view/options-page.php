@@ -5,7 +5,7 @@
         <p>
             <?php esc_html_e('Select locked and protected posts by adding them to the boxes on the right. Use the search field to filter the list of posts.', 'post-lockdown'); ?>
         </p>
-        <table class="form-table">
+        <table class="form-table" data-ajax_action="<?= PostLockdown\OptionsPage::AJAX_ACTION; ?>" data-ajax_nonce="<?= esc_attr(wp_create_nonce(PostLockdown\OptionsPage::AJAX_ACTION)); ?>">
             <tbody>
             <?php foreach ($blocks as $block): ?>
                 <tr>
