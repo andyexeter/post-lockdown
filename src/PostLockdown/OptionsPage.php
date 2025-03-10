@@ -4,7 +4,7 @@ namespace PostLockdown;
 
 class OptionsPage
 {
-    public const PAGE_TITLE = 'Post Lockdown';
+    public const PAGE_TITLE  = 'Post Lockdown';
     public const AJAX_ACTION = 'pl_autocomplete';
     /** @var string Page hook returned by add_options_page(). */
     private $page_hook;
