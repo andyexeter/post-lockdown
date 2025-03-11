@@ -1,7 +1,7 @@
 === Post Lockdown ===
 Contributors: andyexeter
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
-Tags: posts, lock, protect, capabilities, capability, trash, delete
+Tags: posts, lock, protect, trash, delete
 Requires at least: 4.6
 Tested up to: 6.7
 Stable tag: 4.0.3
