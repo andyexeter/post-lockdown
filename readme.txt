@@ -56,6 +56,16 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 4.0.4 =
+This is a security release. Please update as soon as possible.
+
+* Added a capability check and nonce to the autocomplete AJAX request to prevent unauthorised access to the post list
+* Added sanitization to autocomplete search term
+* Added sanitization to the plugin's settings
+* Added version string to the plugin's enqueued CSS and JS files to prevent caching issues
+* Added missing text domain to the plugin's settings page footer text
+* Added wp_kses to the Post Lockdown status column to only allow certain HTML tags
+
 = 4.0.2 =
 * Fixed a warning in WordPress 6.7 related to loading translations too early
 
