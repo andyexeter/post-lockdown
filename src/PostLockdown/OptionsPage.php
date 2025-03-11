@@ -33,7 +33,9 @@ class OptionsPage
      */
     public function _register_setting()
     {
-        register_setting(PostLockdown::KEY, PostLockdown::KEY);
+        register_setting(PostLockdown::KEY, PostLockdown::KEY, [
+            'sanitize_callback' => [$this, '_sanitize_options'],
+        ]);
     }
 
     /**
@@ -93,13 +95,47 @@ class OptionsPage
             wp_send_json_error(null, 403);
         }
 
+        if (!isset($_REQUEST['term']) || !isset($_REQUEST['offset'])) {
+            wp_send_json_error(null, 400);
+        }
+
         $posts = $this->postlockdown->get_posts([
-            's'              => $_REQUEST['term'],
+            's'              => sanitize_text_field(wp_unslash($_REQUEST['term'])),
             'offset'         => (int)$_REQUEST['offset'],
             'posts_per_page' => 10,
         ]);
 
         wp_send_json_success($posts);
+    }
+
+    /**
+     * Callback for the sanitize_callback option of register_setting().
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    public function _sanitize_options($options)
+    {
+        if (!\is_array($options)) {
+            $options = [];
+        }
+
+        $options = array_intersect_key($options, array_flip(['locked_post_ids', 'protected_post_ids', 'bulk_actions_enabled']));
+
+        $options['bulk_actions_enabled'] = isset($options['bulk_actions_enabled']);
+
+        foreach (['locked_post_ids', 'protected_post_ids'] as $optionKey) {
+            if (!isset($options[$optionKey]) || !\is_array($options[$optionKey])) {
+                $options[$optionKey] = [];
+            }
+
+            foreach ($options[$optionKey] as $key => $postId) {
+                $options[$optionKey][(int)$key] = (int)$postId;
+            }
+        }
+
+        return $options;
     }
 
     /**
@@ -118,8 +154,8 @@ class OptionsPage
 
         $assets_path = $this->postlockdown->plugin_url . 'view/assets/';
 
-        wp_enqueue_style(PostLockdown::KEY, $assets_path . 'postlockdown.css', null, null);
-        wp_enqueue_script(PostLockdown::KEY, $assets_path . 'postlockdown.js', ['jquery-ui-autocomplete'], null, true);
+        wp_enqueue_style(PostLockdown::KEY, $assets_path . 'postlockdown.css', null, PostLockdown::VERSION);
+        wp_enqueue_script(PostLockdown::KEY, $assets_path . 'postlockdown.js', ['jquery-ui-autocomplete'], PostLockdown::VERSION, true);
 
         $posts = $this->postlockdown->get_posts([
             'nopaging' => true,
@@ -160,10 +196,12 @@ class OptionsPage
             return $html;
         }
 
-        $text = sprintf(__('Thank you for using Post Lockdown. If you like it, please consider <a href="%s" target="_blank">leaving a review.</a>'), __('https://wordpress.org/support/view/plugin-reviews/post-lockdown?rate=5#postform'));
+        $text = sprintf(
+            /* translators: %s: Plugin review form URL. */
+            __('Thank you for using Post Lockdown. If you like it, please consider <a href="%s" target="_blank">leaving a review.</a>', 'post-lockdown'),
+            'https://wordpress.org/support/view/plugin-reviews/post-lockdown?rate=5#postform'
+        );
 
-        $html = '<span id="footer-thankyou">' . $text . '</span>';
-
-        return $html;
+        return sprintf('<span id="footer-thankyou">%s</span>', $text);
     }
 }

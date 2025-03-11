@@ -45,16 +45,16 @@ class StatusColumn
      * Filter for all 'get_user_option_manageedit-{$post_type}columnshidden' hooks
      * added in the _set_post_type_hooks() method.
      *
-     * @see PostLockdown_StatusColumn::_set_post_type_hooks()
-     *
-     * Hides the status column for the user if they haven't already hidden any columns
-     * on the current screen.
-     *
      * @param array    $result
      * @param string   $option
      * @param \WP_User $user
      *
      * @return array
+     *
+     * @see PostLockdown_StatusColumn::_set_post_type_hooks()
+     *
+     * Hides the status column for the user if they haven't already hidden any columns
+     * on the current screen.
      */
     public function _column_hidden($result, $option, $user)
     {
@@ -122,14 +122,14 @@ class StatusColumn
         $html   = '';
         $status = false;
         if ($this->postlockdown->is_post_locked($post_id)) {
-            $html   = sprintf(
+            $html = sprintf(
                 '<span title="%s" class="dashicons dashicons-lock"></span> %s',
                 __('Locked - Cannot be edited, trashed or deleted', 'post-lockdown'),
                 __('Locked', 'post-lockdown')
             );
             $status = 'locked';
         } elseif ($this->postlockdown->is_post_protected($post_id)) {
-            $html   = sprintf(
+            $html = sprintf(
                 '<span title="%s" class="dashicons dashicons-unlock"></span> %s',
                 __('Protected - Cannot be trashed or deleted', 'post-lockdown'),
                 __('Protected', 'post-lockdown')
@@ -139,7 +139,7 @@ class StatusColumn
 
         if (false !== $status) {
             $html = apply_filters('postlockdown_column_html', $html, $status, $post_id);
-            echo $html; // xss ok
+            echo wp_kses($html, ['span' => ['title' => true, 'class' => true]]);
         }
     }
 
@@ -150,16 +150,16 @@ class StatusColumn
         if ('edit.php' !== $pagenow) {
             return;
         } ?>
-		<style id="postlockdown-column-styles">
-			.fixed .column-postlockdown_status {
-				width: 10%;
-			}
+        <style id="postlockdown-column-styles">
+            .fixed .column-postlockdown_status {
+                width: 10%;
+            }
 
-			.fixed td.column-postlockdown_status .dashicons {
-				color: #444;
-				font-size: 22px;
-			}
-		</style>
-		<?php
+            .fixed td.column-postlockdown_status .dashicons {
+                color: #444;
+                font-size: 22px;
+            }
+        </style>
+        <?php
     }
 }

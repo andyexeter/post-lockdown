@@ -56,7 +56,7 @@ class AdminNotice
     {
         $notices = [];
 
-        if (!empty($_GET[self::QUERY_ARG])) {
+        if (isset($_GET[self::QUERY_ARG])) {
             $notices[] = [
                 'class'   => 'error',
                 'message' => __('This post is protected by Post Lockdown and must stay published.', 'post-lockdown'),
