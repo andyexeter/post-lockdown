@@ -29,17 +29,6 @@ See the screenshots for an example of what an Editor would see when they view a 
 
 == Frequently Asked Questions ==
 
-= Are there any major changes in v2.0? =
-
-The plugin now stores an instance of the class in a global variable (`$postlockdown`) instead of using static class methods.
-If you're a developer and use any of the static methods like `PostLockdown::is_post_protected( $post_id )` in your theme code then
-you'll need to update your code to the following to be able to use v2.0:
-
-`
-global $postlockdown;
-$postlockdown->is_post_protected( $post_id );
-`
-
 = What is a "non-admin user"? =
 
 By default, the plugin classes a non-admin as a user who does not have the `manage_options` capability e.g an Editor.
