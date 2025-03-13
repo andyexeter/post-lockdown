@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
     build: {
         lib: {
-            entry: resolve(__dirname, 'src/assets/main.js'),
+            entry: resolve(__dirname, 'assets/main.js'),
             name: 'PostLockdown',
             fileName: () => `postlockdown.js`,
             cssFileName: 'postlockdown',
