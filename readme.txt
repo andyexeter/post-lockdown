@@ -59,7 +59,7 @@ The following filters are used throughout the plugin:
 = 4.0.4 =
 This is a security release. Please update as soon as possible.
 
-* Added a capability check and nonce to the autocomplete AJAX request to prevent unauthorised access to the post list
+* Added a capability check and nonce to the autocomplete AJAX request to prevent unauthorised access to the post list (Thanks to Krzysztof Zając)
 * Added sanitization to autocomplete search term
 * Added sanitization to the plugin's settings
 * Added version string to the plugin's enqueued CSS and JS files to prevent caching issues
