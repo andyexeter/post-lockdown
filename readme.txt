@@ -56,6 +56,10 @@ The following filters are used throughout the plugin:
 
 == Changelog ==
 
+= 4.0.5 =
+
+* Removed a couple of development files erroneously included in previous release
+
 = 4.0.4 =
 This is a security release. Please update as soon as possible.
 
