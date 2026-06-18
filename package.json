@@ -3,7 +3,7 @@
     "license": "GPL2",
     "type": "module",
     "dependencies": {
-        "vite": "^6.2.1"
+        "vite": "^8.0.16"
     },
     "scripts": {
         "dev": "vite",
