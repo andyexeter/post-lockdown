@@ -10,14 +10,20 @@
         "friendsofphp/php-cs-fixer": "^v3.54",
         "wp-cli/wp-cli": "^2.4",
         "roots/wordpress": "^5.9",
-        "palmtree/php-cs-fixer-config": "^2.1"
+        "palmtree/php-cs-fixer-config": "^2.1",
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^1.1"
     },
     "scripts": {
-        "fix": "vendor/bin/php-cs-fixer fix --diff"
+        "fix": "vendor/bin/php-cs-fixer fix --diff",
+        "test": "phpunit"
     },
     "config": {
         "allow-plugins": {
             "roots/wordpress-core-installer": true
+        },
+        "platform": {
+            "php": "7.4"
         }
     }
 }

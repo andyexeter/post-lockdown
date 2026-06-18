@@ -1,0 +1,49 @@
+# Local integration testing — no need to install MySQL, svn or PHP on the host.
+#
+#   docker compose run --rm tests                 # test against the latest WordPress
+#   WP_VERSION=6.5 docker compose run --rm tests   # test against a specific version
+#   WP_VERSION=nightly docker compose run --rm tests
+#   PHP_VERSION=7.4 docker compose build tests      # rebuild against a different PHP version
+#
+# This runs the same suite as .github/workflows/tests.yaml.
+
+services:
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress_test
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: wp
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  tests:
+    build:
+      context: .
+      dockerfile: bin/test.Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.3}
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      WP_TESTS_PHPUNIT_POLYFILLS_PATH: /app/vendor/yoast/phpunit-polyfills
+    command:
+      - bash
+      - -c
+      - |
+        composer install --no-interaction --no-progress
+        bash bin/install-wp-tests.sh wordpress_test wp wp database ${WP_VERSION:-latest} true
+        composer test
+
+volumes:
+  db-data:

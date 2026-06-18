@@ -1,0 +1,69 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # Weekly, so we get an early warning when an upcoming WordPress release
+    # (the 'nightly' matrix entry) breaks the plugin.
+    - cron: '0 4 * * 1'
+
+jobs:
+  test:
+    name: WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-22.04
+
+    services:
+      database:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Each currently-supported WordPress version on the minimum PHP version.
+          - { wordpress: '6.5', php: '7.4' }
+          - { wordpress: '6.6', php: '7.4' }
+          - { wordpress: '6.7', php: '7.4' }
+          # Latest WordPress across the supported PHP range.
+          - { wordpress: 'latest', php: '7.4' }
+          - { wordpress: 'latest', php: '8.0' }
+          - { wordpress: 'latest', php: '8.1' }
+          - { wordpress: 'latest', php: '8.2' }
+          - { wordpress: 'latest', php: '8.3' }
+          # Early warning for the next WordPress release.
+          - { wordpress: 'nightly', php: '8.3' }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli
+          coverage: none
+          tools: composer
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Install WordPress test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 ${{ matrix.wordpress }}
+
+      - name: Run tests
+        run: composer test
+        env:
+          WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/vendor/yoast/phpunit-polyfills
