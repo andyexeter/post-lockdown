@@ -6,7 +6,7 @@ class PostLockdown
 {
     /** Plugin key for options and the option page. */
     public const KEY     = 'postlockdown';
-    public const VERSION = '4.0.5';
+    public const VERSION = '4.1.0';
 
     /** @var array List of post IDs which cannot be edited, trashed or deleted. */
     private $locked_post_ids = [];
@@ -359,6 +359,7 @@ class PostLockdown
 
         if ($changed) {
             add_filter('redirect_post_location', [$this->registry['AdminNotice'], '_add_query_arg']);
+            $this->registry['BlockEditorNotice']->flag_reverted($post_id);
         }
 
         return $data;
@@ -403,10 +404,11 @@ class PostLockdown
     private function load_registry()
     {
         $this->registry = [
-            'AdminNotice'  => new AdminNotice($this->plugin_path),
-            'OptionsPage'  => new OptionsPage($this),
-            'StatusColumn' => new StatusColumn($this),
-            'BulkActions'  => new BulkActions($this),
+            'AdminNotice'       => new AdminNotice($this->plugin_path),
+            'BlockEditorNotice' => new BlockEditorNotice($this),
+            'OptionsPage'       => new OptionsPage($this),
+            'StatusColumn'      => new StatusColumn($this),
+            'BulkActions'       => new BulkActions($this),
         ];
     }
 

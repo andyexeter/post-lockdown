@@ -16,4 +16,6 @@
 /tests                  export-ignore
 /phpunit.xml.dist       export-ignore
 /compose.yaml           export-ignore
+/.wp-env.json           export-ignore
+/playwright.config.js   export-ignore
 

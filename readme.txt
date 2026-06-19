@@ -3,8 +3,8 @@ Contributors: andyexeter
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: posts, lock, protect, trash, delete
 Requires at least: 4.6
-Tested up to: 6.9
-Stable tag: 4.0.5
+Tested up to: 7.0
+Stable tag: 4.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,11 +50,17 @@ The following filters are used throughout the plugin:
 
 == Screenshots ==
 
-1. A page list showing one regular page, one locked page and one protected page with the plugin's status column visible.
-2. The Publish metabox for a protected page logged in as an Editor. See how the plugin removes the Move to Trash link.
-3. The Post Lockdown administration page.
+1. The Post Lockdown settings page. Add posts and pages of any type to the Locked or Protected boxes.
+2. Locked and protected items are flagged in a status column on the posts and pages lists.
+3. An Editor's view of the page list: a locked page cannot be edited, selected or trashed, while a protected page can still be edited but not trashed.
+4. A protected post opened in the block editor by an Editor - the Move to Trash action is removed.
+5. When a non-admin tries to unpublish a protected post the change is reverted and a notice explains why.
 
 == Changelog ==
+
+= 4.1.0 =
+
+* New feature: when a non-admin tries to unpublish a protected post in the block editor, the change is reverted and a notice is shown - matching the existing classic editor behaviour
 
 = 4.0.5 =
 

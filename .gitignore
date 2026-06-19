@@ -4,3 +4,8 @@
 /wordpress
 /.php-cs-fixer.cache
 /.phpunit.result.cache
+/.wp-env.override.json
+/artifacts
+/playwright-report
+/test-results
+/.playwright-mcp

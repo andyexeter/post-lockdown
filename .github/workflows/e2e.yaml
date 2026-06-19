@@ -1,0 +1,58 @@
+name: E2E
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # Weekly early warning that an upcoming WordPress release breaks the admin UI.
+    - cron: '0 5 * * 1'
+
+jobs:
+  e2e:
+    name: E2E / WP ${{ matrix.wordpress }}
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress: [ 'latest', 'nightly' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build plugin assets
+        run: npm run build
+
+      - name: Pin WordPress version
+        run: node bin/set-wp-env-core.mjs "${{ matrix.wordpress }}"
+
+      - name: Start WordPress
+        run: npm run wp-env -- start
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.wordpress }}
+          path: |
+            playwright-report/
+            artifacts/
+          retention-days: 7
