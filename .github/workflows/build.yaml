@@ -14,7 +14,7 @@ jobs:
         php-versions: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Declare variables
         id: vars
@@ -31,7 +31,7 @@ jobs:
         run: find -L src -type f -name '*.php' -print0 | xargs -0 -n 1 -P $(nproc) php -l
 
       - name: Cache composer
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         if: matrix.php-versions == 8.3
         with:
           path: ${{ steps.vars.outputs.composer_cache_dir }}

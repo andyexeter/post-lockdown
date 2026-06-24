@@ -7,10 +7,10 @@ on:
 jobs:
   trunk:
     name: Update trunk
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Release
         uses: 10up/action-wordpress-plugin-asset-update@stable
