@@ -6,6 +6,12 @@
 #   PHP_VERSION=7.4 docker compose build tests      # rebuild against a different PHP version
 #
 # This runs the same suite as .github/workflows/tests.yaml.
+#
+# General-purpose PHP 8.3 shell for tooling (php-cs-fixer, composer, etc.):
+#
+#   docker compose run --rm php composer fix       # run php-cs-fixer
+#   docker compose run --rm php composer install
+#   docker compose run --rm php bash               # interactive shell
 
 services:
   database:
@@ -44,6 +50,16 @@ services:
         composer install --no-interaction --no-progress
         bash bin/install-wp-tests.sh wordpress_test wp wp database ${WP_VERSION:-latest} true
         composer test
+
+  php:
+    build:
+      context: .
+      dockerfile: bin/test.Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.3}
+    volumes:
+      - .:/app
+    working_dir: /app
 
 volumes:
   db-data:
