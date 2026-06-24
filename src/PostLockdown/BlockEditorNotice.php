@@ -32,7 +32,7 @@ class BlockEditorNotice
     public function flag_reverted($post_id)
     {
         // The classic editor surfaces this via a redirect notice instead.
-        if (!defined('REST_REQUEST') || !REST_REQUEST) {
+        if (!\defined('REST_REQUEST') || !REST_REQUEST) {
             return;
         }
 
