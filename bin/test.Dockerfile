@@ -3,14 +3,12 @@
 ARG PHP_VERSION=8.3
 FROM php:${PHP_VERSION}-cli
 
-# subversion         - bin/install-wp-tests.sh fetches the WP test framework over svn
 # default-mysql-client - handy for poking at the database while debugging
 # git/unzip          - composer + WordPress core download
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         git \
         unzip \
-        subversion \
         default-mysql-client \
     && docker-php-ext-install mysqli \
     && rm -rf /var/lib/apt/lists/*

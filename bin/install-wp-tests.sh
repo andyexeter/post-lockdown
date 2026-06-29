@@ -19,7 +19,7 @@ WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress/}
 
 download() {
     if [ "$(which curl)" ]; then
-        curl -s "$1" > "$2";
+        curl -sfL "$1" > "$2";
     elif [ "$(which wget)" ]; then
         wget -nv -O "$2" "$1"
     else
@@ -113,8 +113,16 @@ install_test_suite() {
 		# set up testing suite
 		mkdir -p $WP_TESTS_DIR
 		rm -rf $WP_TESTS_DIR/{includes,data}
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
+
+		# Map the svn-style WP_TESTS_TAG (trunk, branches/X, tags/X) to a git ref
+		# on the GitHub mirror so we can fetch the includes/data without svn.
+		local GIT_REF=${WP_TESTS_TAG#branches/}
+		GIT_REF=${GIT_REF#tags/}
+
+		download https://github.com/WordPress/wordpress-develop/archive/${GIT_REF}.tar.gz $TMPDIR/wp-tests.tar.gz
+		tar --strip-components=3 -zxmf $TMPDIR/wp-tests.tar.gz -C $WP_TESTS_DIR \
+			"wordpress-develop-${GIT_REF}/tests/phpunit/includes" \
+			"wordpress-develop-${GIT_REF}/tests/phpunit/data"
 	fi
 
 	if [ ! -f wp-tests-config.php ]; then
