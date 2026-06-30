@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET4
 Tags: posts, lock, protect, trash, delete
 Requires at least: 4.6
 Tested up to: 7.0
-Stable tag: 4.1.0
+Stable tag: 4.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,10 @@ The following filters are used throughout the plugin:
 5. When a non-admin tries to unpublish a protected post the change is reverted and a notice explains why.
 
 == Changelog ==
+
+= 4.1.1 =
+
+* Fixed a fatal error on activation caused by the BlockEditorNotice class file being omitted from the 4.1.0 release package
 
 = 4.1.0 =
 
