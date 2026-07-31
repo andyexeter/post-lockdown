@@ -40,9 +40,14 @@ See the screenshots for exactly what an Editor sees when they open a list of loc
 
 == Installation ==
 
-1. Upload the `post-lockdown` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Select your locked/protected posts under Settings > Post Lockdown
+1. In your WordPress admin, go to Plugins > Add New Plugin and search for "Post Lockdown"
+2. Click Install Now, then Activate
+3. Go to Settings > Post Lockdown and add the posts and pages you want to lock or protect
+4. Click Save Changes
+
+Prefer to install manually? Download the plugin, then either upload the zip file via Plugins > Add New Plugin > Upload Plugin,
+or extract it and upload the `post-lockdown` folder to `/wp-content/plugins/`. Activate it from the Plugins menu and continue
+from step 3 above.
 
 == Frequently Asked Questions ==
 
