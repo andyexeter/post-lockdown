@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Post Lockdown
  * Plugin URI: https://github.com/andyexeter/post-lockdown
- * Description: Stop non-admin users trashing, deleting or unpublishing your site-critical posts and pages. Lock content down in seconds - no code required.
+ * Description: Allows admins to protect selected posts and pages so they cannot be trashed or deleted by non-admin users.
  * Version: 4.1.1
  * Requires at least: 4.6
  * Requires PHP: 7.4
