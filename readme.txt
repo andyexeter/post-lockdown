@@ -1,25 +1,42 @@
 === Post Lockdown ===
 Contributors: andyexeter
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BRET43XLNLZCJ&lc=GB&item_name=Post%20Lockdown&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
-Tags: posts, lock, protect, trash, delete
+Tags: protect, lock, permissions, user roles, delete
 Requires at least: 4.6
 Tested up to: 7.0
 Stable tag: 4.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Allows admins to protect selected posts and pages so they cannot be trashed or deleted by non-admin users.
+Stop non-admin users trashing, deleting or unpublishing your site-critical posts and pages. Lock content down in seconds - no code required.
 
 == Description ==
 
-Post Lockdown protects your site-critical pages and posts by disabling all non-admin users' ability to trash or delete them.
-It can also lock pages and posts, which will disable editing of the post as well as disabling trashing/deleting.
+Your homepage. Your contact page. The landing page that took three weeks to sign off. One accidental click from a contributor
+or a well-meaning editor and it's in the trash - or worse, gone for good.
 
-The plugin adds a new options page under the Settings menu in your WordPress admin panel which allows you to quickly search and
-select for all pages and posts of any post type. When you find the item you want to select, simply click it to move it to the right
-box and click Save Changes.
+Post Lockdown puts your site-critical content out of reach. Choose which posts and pages matter, and Post Lockdown stops
+non-admin users from trashing or deleting them - no custom code, no role editor, no rebuilding permissions from scratch.
 
-See the screenshots for an example of what an Editor would see when they view a list of posts with some locked and protected.
+**Two levels of safety**
+
+* **Protected** - the post can still be edited, but it can't be trashed, deleted, or unpublished. Editors keep working; the page stays live.
+* **Locked** - the post can't be edited, trashed or deleted at all. Use it for content that must not change.
+
+**Set it up in under a minute**
+
+Post Lockdown adds a single settings page under Settings > Post Lockdown. Start typing to search every post, page, attachment
+and custom post type on your site, click an item to add it to the Locked or Protected box, then hit Save Changes. That's it.
+
+**Built to stay out of the way**
+
+* Locked and protected items are clearly flagged in a status column on your post and page lists, so nobody wonders why an action is missing.
+* Works with both the block editor and the classic editor. If someone tries to unpublish a protected post, the change is reverted and a notice explains why.
+* Optional bulk actions let you lock or protect items straight from the post list.
+* Manage everything from the command line with WP-CLI - run `wp postlockdown` to see the available commands.
+* A full set of filters lets developers change which capability counts as "admin", set locked and protected posts programmatically, and customise the status column. See the FAQ for the complete list.
+
+See the screenshots for exactly what an Editor sees when they open a list of locked and protected posts.
 
 == Installation ==
 

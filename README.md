@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/andyexeter/post-lockdown.png)](https://travis-ci.org/andyexeter/post-lockdown)
+[![Tests](https://github.com/andyexeter/post-lockdown/actions/workflows/tests.yaml/badge.svg)](https://github.com/andyexeter/post-lockdown/actions/workflows/tests.yaml)
 
 # Post Lockdown
 
