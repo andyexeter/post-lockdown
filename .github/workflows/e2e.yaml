@@ -56,3 +56,17 @@ jobs:
             playwright-report/
             artifacts/
           retention-days: 7
+
+  # Aggregate gate with a stable name for branch protection to require,
+  # so the matrix can change without updating the required-check config.
+  ci-success:
+    name: E2E Success
+    if: always()
+    needs: e2e
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any matrix job failed
+        if: needs.e2e.result != 'success'
+        run: |
+          echo "e2e matrix result: ${{ needs.e2e.result }}"
+          exit 1

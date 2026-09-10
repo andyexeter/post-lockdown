@@ -46,3 +46,17 @@ jobs:
       - name: PHP-CS-Fixer - Validate coding standards
         run: php vendor/bin/php-cs-fixer fix -vvv --dry-run --using-cache=no --format=checkstyle | cs2pr
         if: matrix.php-versions == 8.3
+
+  # Aggregate gate with a stable name for branch protection to require,
+  # so the matrix can change without updating the required-check config.
+  ci-success:
+    name: Build Success
+    if: always()
+    needs: run
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any matrix job failed
+        if: needs.run.result != 'success'
+        run: |
+          echo "run matrix result: ${{ needs.run.result }}"
+          exit 1

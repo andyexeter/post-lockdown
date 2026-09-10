@@ -69,3 +69,17 @@ jobs:
         run: composer test
         env:
           WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/vendor/yoast/phpunit-polyfills
+
+  # Aggregate gate with a stable name for branch protection to require,
+  # so the matrix can change without updating the required-check config.
+  ci-success:
+    name: Tests Success
+    if: always()
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any matrix job failed
+        if: needs.test.result != 'success'
+        run: |
+          echo "test matrix result: ${{ needs.test.result }}"
+          exit 1
