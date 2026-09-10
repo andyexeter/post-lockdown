@@ -1,9 +1,9 @@
 # Local integration testing — no need to install MySQL, svn or PHP on the host.
 #
 #   docker compose run --rm tests                 # test against the latest WordPress
-#   WP_VERSION=6.5 docker compose run --rm tests   # test against a specific version
+#   WP_VERSION=7.0 docker compose run --rm tests   # test against a specific version
 #   WP_VERSION=nightly docker compose run --rm tests
-#   PHP_VERSION=7.4 docker compose build tests      # rebuild against a different PHP version
+#   PHP_VERSION=8.5 docker compose build tests      # rebuild against a different PHP version
 #
 # This runs the same suite as .github/workflows/tests.yaml.
 #
